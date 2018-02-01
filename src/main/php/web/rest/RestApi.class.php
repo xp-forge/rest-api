@@ -28,7 +28,8 @@ class RestApi implements Handler {
     $match= strtolower($req->method()).':'.$req->uri()->path();
     foreach ($this->delegates as $pattern => $delegate) { 
       if ($c= preg_match($pattern, $match, $matches)) { 
-        return $delegate->invoke($req, $res, $matches);
+        $delegate->invoke($req, $res, $matches);
+        return;
       }
     }
 
