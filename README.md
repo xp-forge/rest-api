@@ -1,4 +1,4 @@
-Web applications for the XP Framework
+Rest APIs
 ========================================================================
 
 [![Build Status on TravisCI](https://secure.travis-ci.org/xp-forge/rest-api.png)](http://travis-ci.org/xp-forge/rest-api)
