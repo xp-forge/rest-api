@@ -10,7 +10,7 @@ use text\json\StreamOutput;
 use lang\reflect\TargetInvocationException;
 
 class RestApi implements Handler {
-  private $patterns= [];
+  private $delegates= [];
   private $format;
 
   public function __construct($implementation) {
@@ -18,14 +18,14 @@ class RestApi implements Handler {
     foreach (typeof($implementation)->getMethods() as $method) {
       foreach ($method->getAnnotations() as $verb => $path) { 
         $pattern= '#^'.$verb.':'.preg_replace('/\{([^}]+)\}/', '(?<$1>[^/]+)', $path).'$#';
-        $this->patterns[$pattern]= new Delegate($implementation, $method);
+        $this->delegates[$pattern]= new Delegate($implementation, $method);
       }
     }
   }
 
   public function handle($req, $res) {
     $match= strtolower($req->method()).':'.$req->uri()->path();
-    foreach ($this->patterns as $pattern => $delegate) { 
+    foreach ($this->delegates as $pattern => $delegate) { 
       if ($c= preg_match($pattern, $match, $matches)) { 
         $args= [];
         foreach ($delegate->parameters() as $param) {
