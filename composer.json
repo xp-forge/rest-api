@@ -1,0 +1,19 @@
+{
+  "name" : "xp-forge/rest-api",
+  "type" : "library",
+  "homepage" : "http://xp-framework.net/",
+  "license" : "BSD-3-Clause",
+  "description" : "Rest API",
+  "keywords": ["module", "xp"],
+  "require" : {
+    "xp-framework/core": "^9.0 | ^8.0 | ^7.0",
+    "xp-framework/web": "^0.12",
+    "php": ">=5.6.0"
+  },
+  "require-dev" : {
+    "xp-framework/unittest": "^9.0 | ^8.0 |^7.0"
+  },
+  "autoload" : {
+    "files" : ["src/main/php/autoload.php"]
+  }
+}
