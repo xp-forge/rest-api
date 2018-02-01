@@ -10,27 +10,25 @@ use text\json\StreamOutput;
 use lang\reflect\TargetInvocationException;
 
 class RestApi implements Handler {
-  private $implementation;
   private $patterns= [];
   private $format;
 
   public function __construct($implementation) {
-    $this->implementation= $implementation;
     $this->format= Format::dense();
     foreach (typeof($implementation)->getMethods() as $method) {
       foreach ($method->getAnnotations() as $verb => $path) { 
         $pattern= '#^'.$verb.':'.preg_replace('/\{([^}]+)\}/', '(?<$1>[^/]+)', $path).'$#';
-        $this->patterns[$pattern]= $method;
+        $this->patterns[$pattern]= new Delegate($implementation, $method);
       }
     }
   }
 
   public function handle($req, $res) {
     $match= strtolower($req->method()).':'.$req->uri()->path();
-    foreach ($this->patterns as $pattern => $method) { 
+    foreach ($this->patterns as $pattern => $delegate) { 
       if ($c= preg_match($pattern, $match, $matches)) { 
         $args= [];
-        foreach ($method->getParameters() as $param) {
+        foreach ($delegate->parameters() as $param) {
           $name= $param->getName();
           if (isset($matches[$name])) {
             $args[]= $matches[$name];
@@ -44,7 +42,7 @@ class RestApi implements Handler {
         }
 
         try {
-          $result= $method->invoke($this->implementation, $args);
+          $result= $delegate->invoke($args);
         } catch (TargetInvocationException $e) {
           throw new Error(500, 'Errors invoking '.$method->getName(), $e->getCause());
         }
