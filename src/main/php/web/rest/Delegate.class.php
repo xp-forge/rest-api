@@ -58,15 +58,15 @@ class Delegate {
     $this->instance= $instance;
     $this->method= $method;
     foreach ($method->getParameters() as $param) {
-      foreach ($this->source($param) as $name => $from) {
+      foreach ($this->source($param) as $name => $source) {
         if ($param->isOptional()) {
           $default= $param->getDefaultValue();
-          $this->params[$name]= function($req, $name) use($from, $default) {
-            $f= self::$READ[$from];
+          $this->params[$name]= function($req, $name) use($source, $default) {
+            $f= self::$READ[$source];
             return $f($req, $name, $default);
           };
         } else {
-          $this->params[$name]= self::$READ[$from];
+          $this->params[$name]= self::$READ[$source];
         }
       }
     }
@@ -79,9 +79,9 @@ class Delegate {
    * @return [:string]
    */
   private function source($param) {
-    foreach ($param->getAnnotations() as $from => $name) {
-      if (isset(self::$READ[$from])) {
-        return [$name ?: $param->getName() => $from];
+    foreach ($param->getAnnotations() as $source => $name) {
+      if (isset(self::$READ[$source])) {
+        return [$name ?: $param->getName() => $source];
       }
     }
     return [$param->getName() => 'default'];
@@ -96,6 +96,8 @@ class Delegate {
    * @return var
    */
   public function invoke($request, $response, $matches) {
+
+    // Compute arguments
     $args= [];
     foreach ($this->params as $name => $read) {
       if (isset($matches[$name])) {
@@ -109,6 +111,7 @@ class Delegate {
 
     $result= $this->method->invoke($this->instance, $args);
 
+    // Stream output
     $response->answer(200);
     $response->header('Content-Type', 'application/json');
     $out= new StreamOutput($response->stream(), self::$WRITE);
