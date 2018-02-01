@@ -23,6 +23,11 @@ class Users {
   public function getUser($id) {
     // ...
   }
+
+  #[@post('/users'), @$body: entity]
+  public function createUser($body) {
+    // ...
+  }
 }
 ```
 
