@@ -1,9 +1,10 @@
 <?php namespace web\rest;
 
-use lang\IllegalArgumentException;
 use text\json\Format;
+use text\json\Json;
 use text\json\StreamOutput;
 use text\json\StreamInput;
+use lang\reflect\TargetInvocationException;
 
 class Delegate {
   private $instance, $method;
@@ -87,6 +88,17 @@ class Delegate {
     return [$param->getName() => 'default'];
   }
 
+  private function error($response, $status, $message) {
+    $response->answer($status);
+    $response->send(
+      Json::of(['status' => $status, 'message' => $message, 'context' => $this->name()]),
+      'application/json'
+    );
+  }
+
+  /** @return string */
+  public function name() { return nameof($this->instance).'::'.$this->method->getName(); }
+
   /**
    * Invokes the delegate
    *
@@ -105,11 +117,15 @@ class Delegate {
       } else if (null !== ($arg= $read($request, $name))) {
         $args[]= $arg;
       } else {
-        throw new IllegalArgumentException('Missing argument "'.$name.'"');
+        return $this->error($response, 400, 'Missing argument '.$name);
       }
     }
 
-    $result= $this->method->invoke($this->instance, $args);
+    try {
+      $result= $this->method->invoke($this->instance, $args);
+    } catch (TargetInvocationException $e) {
+      return $this->error($response, 500, $e->getCause()->getMessage());
+    }
 
     // Stream output
     $response->answer(200);
