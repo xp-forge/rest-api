@@ -3,6 +3,7 @@
 use web\Handler;
 use web\routing\CannotRoute;
 use lang\IllegalArgumentException;
+use lang\reflect\TargetInvocationException;
 
 class RestApi implements Handler {
   private $delegates= [];
@@ -25,10 +26,18 @@ class RestApi implements Handler {
    * @return var
    */
   public function handle($req, $res) {
+    $format= new Json();
+
     $match= strtolower($req->method()).':'.$req->uri()->path();
     foreach ($this->delegates as $pattern => $delegate) { 
-      if ($c= preg_match($pattern, $match, $matches)) { 
-        $delegate->invoke($req, $res, $matches);
+      if ($c= preg_match($pattern, $match, $matches)) {
+        try {
+          $format->value($res, $delegate->invoke($format->arguments($req, $matches, $delegate->params())));
+        } catch (IllegalArgumentException $e) {
+          $format->error($res, 400, $e);
+        } catch (TargetInvocationException $e) {
+          $format->error($res, 500, $e->getCause());
+        }
         return;
       }
     }
