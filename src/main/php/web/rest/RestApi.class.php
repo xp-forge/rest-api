@@ -1,11 +1,13 @@
 <?php namespace web\rest;
 
 use web\Handler;
+use web\Error;
 use web\routing\CannotRoute;
 use lang\IllegalArgumentException;
 use lang\reflect\TargetInvocationException;
 
 class RestApi implements Handler {
+  private $formats= [];
   private $delegates= [];
 
   /** @param object $instance */
@@ -16,6 +18,34 @@ class RestApi implements Handler {
         $this->delegates[$pattern]= new Delegate($instance, $method);
       }
     }
+    $this->formats['#(application|text)/.*json#']= new Json();
+  }
+
+  /**
+   * Register a format
+   *
+   * @param  web.rest.EntityFormat $format
+   * @param  string... $mime Mime type patterns, not including the delimiters!
+   * @return self
+   */
+  public function register(EntityFormat $format, ... $mime) {
+    foreach ($mime as $pattern) {
+      $this->formats['#'.preg_quote($pattern, '#').'#i']= $format;
+    }
+    return $this;
+  }
+
+  /**
+   * Determines format from Content-Type header
+   *
+   * @param  string $mime
+   * @return web.rest.EntityFormat
+   */
+  private function format($mime) {
+    foreach ($this->formats as $pattern => $format) {
+      if (preg_match($pattern, $mime)) return $format;
+    }
+    throw new Error(406, 'Cannot handle '.$mime);
   }
 
   /**
@@ -26,7 +56,7 @@ class RestApi implements Handler {
    * @return var
    */
   public function handle($req, $res) {
-    $format= new Json();
+    $format= $this->format($req->header('Content-Type') ?: 'application/json');
 
     $match= strtolower($req->method()).':'.$req->uri()->path();
     foreach ($this->delegates as $pattern => $delegate) { 
