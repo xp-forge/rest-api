@@ -9,6 +9,21 @@ use web\io\TestOutput;
 
 class RestApiTest extends TestCase {
 
+  /**
+   * Assertion helper - tests HTTP payload. Assumes chunked transfer-encoding.
+   *
+   * @param  string $expected
+   * @param  string $bytes
+   * @throws unittest.AssertionFailedError
+   * @return void
+   */
+  private function assertPayload($expected, $bytes) {
+    $this->assertEquals(
+      dechex(strlen($expected))."\r\n".$expected."\r\n0\r\n\r\n",
+      substr($bytes, strpos($bytes, "\r\n\r\n") + 4)
+    );
+  }
+
   #[@test]
   public function can_create() {
     new RestApi(new Users());
@@ -22,13 +37,8 @@ class RestApiTest extends TestCase {
     $fixture= new RestApi(new Users());
     $fixture->handle($req, $res);
 
-    $this->assertEquals(
-      "HTTP/1.1 200 OK\r\n".
-      "Content-Type: application/json\r\n".
-      "Transfer-Encoding: chunked\r\n\r\n".
-      "43\r\n".
-      "{\"1549\":{\"id\":1549,\"name\":\"Timm\"},\"6100\":{\"id\":6100,\"name\":\"Test\"}}\r\n".
-      "0\r\n\r\n",
+    $this->assertPayload(
+      '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}',
       $out->bytes()
     );
   }
