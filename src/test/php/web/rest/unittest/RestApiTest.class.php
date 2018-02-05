@@ -30,15 +30,27 @@ class RestApiTest extends TestCase {
   }
 
   #[@test]
-  public function list_users() {
+  public function list_users_returns_json() {
     $req= new Request(new TestInput('GET', '/users'));
     $res= new Response(new TestOutput());
 
-    $fixture= new RestApi(new Users());
-    $fixture->handle($req, $res);
+    (new RestApi(new Users()))->handle($req, $res);
 
     $this->assertPayload(
       '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}',
+      $res->output()->bytes()
+    );
+  }
+
+  #[@test]
+  public function find_user_returns_json() {
+    $req= new Request(new TestInput('GET', '/users/1549'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertPayload(
+      '{"id":1549,"name":"Timm"}',
       $res->output()->bytes()
     );
   }
