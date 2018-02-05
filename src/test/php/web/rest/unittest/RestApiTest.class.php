@@ -50,4 +50,14 @@ class RestApiTest extends TestCase {
 
     $this->assertPayload(200, '{"id":1549,"name":"Timm"}', $res);
   }
+
+  #[@test]
+  public function exception_raised() {
+    $req= new Request(new TestInput('GET', '/users/not.a.user'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertPayload(500, '{"status":500,"message":"Undefined index: not.a.user"}', $res);
+  }
 }
