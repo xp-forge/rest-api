@@ -12,15 +12,17 @@ class RestApiTest extends TestCase {
   /**
    * Assertion helper - tests HTTP payload. Assumes chunked transfer-encoding.
    *
-   * @param  string $expected
-   * @param  string $bytes
+   * @param  int $status
+   * @param  string $body
+   * @param  web.Response $res
    * @throws unittest.AssertionFailedError
    * @return void
    */
-  private function assertPayload($expected, $bytes) {
+  private function assertPayload($status, $body, $res) {
+    $bytes= $res->output()->bytes();
     $this->assertEquals(
-      dechex(strlen($expected))."\r\n".$expected."\r\n0\r\n\r\n",
-      substr($bytes, strpos($bytes, "\r\n\r\n") + 4)
+      ['status' => $status, 'body' => dechex(strlen($body))."\r\n".$body."\r\n0\r\n\r\n"],
+      ['status' => $res->status(), 'body' => substr($bytes, strpos($bytes, "\r\n\r\n") + 4)]
     );
   }
 
@@ -36,10 +38,7 @@ class RestApiTest extends TestCase {
 
     (new RestApi(new Users()))->handle($req, $res);
 
-    $this->assertPayload(
-      '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}',
-      $res->output()->bytes()
-    );
+    $this->assertPayload(200, '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}', $res);
   }
 
   #[@test]
@@ -49,9 +48,6 @@ class RestApiTest extends TestCase {
 
     (new RestApi(new Users()))->handle($req, $res);
 
-    $this->assertPayload(
-      '{"id":1549,"name":"Timm"}',
-      $res->output()->bytes()
-    );
+    $this->assertPayload(200, '{"id":1549,"name":"Timm"}', $res);
   }
 }
