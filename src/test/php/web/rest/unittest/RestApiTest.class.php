@@ -32,14 +32,14 @@ class RestApiTest extends TestCase {
   #[@test]
   public function list_users() {
     $req= new Request(new TestInput('GET', '/users'));
-    $res= new Response($out= new TestOutput());
+    $res= new Response(new TestOutput());
 
     $fixture= new RestApi(new Users());
     $fixture->handle($req, $res);
 
     $this->assertPayload(
       '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}',
-      $out->bytes()
+      $res->output()->bytes()
     );
   }
 }
