@@ -65,7 +65,8 @@ abstract class EntityFormat {
    */
   public function value($response, $value) {
     $response->answer(200);
-    self::$WRITE['entity']($response, $value);
+    $f= self::$WRITE['entity'];
+    $f($response, $value);
   }
 
   /**
@@ -78,6 +79,7 @@ abstract class EntityFormat {
    */
   public function error($response, $status, $cause) {
     $response->answer($status);
-    self::$WRITE['entity']($response, ['status'  => $status, 'message' => $cause->getMessage()]);
+    $f= self::$WRITE['entity'];
+    $f($response, ['status'  => $status, 'message' => $cause->getMessage()]);
   }
 }
