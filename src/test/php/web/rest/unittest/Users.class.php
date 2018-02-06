@@ -1,6 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use web\rest\Response;
+use io\streams\InputStream;
 use io\streams\MemoryInputStream;
 
 class Users {
@@ -20,14 +21,6 @@ class Users {
     return $this->users[$id];
   }
 
-  #[@get('/users/{id}/avatar')]
-  public function userAvatar($id) {
-    if (isset($this->users[$id])) {
-      return Response::ok()->type('image/png')->stream(new MemoryInputStream('PNG...'));
-    }
-    return Response::notFound('No such user #'.$id);
-  }
-
   #[@post('/users'), @$user: entity]
   public function newUser($user) {
     end($this->users);
@@ -36,5 +29,25 @@ class Users {
 
     $this->users[$id]= $new;
     return Response::created('/users/'.$id)->entity($new);
+  }
+
+  #[@get('/users/{id}/avatar')]
+  public function userAvatar($id) {
+    if (!isset($this->users[$id])) {
+      return Response::notFound('No such user #'.$id);
+    }
+
+    // TBI: Loading from storage
+    return Response::ok()->type('image/png')->stream(new MemoryInputStream('PNG...'));
+  }
+
+  #[@put('/users/{id}/avatar')]
+  public function changeUserAvatar($id, InputStream $stream) {
+    if (!isset($this->users[$id])) {
+      return Response::notFound('No such user #'.$id);
+    }
+
+    // TBI: Saving to storage
+    return Response::noContent();
   }
 }

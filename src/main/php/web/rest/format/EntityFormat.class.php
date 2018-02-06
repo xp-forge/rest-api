@@ -1,9 +1,10 @@
-<?php namespace web\rest;
+<?php namespace web\rest\format;
 
 use lang\IllegalArgumentException;
+use web\rest\Response;
 
 abstract class EntityFormat {
-  protected static $READ, $WRITE;
+  protected static $READ;
   protected $mimeType= 'application/octet-stream';
 
   static function __static() {
@@ -32,8 +33,11 @@ abstract class EntityFormat {
         }
       }
     ];
-    self::$WRITE= [];
   }
+
+  protected abstract function read($req, $name);
+
+  protected abstract function write($res, $value);
 
   /**
    * Receives arguments from request
@@ -44,11 +48,14 @@ abstract class EntityFormat {
    * @return var[]
    */
   public function arguments($request, $matches, $params) {
+    $read= self::$READ;
+    $read['entity']= function($req, $name) { return $this->read($req, $name); };
+
     $args= [];
     foreach ($params as $name => $from) {
       if (isset($matches[$name])) {
         $args[]= $matches[$name];
-      } else if (null !== ($arg= $from($request, self::$READ))) {
+      } else if (null !== ($arg= $from($request, $read))) {
         $args[]= $arg;
       } else {
         throw new IllegalArgumentException('Missing argument '.$name);
@@ -65,13 +72,13 @@ abstract class EntityFormat {
    * @return void
    */
   public function value($response, $value) {
+    $response->answer(200);
     $response->header('Content-Type', $this->mimeType);
+
     if ($value instanceof Response) {
-      $value->transmit($response, self::$WRITE['entity']);
+      $value->transmit($response, function($res, $value) { $this->write($res, $value); });
     } else {
-      $response->answer(200);
-      $f= self::$WRITE['entity'];
-      $f($response, $value);
+      $this->write($response, $value);
     }
   }
 
@@ -86,7 +93,7 @@ abstract class EntityFormat {
   public function error($response, $status, $cause) {
     $response->answer($status);
     $response->header('Content-Type', $this->mimeType);
-    $f= self::$WRITE['entity'];
-    $f($response, ['status'  => $status, 'message' => $cause->getMessage()]);
+
+    $this->write($response, ['status'  => $status, 'message' => $cause->getMessage()]);
   }
 }

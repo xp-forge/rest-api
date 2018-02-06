@@ -86,6 +86,19 @@ class RestApiTest extends TestCase {
   }
 
   #[@test]
+  public function change_users_avatar() {
+    $body= 'PNG...';
+    $headers= ['Content-Type' => 'image/png', 'Content-Length' => strlen($body)];
+
+    $req= new Request(new TestInput('PUT', '/users/1549/avatar', $headers, $body));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertEquals(204, $res->status());
+  }
+
+  #[@test]
   public function not_found() {
     $req= new Request(new TestInput('GET', '/users/not.a.user/avatar'));
     $res= new Response(new TestOutput());

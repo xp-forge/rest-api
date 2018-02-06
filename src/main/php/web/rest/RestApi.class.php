@@ -2,6 +2,9 @@
 
 use web\Handler;
 use web\Error;
+use web\rest\format\EntityFormat;
+use web\rest\format\Json;
+use web\rest\format\OctetStream;
 use web\routing\CannotRoute;
 use lang\IllegalArgumentException;
 use lang\reflect\TargetInvocationException;
@@ -19,6 +22,7 @@ class RestApi implements Handler {
       }
     }
     $this->formats['#(application|text)/.*json#']= new Json();
+    $this->formats['#application/octet-stream#']= new OctetStream();
   }
 
   /**
@@ -36,7 +40,7 @@ class RestApi implements Handler {
   }
 
   /**
-   * Determines format from Content-Type header
+   * Determines format from Content-Type header. Defaults to `application/octet-stream`. 
    *
    * @param  string $mime
    * @return web.rest.EntityFormat
@@ -45,7 +49,8 @@ class RestApi implements Handler {
     foreach ($this->formats as $pattern => $format) {
       if (preg_match($pattern, $mime)) return $format;
     }
-    throw new Error(406, 'Cannot handle '.$mime);
+
+    return $this->formats['#application/octet-stream#'];
   }
 
   /**

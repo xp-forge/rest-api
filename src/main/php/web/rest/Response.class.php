@@ -152,7 +152,7 @@ class Response {
    * Sends a stream
    *
    * @param  io,streams.InputStream $in
-   * @param  int $size
+   * @param  int $size Optional size (in bytes), omit to use chunked transfer
    * @return self
    */
   public function stream($in, $size= null) {
@@ -171,7 +171,7 @@ class Response {
   }
 
   /**
-   * Transmits
+   * Transmits this response value
    *
    * @param  web.Response $response
    * @param  function(web.Response, var): void $write

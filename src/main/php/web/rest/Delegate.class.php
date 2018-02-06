@@ -1,10 +1,17 @@
 <?php namespace web\rest;
 
+use io\streams\InputStream;
+use lang\XPClass;
+
 class Delegate {
   private static $SOURCES= ['param' => true, 'value' => true, 'header' => true, 'stream' => true, 'entity' => true];
-
+  private static $INPUTSTREAM;
   private $instance, $method;
   private $params= [];
+
+  static function __static() {
+    self::$INPUTSTREAM= new XPClass(InputStream::class);
+  }
 
   /**
    * Creates a new delegate
@@ -22,7 +29,9 @@ class Delegate {
           continue 2;
         }
       }
-      $this->param($param, $param->getName(), 'default');
+
+      $source= self::$INPUTSTREAM->isAssignableFrom($param->getType()) ? 'stream' : 'default';
+      $this->param($param, $param->getName(),  $source);
     }
   }
 
