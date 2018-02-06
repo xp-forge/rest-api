@@ -3,6 +3,7 @@
 use io\streams\InputStream;
 use io\streams\Streams;
 use lang\XPClass;
+use lang\IllegalArgumentException;
 
 class Delegate {
   private static $SOURCES;
@@ -26,7 +27,10 @@ class Delegate {
         return $req->stream();
       },
       'body'     => function($req, $format, $name) {
-        return Streams::readAll($req->stream());
+        if (null === ($stream= $req->stream())) {
+          throw new IllegalArgumentException('Expecting a request body, none transmitted');
+        }
+        return Streams::readAll($stream);
       },
       'entity'   => function($req, $format, $name) {
         return $format->read($req, $name);
