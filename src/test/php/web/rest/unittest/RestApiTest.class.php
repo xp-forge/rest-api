@@ -140,4 +140,20 @@ class RestApiTest extends TestCase {
       $res->output()->bytes()
     );
   }
+
+  #[@test]
+  public function date_objects_are_serialized() {
+    $req= new Request(new TestInput('GET', '/monitoring/details'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Monitoring()))->handle($req, $res);
+
+    $details= '{'.
+      '"startup":"2018-06-02T14:12:11+0200",'.
+      '"core":"XP9",'.
+      '"author":{"id":1549,"name":"Timm"},'.
+      '"cost":{"amount":"3.5","currency":"EUR"}'.
+    '}';
+    $this->assertPayload(200, 'application/json', $details, $res);
+  }
 }

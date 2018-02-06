@@ -12,6 +12,7 @@ use lang\reflect\TargetInvocationException;
 class RestApi implements Handler {
   private $formats= [];
   private $delegates= [];
+  private $marshalling;
 
   /** @param object $instance */
   public function __construct($instance) {
@@ -24,6 +25,7 @@ class RestApi implements Handler {
 
     $this->formats['#(application|text)/.*json#']= new Json();
     $this->formats['#application/octet-stream#']= new OctetStream();
+    $this->marshalling= new Marshalling();
   }
 
   /**
@@ -76,7 +78,7 @@ class RestApi implements Handler {
         if ($result instanceof Response) {
           $result->transmit($res, $format);
         } else {
-          $format->transmit($res, $result);
+          $format->transmit($res, $this->marshalling->marshal($result));
         }
         return;
       }
