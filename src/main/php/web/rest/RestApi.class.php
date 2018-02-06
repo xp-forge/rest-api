@@ -67,15 +67,16 @@ class RestApi implements Handler {
       if (preg_match($pattern, $match, $matches)) {
         try {
           $result= $delegate->invoke($format->arguments($req, $matches, $delegate->params()));
-          if ($result instanceof Response) {
-            $result->transmit($res, $format);
-          } else {
-            $format->transmit($res, $result);
-          }
         } catch (IllegalArgumentException $e) {
-          Response::error(400, $e->getMessage())->transmit($res, $format);
+          $result= Response::error(400, $e);
         } catch (TargetInvocationException $e) {
-          Response::error(500, $e->getCause()->getMessage())->transmit($res, $format);
+          $result= Response::error(500, $e->getCause());
+        }
+
+        if ($result instanceof Response) {
+          $result->transmit($res, $format);
+        } else {
+          $format->transmit($res, $result);
         }
         return;
       }

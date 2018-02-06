@@ -1,5 +1,7 @@
 <?php namespace web\rest;
 
+use lang\Throwable;
+
 class Response {
   private $status;
   private $headers= [];
@@ -66,21 +68,21 @@ class Response {
   /**
    * Creates a new response instance with the status code set to 404 (Not found)
    *
-   * @param  string $message
+   * @param  string|lang.Throwable $cause Optional
    * @return self
    */
-  public static function notFound($message= null) {
-    return self::error(404, $message);
+  public static function notFound($cause= null) {
+    return self::error(404, $cause);
   }
 
   /**
    * Creates a new response instance with the status code set to 406 (Not acceptable)
    *
-   * @param  string $message
+   * @param  string|lang.Throwable $cause Optional
    * @return self
    */
-  public static function notAcceptable($message= null) {
-    return self::error(406, $message);
+  public static function notAcceptable($cause= null) {
+    return self::error(406, $cause);
   }
 
   /**
@@ -88,14 +90,15 @@ class Response {
    * error code (defaulting to 500 - Internal Server Error).
    *
    * @param  int $code
-   * @param  string $message
+   * @param  string|lang.Throwable $cause Optional
    * @return self
    */
-  public static function error($code= 500, $message= null) {
+  public static function error($code= 500, $cause= null) {
     $self= new self($code);
-    if (null !== $message) {
-      $self->body= function($res, $format) use($code, $message) {
-        $format->write($res, ['status' => $code, 'message' => $message]);
+    if (null !== $cause) {
+      $error= ['status' => $code, 'message' => $cause instanceof Throwable ? $cause->getMessage() : $cause];
+      $self->body= function($res, $format) use($error) {
+        $format->write($res, $error);
       };
     }
     return $self;
