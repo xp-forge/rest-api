@@ -105,8 +105,8 @@ class Response {
   public static function status($code, $message= null) {
     $self= new self($code);
     if (null !== $message) {
-      $self->body= function($res, $write) use($code, $message) {
-        $write($res, ['status' => $code, 'message' => $message]);
+      $self->body= function($res, $format) use($code, $message) {
+        $format->write($res, ['status' => $code, 'message' => $message]);
       };
     }
     return $self;
@@ -142,8 +142,8 @@ class Response {
    * @return self
    */
   public function entity($value) {
-    $this->body= function($res, $write) use($value) {
-      $write($res, $value);
+    $this->body= function($res, $format) use($value) {
+      $format->write($res, $value);
     };
     return $this;
   }
@@ -156,7 +156,7 @@ class Response {
    * @return self
    */
   public function stream($in, $size= null) {
-    $this->body= function($res, $write) use($in, $size) {
+    $this->body= function($res, $format) use($in, $size) {
       $out= $res->stream($size);
       try {
         while ($in->available()) {
@@ -174,17 +174,17 @@ class Response {
    * Transmits this response value
    *
    * @param  web.Response $response
-   * @param  function(web.Response, var): void $write
+   * @param  web.rest.format.EntityFormat $format
    * @return void
    */
-  public function transmit($response, $write) {
+  public function transmit($response, $format) {
     $response->answer($this->status);
     foreach ($this->headers as $name => $value) {
       $response->header($name, $value);
     }
 
     if ($f= $this->body) {
-      $f($response, $write);
+      $f($response, $format);
     } else {
       $response->flush();
     }

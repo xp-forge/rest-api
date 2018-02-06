@@ -21,6 +21,7 @@ class RestApi implements Handler {
         $this->delegates[$pattern]= new Delegate($instance, $method);
       }
     }
+
     $this->formats['#(application|text)/.*json#']= new Json();
     $this->formats['#application/octet-stream#']= new OctetStream();
   }
@@ -28,14 +29,12 @@ class RestApi implements Handler {
   /**
    * Register a format
    *
+   * @param  string $pattern Mime type regular expression pattern, not including the delimiters!
    * @param  web.rest.EntityFormat $format
-   * @param  string... $mime Mime type patterns, not including the delimiters!
    * @return self
    */
-  public function register(EntityFormat $format, ... $mime) {
-    foreach ($mime as $pattern) {
-      $this->formats['#'.preg_quote($pattern, '#').'#i']= $format;
-    }
+  public function register($pattern, EntityFormat $format) {
+    $this->formats['#'.preg_quote($pattern, '#').'#i']= $format;
     return $this;
   }
 

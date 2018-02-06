@@ -4,40 +4,25 @@ use lang\IllegalArgumentException;
 use web\rest\Response;
 
 abstract class EntityFormat {
-  protected static $READ;
   protected $mimeType= 'application/octet-stream';
 
-  static function __static() {
-    self::$READ= [
-      'param'    => function($req, $name) {
-        return $req->param($name);
-      },
-      'value'    => function($req, $name) {
-        return $req->value($name);
-      },
-      'header'   => function($req, $name) {
-        return $req->header($name);
-      },
-      'stream'   => function($req, $name) {
-        return $req->stream();
-      },
-      'default'  => function($req, $name) {
-        if (null !== ($v= $req->param($name))) {
-          return $v;
-        } else if (null !== ($v= $req->value($name))) {
-          return $v;
-        } else if (null !== ($v= $req->header($name))) {
-          return $v;
-        } else {
-          return null;
-        }
-      }
-    ];
-  }
+  /**
+   * Reads entity from request
+   *
+   * @param  web.Request $request
+   * @param  string $name
+   * @return var
+   */
+  public abstract function read($request, $name);
 
-  protected abstract function read($req, $name);
-
-  protected abstract function write($res, $value);
+  /**
+   * Writes entity to response
+   *
+   * @param  web.Response $response
+   * @param  string $name
+   * @return void
+   */
+  public abstract function write($response, $value);
 
   /**
    * Receives arguments from request
@@ -48,14 +33,11 @@ abstract class EntityFormat {
    * @return var[]
    */
   public function arguments($request, $matches, $params) {
-    $read= self::$READ;
-    $read['entity']= function($req, $name) { return $this->read($req, $name); };
-
     $args= [];
     foreach ($params as $name => $from) {
       if (isset($matches[$name])) {
         $args[]= $matches[$name];
-      } else if (null !== ($arg= $from($request, $read))) {
+      } else if (null !== ($arg= $from($request, $this))) {
         $args[]= $arg;
       } else {
         throw new IllegalArgumentException('Missing argument '.$name);
@@ -76,7 +58,7 @@ abstract class EntityFormat {
     $response->header('Content-Type', $this->mimeType);
 
     if ($value instanceof Response) {
-      $value->transmit($response, function($res, $value) { $this->write($res, $value); });
+      $value->transmit($response, $this);
     } else {
       $this->write($response, $value);
     }

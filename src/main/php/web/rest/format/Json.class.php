@@ -12,8 +12,8 @@ class Json extends EntityFormat {
     self::$FORMAT= Format::dense();
   }
 
-  protected function read($req, $name) {
-    $in= new StreamInput($req->stream());
+  public function read($request, $name) {
+    $in= new StreamInput($request->stream());
     try {
       return $in->read();
     } finally {
@@ -21,8 +21,8 @@ class Json extends EntityFormat {
     }
   }
 
-  protected function write($res, $value) {
-    $out= new StreamOutput($res->stream(), self::$FORMAT);
+  public function write($response, $value) {
+    $out= new StreamOutput($response->stream(), self::$FORMAT);
     try {
       $out->write($value);
     } finally {
