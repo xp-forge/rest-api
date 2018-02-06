@@ -26,8 +26,8 @@ class Users {
     // ...
   }
 
-  #[@post('/users'), @$body: entity]
-  public function createUser($body) {
+  #[@post('/users'), @$user: entity]
+  public function createUser($user) {
     // ...
     return Response::created('/users/'.$id)->entity($created);
   }
