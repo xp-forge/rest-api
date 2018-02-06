@@ -56,25 +56,10 @@ abstract class EntityFormat {
    * @param  var $value
    * @return void
    */
-  public function value($response, $value) {
+  public function transmit($response, $value) {
     $response->answer(200);
     $response->header('Content-Type', $this->mimeType());
 
     $this->write($response, $value);
-  }
-
-  /**
-   * Sends an error
-   *
-   * @param  web.Response $response
-   * @param  int $status Used as HTTP status code
-   * @param  lang.Throwable $cause
-   * @return void
-   */
-  public function error($response, $status, $cause) {
-    $response->answer($status);
-    $response->header('Content-Type', $this->mimeType());
-
-    $this->write($response, ['status'  => $status, 'message' => $cause->getMessage()]);
   }
 }

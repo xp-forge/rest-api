@@ -70,12 +70,12 @@ class RestApi implements Handler {
           if ($result instanceof Response) {
             $result->transmit($res, $format);
           } else {
-            $format->value($res, $result);
+            $format->transmit($res, $result);
           }
         } catch (IllegalArgumentException $e) {
-          $format->error($res, 400, $e);
+          Response::error(400, $e->getMessage())->transmit($res, $format);
         } catch (TargetInvocationException $e) {
-          $format->error($res, 500, $e->getCause());
+          Response::error(500, $e->getCause()->getMessage())->transmit($res, $format);
         }
         return;
       }
