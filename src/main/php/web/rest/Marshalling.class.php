@@ -66,6 +66,18 @@ class Marshalling {
   }
 
   /**
+   * Applies marshal() to values inside a generator
+   *
+   * @param  iterable $in
+   * @return iterable
+   */
+  private function generator($in) {
+    foreach ($in as $key => $value) {
+      yield $key => $this->marshal($value);
+    }
+  }
+
+  /**
    * Marshals a value. Handles util.Date and util.Money instances specially,
    * converts objects with a `__toString` method and handles other objects
    * in a generic way, iterating over their instance fields.
@@ -79,7 +91,7 @@ class Marshalling {
     } else if ($value instanceof Money) {
       return ['amount' => $value->amount(), 'currency' => $value->currency()->toString()];
     } else if ($value instanceof \Generator) {
-      return $value;
+      return $this->generator($value);
     } else if (is_object($value)) {
       if (method_exists($value, '__toString')) return $value->__toString();
 
