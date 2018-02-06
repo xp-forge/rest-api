@@ -6,6 +6,9 @@ use web\rest\Response;
 abstract class EntityFormat {
   protected $mimeType;
 
+  /** @return string */
+  public abstract function mimeType();
+
   /**
    * Reads entity from request
    *
@@ -54,14 +57,10 @@ abstract class EntityFormat {
    * @return void
    */
   public function value($response, $value) {
-    $response->header('Content-Type', $this->mimeType);
+    $response->answer(200);
+    $response->header('Content-Type', $this->mimeType());
 
-    if ($value instanceof Response) {
-      $value->transmit($response, $this);
-    } else {
-      $response->answer(200);
-      $this->write($response, $value);
-    }
+    $this->write($response, $value);
   }
 
   /**
@@ -74,7 +73,7 @@ abstract class EntityFormat {
    */
   public function error($response, $status, $cause) {
     $response->answer($status);
-    $response->header('Content-Type', $this->mimeType);
+    $response->header('Content-Type', $this->mimeType());
 
     $this->write($response, ['status'  => $status, 'message' => $cause->getMessage()]);
   }

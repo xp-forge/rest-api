@@ -179,14 +179,15 @@ class Response {
    */
   public function transmit($response, $format) {
     $response->answer($this->status);
+    $response->header('Content-Type', $format->mimeType());
+
+    // Copy headers, overwriting default content type if necessary
     foreach ($this->headers as $name => $value) {
       $response->header($name, $value);
     }
 
     if ($f= $this->body) {
       $f($response, $format);
-    } else {
-      $response->flush();
     }
   }
 }

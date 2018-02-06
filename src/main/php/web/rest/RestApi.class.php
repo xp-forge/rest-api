@@ -64,9 +64,14 @@ class RestApi implements Handler {
 
     $match= strtolower($req->method()).':'.$req->uri()->path();
     foreach ($this->delegates as $pattern => $delegate) { 
-      if ($c= preg_match($pattern, $match, $matches)) {
+      if (preg_match($pattern, $match, $matches)) {
         try {
-          $format->value($res, $delegate->invoke($format->arguments($req, $matches, $delegate->params())));
+          $result= $delegate->invoke($format->arguments($req, $matches, $delegate->params()));
+          if ($result instanceof Response) {
+            $result->transmit($res, $format);
+          } else {
+            $format->value($res, $result);
+          }
         } catch (IllegalArgumentException $e) {
           $format->error($res, 400, $e);
         } catch (TargetInvocationException $e) {

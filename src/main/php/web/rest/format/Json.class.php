@@ -6,11 +6,13 @@ use text\json\StreamInput;
 
 class Json extends EntityFormat {
   private static $FORMAT;
-  protected $mimeType= 'application/json';
 
   static function __static() {
     self::$FORMAT= Format::dense();
   }
+
+  /** @return string */
+  public function mimeType() { return 'application/json'; }
 
   public function read($request, $name) {
     $in= new StreamInput($request->stream());
