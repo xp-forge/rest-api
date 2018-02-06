@@ -68,7 +68,18 @@ class RestApi implements Handler {
     foreach ($this->delegates as $pattern => $delegate) { 
       if (preg_match($pattern, $match, $matches)) {
         try {
-          $result= $delegate->invoke($format->arguments($req, $matches, $delegate->params()));
+          $args= [];
+          foreach ($delegate->params() as $name => $definition) {
+            if (isset($matches[$name])) {
+              $args[]= $this->marshalling->unmarshal($matches[$name], $definition['type']);
+            } else if (null !== ($arg= $definition['read']($req, $format))) {
+              $args[]= $this->marshalling->unmarshal($arg, $definition['type']);
+            } else {
+              throw new IllegalArgumentException('Missing argument '.$name);
+            }
+          }
+
+          $result= $delegate->invoke($args);
         } catch (IllegalArgumentException $e) {
           $result= Response::error(400, $e);
         } catch (TargetInvocationException $e) {

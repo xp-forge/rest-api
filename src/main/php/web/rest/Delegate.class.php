@@ -81,16 +81,17 @@ class Delegate {
   private function param($param, $name, $source) {
     if ($param->isOptional()) {
       $default= $param->getDefaultValue();
-      $this->params[$name]= function($req, $format) use($source, $name, $default) {
+      $read= function($req, $format) use($source, $name, $default) {
         $f= self::$SOURCES[$source];
         return null === ($value= $f($req, $format, $name)) ? $default : $value;
       };
     } else {
-      $this->params[$name]= function($req, $format) use($source, $name) {
+      $read= function($req, $format) use($source, $name) {
         $f= self::$SOURCES[$source];
         return $f($req, $format, $name);
       };
     }
+    $this->params[$name]= ['type' => $param->getType(), 'read' => $read];
   }
 
   /** @return string */

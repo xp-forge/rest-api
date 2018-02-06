@@ -28,28 +28,6 @@ abstract class EntityFormat {
   public abstract function write($response, $value);
 
   /**
-   * Receives arguments from request
-   *
-   * @param  web.Request $request
-   * @param  [:string] $matches
-   * @param  [:function(web.Request, var): var] $params
-   * @return var[]
-   */
-  public function arguments($request, $matches, $params) {
-    $args= [];
-    foreach ($params as $name => $from) {
-      if (isset($matches[$name])) {
-        $args[]= $matches[$name];
-      } else if (null !== ($arg= $from($request, $this))) {
-        $args[]= $arg;
-      } else {
-        throw new IllegalArgumentException('Missing argument '.$name);
-      }
-    }
-    return $args;
-  }
-
-  /**
    * Sends a value
    *
    * @param  web.Response $response

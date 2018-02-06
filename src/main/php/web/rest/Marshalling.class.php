@@ -2,13 +2,63 @@
 
 use util\Date;
 use util\Money;
+use lang\XPClass;
 
 class Marshalling {
 
   /**
+   * Unmarshals a value. Handles util.Date and util.Money instances specially,
+   * creates instances if the type has a single-argument constructor; treats
+   * other types in a generic way, iterating over their instance fields.
+   *
+   * @param  var $value
+   * @param  lang.Type $type
+   * @return var
+   */
+  public function unmarshal($value, $type) {
+    if ($type instanceof XPClass) {
+      if ($type->isInterface()) {
+        return $type->cast($value);
+      } else if ($type->isAssignableFrom(Date::class)) {
+        return new Date($value);
+      } else if ($type->isAssignableFrom(Money::class)) {
+        return new Money($value['amount'], Currency::getInstance($value['currency']));
+      } else if (1 === $type->getConstructor()->numParameters()) {
+        return $type->newInstance($value);
+      }
+
+      $n= $type->literal();
+      $r= unserialize('O:'.strlen($n).':"'.$n.'":0:{}');
+      foreach ($type->getFields() as $field) {
+        $m= $field->getModifiers();
+        if ($m & MODIFIER_STATIC) continue;
+
+        $n= $field->getName();
+        if ($m & MODIFIER_PUBLIC) {
+          $field->set($r, $value[$n]);
+        } else if ($type->hasMethod($set= 'set'.ucfirst($n))) {
+          $t->getMethod($set)->invoke($r, $value[$n]);
+        } else {
+          $field->setAccessible(true)->set($r, $value[$n]);
+        }
+      }
+      return $r;
+    } else if ($type instanceof ArrayType || $type instanceof MapType) {
+      $t= $type->componentType();
+      $r= [];
+      foreach ($value as $k => $v) {
+        $r[$k]= $this->unmarshal($v, $t);
+      }
+      return $r;
+    } else {
+      return $type->cast($value);
+    }
+  }
+
+  /**
    * Marshals a value. Handles util.Date and util.Money instances specially,
    * converts objects with a `__toString` method and handles other objects
-   * in a generic way, iterating over their instance members.
+   * in a generic way, iterating over their instance fields.
    * 
    * @param  var $value
    * @return var

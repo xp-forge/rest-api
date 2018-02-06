@@ -142,7 +142,7 @@ class RestApiTest extends TestCase {
   }
 
   #[@test]
-  public function date_objects_are_serialized() {
+  public function objects_are_marshalled() {
     $req= new Request(new TestInput('GET', '/monitoring/details'));
     $res= new Response(new TestOutput());
 
@@ -151,9 +151,35 @@ class RestApiTest extends TestCase {
     $details= '{'.
       '"startup":"2018-06-02T14:12:11+0200",'.
       '"core":"XP9",'.
-      '"author":{"id":1549,"name":"Timm"},'.
+      '"responsible":{"id":1549,"name":"Timm"},'.
       '"cost":{"amount":"3.5","currency":"EUR"}'.
     '}';
     $this->assertPayload(200, 'application/json', $details, $res);
+  }
+
+  #[@test]
+  public function date_is_unmarshalled() {
+    $body= '"2018-06-02T11:55:11+0200"';
+    $headers= ['Content-Type' => 'application/json', 'Content-Length' => strlen($body)];
+
+    $req= new Request(new TestInput('PUT', '/monitoring/startup', $headers, $body));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Monitoring()))->handle($req, $res);
+
+    $this->assertPayload(200, 'application/json', $body, $res);
+  }
+
+  #[@test]
+  public function person_is_unmarshalled() {
+    $body= '{"id":1549,"name":"Timm"}';
+    $headers= ['Content-Type' => 'application/json', 'Content-Length' => strlen($body)];
+
+    $req= new Request(new TestInput('PUT', '/monitoring/responsible', $headers, $body));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Monitoring()))->handle($req, $res);
+
+    $this->assertPayload(200, 'application/json', $body, $res);
   }
 }
