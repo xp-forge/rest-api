@@ -75,19 +75,25 @@ Method parameters are automatically extracted from URI segments if their name ma
 Return types
 ------------
 
-Methods can return anything, which is then serialized and written to the response with a "200 OK" status. If you want greater control over the response, you can use the `web.rest.Response` class. It provides a fluent DSL for handling various scenarios:
+Methods can return anything, which is then serialized and written to the response with a "200 OK" status. If you want greater control over the response, you can use the `web.rest.Response` class. It provides a fluent DSL for handling various scenarios.
+
+Example:
+
+```php
+return Response::created('/users/'.$id)->type('application/vnd.example.customer-v2+json')->entity($user);
+```
 
 Creation:
 
-* `Response::ok()`
-* `Response::created(string? $location)`
-* `Response::noContent()`
-* `Response::see(string $location)`
-* `Response::notModified()`
-* `Response::notFound(string? $message)`
-* `Response::notAcceptable(string? $message)`
-* `Response::error(int $code, string? $message)`
-* `Response::status(int $code, string? $message)`
+* `Response::ok()` - 200 OK
+* `Response::created(string? $location)` - 201 Created, optionally with a *Location* header
+* `Response::noContent()` - 204 No content
+* `Response::see(string $location)` - 302 Found and a *Location* header
+* `Response::notModified()` - 304 Not modified
+* `Response::notFound(string? $message)` - 404 Not found and an optional message, which is serialized
+* `Response::notAcceptable(string? $message)` - 406 Not acceptable and an optional message, which is serialized
+* `Response::error(int $code, string? $message)` - An error and an optional message, which is serialized
+* `Response::status(int $code)` - Any other status code
 
 Headers:
 

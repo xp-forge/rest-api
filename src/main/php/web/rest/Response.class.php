@@ -6,7 +6,7 @@ class Response {
   private $body= null;
 
   /** @param int $status */
-  public function __construct($status) {
+  private function __construct($status) {
     $this->status= $status;
   }
 
@@ -70,7 +70,7 @@ class Response {
    * @return self
    */
   public static function notFound($message= null) {
-    return self::status(404, $message);
+    return self::error(404, $message);
   }
 
   /**
@@ -80,7 +80,7 @@ class Response {
    * @return self
    */
   public static function notAcceptable($message= null) {
-    return self::status(406, $message);
+    return self::error(406, $message);
   }
 
   /**
@@ -92,17 +92,6 @@ class Response {
    * @return self
    */
   public static function error($code= 500, $message= null) {
-    return self::status($code, $message);
-  }
-
-  /**
-   * Creates a new response instance with the status code set to a given status.
-   *
-   * @param  int $code
-   * @param  string $message
-   * @return self
-   */
-  public static function status($code, $message= null) {
     $self= new self($code);
     if (null !== $message) {
       $self->body= function($res, $format) use($code, $message) {
@@ -110,6 +99,16 @@ class Response {
       };
     }
     return $self;
+  }
+
+  /**
+   * Creates a new response instance with the status code set to a given status.
+   *
+   * @param  int $code
+   * @return self
+   */
+  private static function status($code) {
+    return new self($code);
   }
 
   /**
