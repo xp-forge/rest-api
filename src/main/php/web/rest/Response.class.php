@@ -138,7 +138,7 @@ class Response {
   /**
    * Sends a entity
    *
-   * @param  string $value
+   * @param  var $value
    * @return self
    */
   public function entity($value) {
