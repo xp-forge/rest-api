@@ -1,6 +1,7 @@
 <?php namespace web\rest;
 
 use io\streams\InputStream;
+use io\streams\Streams;
 use lang\XPClass;
 
 class Delegate {
@@ -23,6 +24,9 @@ class Delegate {
       },
       'stream'   => function($req, $format, $name) {
         return $req->stream();
+      },
+      'body'     => function($req, $format, $name) {
+        return Streams::readAll($req->stream());
       },
       'entity'   => function($req, $format, $name) {
         return $format->read($req, $name);

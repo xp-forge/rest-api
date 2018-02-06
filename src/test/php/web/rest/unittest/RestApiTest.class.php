@@ -107,4 +107,17 @@ class RestApiTest extends TestCase {
 
     $this->assertPayload(404, 'application/json', '{"status":404,"message":"No such user #not.a.user"}', $res);
   }
+
+  #[@test]
+  public function plain_output() {
+    $req= new Request(new TestInput('GET', '/monitoring/status'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Monitoring()))->handle($req, $res);
+
+    $this->assertEquals(
+      "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK",
+      $res->output()->bytes()
+    );
+  }
 }

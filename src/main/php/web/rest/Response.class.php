@@ -151,7 +151,7 @@ class Response {
   /**
    * Sends a stream
    *
-   * @param  io,streams.InputStream $in
+   * @param  io.streams.InputStream $in
    * @param  int $size Optional size (in bytes), omit to use chunked transfer
    * @return self
    */
@@ -166,6 +166,21 @@ class Response {
         $in->close();
         $out->close();
       }
+    };
+    return $this;
+  }
+
+  /**
+   * Sends given bytes as response body
+   *
+   * @param  string $bytes
+   * @return self
+   */
+  public function body($bytes) {
+    $this->body= function($res, $format) use($bytes) {
+      $out= $res->stream(strlen($bytes));
+      $out->write($bytes);
+      $out->close();
     };
     return $this;
   }
