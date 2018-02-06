@@ -4,7 +4,7 @@ use lang\IllegalArgumentException;
 use web\rest\Response;
 
 abstract class EntityFormat {
-  protected $mimeType= 'application/octet-stream';
+  protected $mimeType;
 
   /**
    * Reads entity from request
@@ -54,12 +54,12 @@ abstract class EntityFormat {
    * @return void
    */
   public function value($response, $value) {
-    $response->answer(200);
     $response->header('Content-Type', $this->mimeType);
 
     if ($value instanceof Response) {
       $value->transmit($response, $this);
     } else {
+      $response->answer(200);
       $this->write($response, $value);
     }
   }
