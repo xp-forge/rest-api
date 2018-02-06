@@ -8,6 +8,8 @@ Rest APIs
 [![Supports PHP 7.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-7_0plus.png)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-forge/rest-api/version.png)](https://packagist.org/packages/xp-forge/rest-api)
 
+Annotation-based REST APIs
+
 Example
 -------
 
@@ -16,8 +18,8 @@ use web\rest\Response;
 
 class Users {
 
-  #[@get('/users')]
-  public function listUsers() {
+  #[@get('/users'), @$max: param]
+  public function listUsers($max= 10) {
     // ...
   }
 
@@ -55,3 +57,45 @@ $ xp -supervise web Service
 ```
 
 Then call `curl -i localhost:8080/users/1549`.
+
+Parameter sources
+-----------------
+
+Method parameters are automatically extracted from URI segments if their name matches the string in the curly braces. For other sources, you will need to supply a method annotation in the form `$<param>: <source>[(<name>)]`:
+
+* `@$max: param` will fetch the $max parameter from the request parameter named "max".
+* `@$max: param('maximum')` will fetch the $max parameter from the request parameter named "maximum".
+* `@$user: value` will use a request value (which was previously passed e.g. inside a filter via `pass()`) for $user
+* `@$type: header('Content-Type')` will use the *Content-Type* header as value for $type
+* `@$attributes: entity` will deserialize the request body and pass its value to $attributes
+* `@$upload: stream` will pass an `io.streams.InputStream` instance to stream the request body to $upload
+* `@$bytes: body` will pass the request body as a string
+
+
+Return types
+------------
+
+Methods can return anything, which is then serialized and written to the response with a "200 OK" status. If you want greater control over the response, you can use the `web.rest.Response` class. It provides a fluent DSL for handling various scenarios:
+
+Creation:
+
+* `Response::ok()`
+* `Response::created(string? $location)`
+* `Response::noContent()`
+* `Response::see(string $location)`
+* `Response::notModified()`
+* `Response::notFound(string? $message)`
+* `Response::notAcceptable(string? $message)`
+* `Response::error(int $code, string? $message)`
+* `Response::status(int $code, string? $message)`
+
+Headers:
+
+* `$response->type(string $mime)` will set the *Content-Type* header
+* `$response->header(string $name, string $value)` will set a header with a given name and value
+
+Body:
+
+* `$response->entity(var $value)` will sent a value, serializing it
+* `$response->stream(io.streams.InputStream $in, int? $size)` will stream a response
+* `$response->body(string $bytes)` will write the given raw bytes to the response
