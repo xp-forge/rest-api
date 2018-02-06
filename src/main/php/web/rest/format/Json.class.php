@@ -3,6 +3,7 @@
 use text\json\Format;
 use text\json\StreamOutput;
 use text\json\StreamInput;
+use lang\IllegalArgumentException;
 
 class Json extends EntityFormat {
   private static $FORMAT;
@@ -22,7 +23,11 @@ class Json extends EntityFormat {
    * @return var
    */
   public function read($request, $name) {
-    $in= new StreamInput($request->stream());
+    if (null === ($stream= $request->stream())) {
+      throw new IllegalArgumentException('Expecting a request body, none transmitted');
+    }
+
+    $in= new StreamInput($stream);
     try {
       return $in->read();
     } finally {

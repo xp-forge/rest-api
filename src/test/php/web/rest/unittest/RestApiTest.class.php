@@ -53,13 +53,33 @@ class RestApiTest extends TestCase {
   }
 
   #[@test]
-  public function exception_raised() {
-    $req= new Request(new TestInput('GET', '/users/not.a.user'));
+  public function exception_raised_from_find_user_rendered_as_internal_server_error() {
+    $req= new Request(new TestInput('GET', '/users/0'));
     $res= new Response(new TestOutput());
 
     (new RestApi(new Users()))->handle($req, $res);
 
-    $this->assertPayload(500, 'application/json', '{"status":500,"message":"Undefined index: not.a.user"}', $res);
+    $this->assertPayload(500, 'application/json', '{"status":500,"message":"Undefined offset: 0"}', $res);
+  }
+
+  #[@test, @ignore('Not yet implemented')]
+  public function type_errors_for_arguments_rendered_as_bad_request() {
+    $req= new Request(new TestInput('GET', '/users/not.an.int'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertPayload(400, 'application/json', '{"status":400,"message":"Expected integer for argument $id, have string"}', $res);
+  }
+
+  #[@test]
+  public function missing_arguments_rendered_as_bad_request() {
+    $req= new Request(new TestInput('POST', '/users'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertPayload(400, 'application/json', '{"status":400,"message":"Expecting a request body, none transmitted"}', $res);
   }
 
   #[@test]
