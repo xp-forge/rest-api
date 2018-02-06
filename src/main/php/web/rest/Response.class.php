@@ -144,8 +144,8 @@ class Response {
    * @return self
    */
   public function entity($value) {
-    $this->body= function($res, $format) use($value) {
-      $format->write($res, $value);
+    $this->body= function($res, $format, $marshalling) use($value) {
+      $format->write($res, $marshalling->marshal($value));
     };
     return $this;
   }
@@ -158,7 +158,7 @@ class Response {
    * @return self
    */
   public function stream($in, $size= null) {
-    $this->body= function($res, $format) use($in, $size) {
+    $this->body= function($res, $format, $marshalling) use($in, $size) {
       $out= $res->stream($size);
       try {
         while ($in->available()) {
@@ -179,7 +179,7 @@ class Response {
    * @return self
    */
   public function body($bytes) {
-    $this->body= function($res, $format) use($bytes) {
+    $this->body= function($res, $format, $marshalling) use($bytes) {
       $out= $res->stream(strlen($bytes));
       $out->write($bytes);
       $out->close();
@@ -194,7 +194,7 @@ class Response {
    * @param  web.rest.format.EntityFormat $format
    * @return void
    */
-  public function transmit($response, $format) {
+  public function transmit($response, $format, $marshalling) {
     $response->answer($this->status);
     $response->header('Content-Type', $format->mimeType());
 
@@ -204,7 +204,7 @@ class Response {
     }
 
     if ($f= $this->body) {
-      $f($response, $format);
+      $f($response, $format, $marshalling);
     }
   }
 }

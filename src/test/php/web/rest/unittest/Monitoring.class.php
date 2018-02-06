@@ -39,6 +39,6 @@ class Monitoring {
   #[@put('/monitoring/responsible'), @$responsible: entity]
   public function change(Person $responsible) {
     $this->responsible= $responsible;
-    return $this->responsible;
+    return Response::ok()->entity($this->responsible);
   }
 }

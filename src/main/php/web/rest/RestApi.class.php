@@ -87,7 +87,7 @@ class RestApi implements Handler {
         }
 
         if ($result instanceof Response) {
-          $result->transmit($res, $format);
+          $result->transmit($res, $format, $this->marshalling);
         } else {
           $format->transmit($res, $this->marshalling->marshal($result));
         }
