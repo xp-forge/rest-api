@@ -5,6 +5,7 @@ use text\json\StreamOutput;
 use text\json\StreamInput;
 
 class Json extends EntityFormat {
+  protected $mimeType= 'application/json';
 
   static function __static() {
     parent::__static();
@@ -19,7 +20,6 @@ class Json extends EntityFormat {
       }
     };
     self::$WRITE['entity']= function($res, $value) use($format) {
-      $res->header('Content-Type', 'application/json');
       $out= new StreamOutput($res->stream(), $format);
       try {
         $out->write($value);

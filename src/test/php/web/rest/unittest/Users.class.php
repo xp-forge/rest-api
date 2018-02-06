@@ -1,6 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use web\rest\Response;
+use io\streams\MemoryInputStream;
 
 class Users {
   private $users= [
@@ -17,6 +18,11 @@ class Users {
   #[@get('/users/{id}')]
   public function findUser($id) {
     return $this->users[$id];
+  }
+
+  #[@get('/users/{id}/avatar')]
+  public function userAvatar($id) {
+    return Response::ok()->type('image/png')->stream(new MemoryInputStream('PNG...'));
   }
 
   #[@post('/users'), @$user: entity]

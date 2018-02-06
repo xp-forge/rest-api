@@ -3,6 +3,8 @@
 class Response {
   private $status;
   private $value= null;
+  private $size= null;
+  private $stream= null;
   private $headers= [];
 
   public function __construct($status) {
@@ -110,6 +112,17 @@ class Response {
   }
 
   /**
+   * Sets content-type
+   *
+   * @param  string $mime
+   * @return self
+   */
+  public function type($mime) {
+    $this->headers['Content-Type']= $mime;
+    return $this;
+  }
+
+  /**
    * Sets a header
    *
    * @param  string $name
@@ -122,13 +135,26 @@ class Response {
   }
 
   /**
-   * Sets a response entity
+   * Sends a entity
    *
    * @param  string $value
    * @return self
    */
   public function entity($value) {
     $this->value= [$value];
+    return $this;
+  }
+
+  /**
+   * Sends a stream
+   *
+   * @param  io,streams.InputStream $in
+   * @param  int $size
+   * @return self
+   */
+  public function stream($in, $size= null) {
+    $this->stream= $in;
+    $this->size= $size;
     return $this;
   }
 
@@ -146,6 +172,16 @@ class Response {
     }
     if (null !== $this->value) {
       $write($response, $this->value[0]);
+    } else if (null !== $this->stream) {
+      $out= $response->stream($this->size);
+      try {
+        while ($this->stream->available()) {
+          $out->write($this->stream->read());
+        }
+      } finally {
+        $this->stream->close();
+        $out->close();
+      }
     }
   }
 }

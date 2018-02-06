@@ -4,6 +4,7 @@ use lang\IllegalArgumentException;
 
 abstract class EntityFormat {
   protected static $READ, $WRITE;
+  protected $mimeType= 'application/octet-stream';
 
   static function __static() {
     self::$READ= [
@@ -64,6 +65,7 @@ abstract class EntityFormat {
    * @return void
    */
   public function value($response, $value) {
+    $response->header('Content-Type', $this->mimeType);
     if ($value instanceof Response) {
       $value->transmit($response, self::$WRITE['entity']);
     } else {
@@ -83,6 +85,7 @@ abstract class EntityFormat {
    */
   public function error($response, $status, $cause) {
     $response->answer($status);
+    $response->header('Content-Type', $this->mimeType);
     $f= self::$WRITE['entity'];
     $f($response, ['status'  => $status, 'message' => $cause->getMessage()]);
   }
