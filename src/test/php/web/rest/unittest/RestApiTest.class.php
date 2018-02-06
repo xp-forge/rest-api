@@ -84,4 +84,14 @@ class RestApiTest extends TestCase {
 
     $this->assertPayload(200, 'image/png', 'PNG...', $res);
   }
+
+  #[@test]
+  public function not_found() {
+    $req= new Request(new TestInput('GET', '/users/not.a.user/avatar'));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertPayload(404, 'application/json', '{"status":404,"message":"No such user #not.a.user"}', $res);
+  }
 }

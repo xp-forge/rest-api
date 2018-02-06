@@ -2,11 +2,10 @@
 
 class Response {
   private $status;
-  private $value= null;
-  private $size= null;
-  private $stream= null;
   private $headers= [];
+  private $body= null;
 
+  /** @param int $status */
   public function __construct($status) {
     $this->status= $status;
   }
@@ -46,8 +45,8 @@ class Response {
    * Creates a new response instance with the status code set to 302 (See other)
    * and a specified location.
    *
-   * @param   string location
-   * @return  self
+   * @param  string $location
+   * @return self
    */
   public static function see($location) {
     $self= new self(302);
@@ -58,7 +57,7 @@ class Response {
   /**
    * Creates a new response instance with the status code set to 304 (Not modified)
    *
-   * @return  self
+   * @return self
    */
   public static function notModified() {
     return new self(304);
@@ -106,7 +105,9 @@ class Response {
   public static function status($code, $message= null) {
     $self= new self($code);
     if (null !== $message) {
-      $self->value= [$message];
+      $self->body= function($res, $write) use($code, $message) {
+        $write($res, ['status' => $code, 'message' => $message]);
+      };
     }
     return $self;
   }
@@ -141,7 +142,9 @@ class Response {
    * @return self
    */
   public function entity($value) {
-    $this->value= [$value];
+    $this->body= function($res, $write) use($value) {
+      $write($res, $value);
+    };
     return $this;
   }
 
@@ -153,8 +156,17 @@ class Response {
    * @return self
    */
   public function stream($in, $size= null) {
-    $this->stream= $in;
-    $this->size= $size;
+    $this->body= function($res, $write) use($in, $size) {
+      $out= $res->stream($size);
+      try {
+        while ($in->available()) {
+          $out->write($in->read());
+        }
+      } finally {
+        $in->close();
+        $out->close();
+      }
+    };
     return $this;
   }
 
@@ -170,18 +182,9 @@ class Response {
     foreach ($this->headers as $name => $value) {
       $response->header($name, $value);
     }
-    if (null !== $this->value) {
-      $write($response, $this->value[0]);
-    } else if (null !== $this->stream) {
-      $out= $response->stream($this->size);
-      try {
-        while ($this->stream->available()) {
-          $out->write($this->stream->read());
-        }
-      } finally {
-        $this->stream->close();
-        $out->close();
-      }
+
+    if ($f= $this->body) {
+      $f($response, $write);
     }
   }
 }

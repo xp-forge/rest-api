@@ -22,7 +22,10 @@ class Users {
 
   #[@get('/users/{id}/avatar')]
   public function userAvatar($id) {
-    return Response::ok()->type('image/png')->stream(new MemoryInputStream('PNG...'));
+    if (isset($this->users[$id])) {
+      return Response::ok()->type('image/png')->stream(new MemoryInputStream('PNG...'));
+    }
+    return Response::notFound('No such user #'.$id);
   }
 
   #[@post('/users'), @$user: entity]
