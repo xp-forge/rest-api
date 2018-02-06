@@ -1,7 +1,7 @@
 <?php namespace web\rest;
 
 class Delegate {
-  private static $SOURCES= ['param', 'value', 'header', 'stream', 'entity'];
+  private static $SOURCES= ['param' => true, 'value' => true, 'header' => true, 'stream' => true, 'entity' => true];
 
   private $instance, $method;
   private $params= [];
@@ -18,7 +18,7 @@ class Delegate {
     foreach ($method->getParameters() as $param) {
       foreach ($param->getAnnotations() as $source => $name) {
         if (isset(self::$SOURCES[$source])) {
-          $this->param($param, $name, $source);
+          $this->param($param, $name ?: $param->getName(), $source);
           continue 2;
         }
       }
@@ -60,6 +60,6 @@ class Delegate {
    * @throws lang.reflect.TargetInvocationException
    */
   public function invoke($args) {
-    return $this->method->invoke($this->instance, ...$args);
+    return $this->method->invoke($this->instance, $args);
   }
 }
