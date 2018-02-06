@@ -3,6 +3,9 @@
 use util\Date;
 use util\Money;
 use lang\XPClass;
+use lang\ArrayType;
+use lang\MapType;
+use lang\Type;
 
 class Marshalling {
 
@@ -45,6 +48,13 @@ class Marshalling {
       return $r;
     } else if ($type instanceof ArrayType || $type instanceof MapType) {
       $t= $type->componentType();
+      $r= [];
+      foreach ($value as $k => $v) {
+        $r[$k]= $this->unmarshal($v, $t);
+      }
+      return $r;
+    } else if ($type === Type::$ARRAY) {
+      $t= Type::$VAR;
       $r= [];
       foreach ($value as $k => $v) {
         $r[$k]= $this->unmarshal($v, $t);
