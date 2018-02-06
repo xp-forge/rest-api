@@ -185,6 +185,8 @@ class Response {
 
     if ($f= $this->body) {
       $f($response, $write);
+    } else {
+      $response->flush();
     }
   }
 }
