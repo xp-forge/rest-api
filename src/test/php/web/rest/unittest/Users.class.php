@@ -17,7 +17,7 @@ class Users {
   }
 
   #[@get('/users/{id}')]
-  public function findUser(int $id) {
+  public function findUser($id) {
     return $this->users[$id];
   }
 
