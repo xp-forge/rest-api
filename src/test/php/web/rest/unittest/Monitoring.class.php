@@ -33,7 +33,7 @@ class Monitoring {
   #[@put('/monitoring/startup'), @$startup: entity]
   public function reset(Date $startup) {
     $this->startup= $startup;
-    return $this->startup;
+    return Response::ok()->entity($this->startup);
   }
 
   #[@put('/monitoring/responsible'), @$responsible: entity]
