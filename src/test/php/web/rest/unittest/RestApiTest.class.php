@@ -60,4 +60,17 @@ class RestApiTest extends TestCase {
 
     $this->assertPayload(500, '{"status":500,"message":"Undefined index: not.a.user"}', $res);
   }
+
+  #[@test]
+  public function create_user_returns_created() {
+    $body= '{"name":"New"}';
+    $headers= ['Content-Type' => 'application/json', 'Content-Length' => strlen($body)];
+
+    $req= new Request(new TestInput('POST', '/users', $headers, $body));
+    $res= new Response(new TestOutput());
+
+    (new RestApi(new Users()))->handle($req, $res);
+
+    $this->assertPayload(201, '{"id":6101,"name":"New"}', $res);
+  }
 }

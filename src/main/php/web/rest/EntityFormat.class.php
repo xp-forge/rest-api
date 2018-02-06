@@ -64,9 +64,13 @@ abstract class EntityFormat {
    * @return void
    */
   public function value($response, $value) {
-    $response->answer(200);
-    $f= self::$WRITE['entity'];
-    $f($response, $value);
+    if ($value instanceof Response) {
+      $value->transmit($response, self::$WRITE['entity']);
+    } else {
+      $response->answer(200);
+      $f= self::$WRITE['entity'];
+      $f($response, $value);
+    }
   }
 
   /**
