@@ -10,6 +10,19 @@ use lang\Type;
 class Marshalling {
 
   /**
+   * Applies unmarshal() to values inside an iterable
+   *
+   * @param  iterable $in
+   * @param  lang.Type $type
+   * @return iterable
+   */
+  private function iterable($in, $type) {
+    foreach ($in as $key => $value) {
+      yield $key => $this->unmarshal($value, $type);
+    }
+  }
+
+  /**
    * Unmarshals a value. Handles util.Date and util.Money instances specially,
    * creates instances if the type has a single-argument constructor; treats
    * other types in a generic way, iterating over their instance fields.
@@ -60,6 +73,8 @@ class Marshalling {
         $r[$k]= $this->unmarshal($v, $t);
       }
       return $r;
+    } else if ($type === Type::$ITERABLE) {
+      return $this->iterable($value, Type::$VAR);
     } else {
       return $type->cast($value);
     }
