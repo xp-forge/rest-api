@@ -12,6 +12,8 @@ Example
 -------
 
 ```php
+use web\rest\Response;
+
 class Users {
 
   #[@get('/users')]
@@ -27,6 +29,7 @@ class Users {
   #[@post('/users'), @$body: entity]
   public function createUser($body) {
     // ...
+    return Response::created('/users/'.$id)->entity($created);
   }
 }
 ```
