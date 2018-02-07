@@ -2,11 +2,17 @@
 
 use util\Date;
 use util\Money;
+use util\Currency;
 use lang\XPClass;
 use lang\ArrayType;
 use lang\MapType;
 use lang\Type;
 
+/**
+ * Takes care of converting objects from and to maps
+ *
+ * @test  xp://web.rest.unittest.MarshallingTest
+ */
 class Marshalling {
 
   /**
