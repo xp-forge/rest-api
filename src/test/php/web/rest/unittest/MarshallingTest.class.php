@@ -35,6 +35,11 @@ class MarshallingTest extends TestCase {
   }
 
   #[@test]
+  public function marshal_enum() {
+    $this->assertEquals('EUR', (new Marshalling())->marshal(Currency::$EUR));
+  }
+
+  #[@test]
   public function marshal_money_uses_amount_and_currency() {
     $this->assertEquals(
       ['amount' => '3.5', 'currency' => 'EUR'],
@@ -87,6 +92,11 @@ class MarshallingTest extends TestCase {
       new Date('2018-02-07 09:47:00+0100'),
       (new Marshalling())->unmarshal($format, Type::forName(Date::class))
     );
+  }
+
+  #[@test]
+  public function unmarshal_enum() {
+    $this->assertEquals(Currency::$EUR, (new Marshalling())->unmarshal('EUR', Type::forName(Currency::class)));
   }
 
   #[@test]

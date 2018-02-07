@@ -7,6 +7,7 @@ use lang\XPClass;
 use lang\ArrayType;
 use lang\MapType;
 use lang\Type;
+use lang\Enum;
 
 /**
  * Takes care of converting objects from and to maps
@@ -41,6 +42,8 @@ class Marshalling {
     if ($type instanceof XPClass) {
       if ($type->isInterface()) {
         return $type->cast($value);
+      } else if ($type->isEnum()) {
+        return Enum::valueOf($type, $value);
       } else if ($type->isAssignableFrom(Date::class)) {
         return new Date($value);
       } else if ($type->isAssignableFrom(Money::class)) {
@@ -111,6 +114,8 @@ class Marshalling {
       return $value->toString(DATE_ISO8601);
     } else if ($value instanceof Money) {
       return ['amount' => $value->amount(), 'currency' => $value->currency()->toString()];
+    } else if ($value instanceof Enum) {
+      return $value->name();
     } else if ($value instanceof \Generator) {
       return $this->generator($value);
     } else if (is_object($value)) {
