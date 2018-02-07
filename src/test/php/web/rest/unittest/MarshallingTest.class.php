@@ -69,6 +69,12 @@ class MarshallingTest extends TestCase {
     $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($generator())));
   }
 
+  #[@test]
+  public function marshal_keyvalue_generator() {
+    $generator= function() { yield 'one' => 1; yield 'two' => 2; };
+    $this->assertEquals(['one' => 1, 'two' => 2], iterator_to_array((new Marshalling())->marshal($generator())));
+  }
+
   #[@test, @values([
   #  0, -1, 1,
   #  0.5, -1.5,
@@ -125,6 +131,17 @@ class MarshallingTest extends TestCase {
 
   #[@test]
   public function unmarshal_iterable() {
-    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->unmarshal([1, 2, 3], Type::$ITERABLE)));
+    $this->assertEquals(
+      [1, 2, 3],
+      iterator_to_array((new Marshalling())->unmarshal([1, 2, 3], Type::$ITERABLE))
+    );
+  }
+
+  #[@test]
+  public function unmarshal_keyvalue_iterable() {
+    $this->assertEquals(
+      ['one' => 1, 'two' => 2],
+      iterator_to_array((new Marshalling())->unmarshal(['one' => 1, 'two' => 2], Type::$ITERABLE))
+    );
   }
 }
