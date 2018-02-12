@@ -3,6 +3,7 @@
 use web\rest\Response;
 use io\streams\InputStream;
 use io\streams\MemoryInputStream;
+use lang\ElementNotFoundException;
 
 class Users {
   private $users= [
@@ -18,6 +19,10 @@ class Users {
 
   #[@get('/users/{id}')]
   public function findUser($id) {
+    if (!isset($this->users[$id])) {
+      throw new ElementNotFoundException('No such user #'.$id);
+    }
+
     return $this->users[$id];
   }
 

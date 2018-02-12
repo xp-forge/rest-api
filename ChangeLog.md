@@ -5,6 +5,7 @@ Rest API change log
 
 ## 0.2.0 / 2018-02-13
 
+* Restored HHVM support - @thekid
 * Added support for all traversable data structures like `ArrayIterator`
   or `IteratorAggregate` implementations, not just generator functions.
   (@thekid)

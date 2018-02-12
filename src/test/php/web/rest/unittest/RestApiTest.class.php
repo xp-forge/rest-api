@@ -66,7 +66,7 @@ class RestApiTest extends TestCase {
   #[@test]
   public function exception_raised_from_find_user_rendered_as_internal_server_error() {
     $res= $this->run(new Users(), 'GET', '/users/0');
-    $this->assertPayload(500, 'application/json', '{"status":500,"message":"Undefined offset: 0"}', $res);
+    $this->assertPayload(500, 'application/json', '{"status":500,"message":"No such user #0"}', $res);
   }
 
   #[@test, @ignore('Not yet implemented')]
