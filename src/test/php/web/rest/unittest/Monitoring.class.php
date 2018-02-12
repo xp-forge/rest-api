@@ -2,7 +2,6 @@
 
 use web\rest\Response;
 use util\Date;
-use util\Bytes;
 use util\Money;
 use util\Currency;
 
@@ -24,7 +23,7 @@ class Monitoring {
   public function startup() {
     return [
       'startup'     => $this->startup,
-      'core'        => new Bytes('XP9'),
+      'core'        => 'XP9',
       'responsible' => $this->responsible,
       'cost'        => new Money(3.50, Currency::$EUR)
     ];

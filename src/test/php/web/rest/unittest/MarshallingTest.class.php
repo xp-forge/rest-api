@@ -75,6 +75,20 @@ class MarshallingTest extends TestCase {
     $this->assertEquals(['one' => 1, 'two' => 2], iterator_to_array((new Marshalling())->marshal($generator())));
   }
 
+  #[@test]
+  public function marshal_iterator() {
+    $iterator= new \ArrayIterator([1, 2, 3]);
+    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
+  }
+
+  #[@test]
+  public function marshal_iterator_aggregate() {
+    $iterator= newinstance(\IteratorAggregate::class, [], [
+      'getIterator' => function() { yield 1; yield 2; yield 3; }
+    ]);
+    $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($iterator)));
+  }
+
   #[@test, @values([
   #  0, -1, 1,
   #  0.5, -1.5,

@@ -117,7 +117,7 @@ class Marshalling {
       return ['amount' => $value->amount(), 'currency' => $value->currency()->toString()];
     } else if ($value instanceof Enum) {
       return $value->name();
-    } else if ($value instanceof \Generator) {
+    } else if ($value instanceof \Traversable) {
       return $this->generator($value);
     } else if (is_object($value)) {
       if (method_exists($value, '__toString')) return $value->__toString();
