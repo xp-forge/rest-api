@@ -60,11 +60,12 @@ class Marshalling {
 
         $n= $field->getName();
         if ($m & MODIFIER_PUBLIC) {
-          $field->set($r, $value[$n]);
+          $field->set($r, $this->unmarshal($value[$n], $field->getType()));
         } else if ($type->hasMethod($set= 'set'.ucfirst($n))) {
-          $t->getMethod($set)->invoke($r, $value[$n]);
+          $method= $type->getMethod($set);
+          $method->invoke($r, $this->unmarshal($value[$n], $method->getParameter(0)->getType()));
         } else {
-          $field->setAccessible(true)->set($r, $value[$n]);
+          $field->setAccessible(true)->set($r, $this->unmarshal($value[$n], $field->getType()));
         }
       }
       return $r;
@@ -122,18 +123,18 @@ class Marshalling {
       if (method_exists($value, '__toString')) return $value->__toString();
 
       $r= [];
-      $t= typeof($value);
-      foreach ($t->getFields() as $field) {
+      $type= typeof($value);
+      foreach ($type->getFields() as $field) {
         $m= $field->getModifiers();
         if ($m & MODIFIER_STATIC) continue;
 
         $n= $field->getName();
         if ($m & MODIFIER_PUBLIC) {
           $r[$n]= $field->get($value);
-        } else if ($t->hasMethod($n)) {
-          $r[$n]= $t->getMethod($n)->invoke($value, []);
-        } else if ($t->hasMethod($get= 'get'.ucfirst($n))) {
-          $r[$n]= $t->getMethod($get)->invoke($value, []);
+        } else if ($type->hasMethod($n)) {
+          $r[$n]= $type->getMethod($n)->invoke($value, []);
+        } else if ($type->hasMethod($get= 'get'.ucfirst($n))) {
+          $r[$n]= $type->getMethod($get)->invoke($value, []);
         } else {
           $r[$n]= $field->setAccessible(true)->get($value);
         }

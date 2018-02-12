@@ -3,7 +3,10 @@
 class Person {
   private static $ROOT = 0;
 
+  /** @var int */
   private $id;
+
+  /** @var string */
   public $name;
 
   public function __construct($id, $name) {

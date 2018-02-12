@@ -113,11 +113,14 @@ class MarshallingTest extends TestCase {
     );
   }
 
-  #[@test]
-  public function unmarshal_person_value_object() {
+  #[@test, @values([
+  #  [['id' => 6100, 'name' => 'Test']],
+  #  [['id' => '6100', 'name' => 'Test']],
+  #])]
+  public function unmarshal_person_value($object) {
     $this->assertEquals(
       new Person(6100, 'Test'),
-      (new Marshalling())->unmarshal(['id' => 6100, 'name' => 'Test'], Type::forName(Person::class))
+      (new Marshalling())->unmarshal($object, Type::forName(Person::class))
     );
   }
 
