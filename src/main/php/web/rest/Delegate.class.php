@@ -35,6 +35,9 @@ class Delegate {
       'entity'   => function($req, $format, $name) {
         return $format->read($req, $name);
       },
+      'request'  => function($req, $format, $name) {
+        return $req;
+      },
       'default'  => function($req, $format, $name) {
         if (null !== ($v= $req->param($name))) {
           return $v;

@@ -3,6 +3,8 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Added `@$req: request` to pass complete request object - @thekid
+
 ## 0.2.0 / 2018-02-13
 
 * Restored HHVM support - @thekid

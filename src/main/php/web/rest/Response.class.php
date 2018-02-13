@@ -110,7 +110,7 @@ class Response {
    * @param  int $code
    * @return self
    */
-  private static function status($code) {
+  public static function status($code) {
     return new self($code);
   }
 
