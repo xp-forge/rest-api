@@ -3,6 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.3.0 / 2018-02-13
+
+* Merged PR #2: Pagination - @thekid
 * Added `@$req: request` to pass complete request object - @thekid
 
 ## 0.2.0 / 2018-02-13
