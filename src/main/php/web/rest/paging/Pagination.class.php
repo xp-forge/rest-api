@@ -7,6 +7,8 @@ use web\rest\Response;
  * A pagination instance holds the paging behavior, the request and the
  * page size. It is created by passing a request instance to the Paging
  * class' `on()` method.
+ *
+ * @test  xp://web.rest.unittest.paging.PaginationTest
  */
 class Pagination {
   private $request, $size, $behavior;
@@ -61,21 +63,24 @@ class Pagination {
    * @return web.rest.Response
    */
   public function paginate($iterable, $res= 200) {
+    $limit= $this->limit();
+
+    // Trim excess elements if necessary
     if ($iterable instanceof \Traversable) {
       $elements= [];
+      $i= 0;
       foreach ($iterable as $value) {
         $elements[]= $value;
+        if (++$i >= $limit) break;
       }
     } else {
       $elements= (array)$iterable;      
+      while (sizeof($elements) > $limit) {
+        array_pop($elements);
+      }
     }
 
-    $limit= $this->limit();
     $last= sizeof($elements) <= $limit;
-    while (sizeof($elements) > $limit) {
-      array_pop($elements);
-    }
-
     $response= $res instanceof Response ? $res : Response::status($res);
     return $this->behavior->paginate($this->request, $response->entity($elements), $last);
   }

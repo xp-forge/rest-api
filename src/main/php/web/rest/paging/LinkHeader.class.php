@@ -1,5 +1,6 @@
 <?php namespace web\rest\paging;
 
+use lang\Value;
 use util\URI;
 
 /**
@@ -7,7 +8,7 @@ use util\URI;
  *
  * @see   http://tools.ietf.org/html/rfc5988#page-6
  */
-class LinkHeader {
+class LinkHeader implements Value {
   private $links= [];
 
   /**
@@ -32,8 +33,24 @@ class LinkHeader {
   public function __toString() {
     $return= '';
     foreach ($this->links as $rel => $link) {
-      $return.= ', <'.$link->getURL().'>; rel="'.$rel.'"';
+      $return.= ', <'.(string)$link.'>; rel="'.$rel.'"';
     }
     return (string)substr($return, 2);
+  }
+
+  /** @return string */
+  public function hashCode() { return md5($this->__toString()); }
+
+  /** @return string */
+  public function toString() { return nameof($this).'('.$this->__toString().')'; }
+
+  /**
+   * Compare
+   *
+   * @param  var $value
+   * @return int
+   */
+  public function compareTo($value) {
+    return $value instanceof self ? strcmp($this->__toString(), $value->__toString()) : 1;
   }
 }

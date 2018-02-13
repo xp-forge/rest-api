@@ -6,6 +6,8 @@
  * the current page is omitted from the URL this behavior regards this as the
  * first page. The limit can be used to overwrite the default paging limit set
  * via the `Paging` class.
+ *
+ * @test  xp://web.rest.unittest.paging.PageParametersTest
  */
 class PageParameters implements Behavior {
   private $page, $limit;
