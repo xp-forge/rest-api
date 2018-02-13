@@ -2,6 +2,11 @@
 
 use lang\Throwable;
 
+/**
+ * Response DSL
+ *
+ * @test  xp://web.rest.unittest.ResponseTest
+ */
 class Response {
   private $status;
   private $headers= [];
@@ -206,5 +211,11 @@ class Response {
     if ($f= $this->body) {
       $f($response, $format, $marshalling);
     }
+  }
+
+  /** @return [:var] */
+  public function export() {
+    $body= $this->body ? (new \ReflectionFunction($this->body))->getStaticVariables() : null;
+    return ['status' => $this->status, 'headers' => $this->headers, 'body' => $body];
   }
 }
