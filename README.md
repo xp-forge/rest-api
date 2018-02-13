@@ -70,6 +70,7 @@ Method parameters are automatically extracted from URI segments if their name ma
 * `@$attributes: entity` will deserialize the request body and pass its value to $attributes
 * `@$upload: stream` will pass an `io.streams.InputStream` instance to stream the request body to $upload
 * `@$bytes: body` will pass the request body as a string
+* `@$req: request` will pass the complete request object
 
 
 Return types
