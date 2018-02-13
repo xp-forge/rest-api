@@ -1,6 +1,7 @@
 <?php namespace web\rest\paging;
 
 use web\Request;
+use web\rest\Response;
 
 /**
  * A pagination instance holds the paging behavior, the request and the
@@ -55,11 +56,11 @@ class Pagination {
   /**
    * Paginate
    *
-   * @param  web.rest.Response $response
    * @param  var[]|iterable $iterable
+   * @param  int|web.rest.Response $res
    * @return web.rest.Response
    */
-  public function paginate($response, $iterable) {
+  public function paginate($iterable, $res= 200) {
     if ($iterable instanceof \Traversable) {
       $elements= [];
       foreach ($iterable as $value) {
@@ -75,6 +76,7 @@ class Pagination {
       array_pop($elements);
     }
 
-    return $this->behavior->paginate($this->request, $response, $last)->entity($elements);
+    $response= $res instanceof Response ? $res : Response::status($res);
+    return $this->behavior->paginate($this->request, $response->entity($elements), $last);
   }
 }
