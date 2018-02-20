@@ -69,18 +69,22 @@ class Pagination {
     if ($iterable instanceof \Traversable) {
       $elements= [];
       $i= 0;
+      $last= true;
       foreach ($iterable as $value) {
+        if (++$i > $limit) {
+          $last= false;
+          break;
+        }
         $elements[]= $value;
-        if (++$i >= $limit) break;
       }
     } else {
-      $elements= (array)$iterable;      
+      $elements= (array)$iterable;
+      $last= sizeof($elements) <= $limit;
       while (sizeof($elements) > $limit) {
         array_pop($elements);
       }
     }
 
-    $last= sizeof($elements) <= $limit;
     $response= $res instanceof Response ? $res : Response::status($res);
     return $this->behavior->paginate($this->request, $response->entity($elements), $last);
   }

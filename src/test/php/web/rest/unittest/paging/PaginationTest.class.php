@@ -7,7 +7,7 @@ use web\Request;
 use web\io\TestInput;
 
 class PaginationTest extends \unittest\TestCase {
-  const SIZE = 50;
+  const SIZE = 5;
 
   /**
    * Creates a new request instance
@@ -123,5 +123,79 @@ class PaginationTest extends \unittest\TestCase {
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
     $this->assertEquals(array_fill(0, self::SIZE, 'element'), $entity);
+  }
+
+  #[@test]
+  public function link_header_not_present_if_elements_exactly_pagers_size() {
+    $elements= array_fill(0, self::SIZE, 'element');
+    $headers= [];
+    $this->newFixture()->paginate($elements, newinstance(Response::class, [], [
+      '__construct' => function() { /* Shadow parent */ },
+      'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
+    ]));
+    $this->assertEquals([], $headers);
+  }
+
+  #[@test]
+  public function link_header_not_present_if_generator_exactly_pagers_size() {
+    $generator= function() {
+      for ($i= 0; $i < self::SIZE; $i++) {
+        yield 'element';
+      }
+    };
+    $headers= [];
+    $this->newFixture()->paginate($generator(), newinstance(Response::class, [], [
+      '__construct' => function() { /* Shadow parent */ },
+      'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
+    ]));
+    $this->assertEquals([], $headers);
+  }
+
+  #[@test]
+  public function link_header_to_next_page_present_if_elements_size_exceeds_pager_size() {
+    $elements= array_fill(0, self::SIZE + 1, 'element');
+    $headers= [];
+    $this->newFixture()->paginate($elements, newinstance(Response::class, [], [
+      '__construct' => function() { /* Shadow parent */ },
+      'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
+    ]));
+    $this->assertEquals(['Link' => '<http://localhost/?page=2>; rel="next"'], $headers);
+  }
+
+  #[@test]
+  public function link_header_to_next_page_present_if_generator_size_exceeds_pager_size() {
+    $generator= function() {
+      for ($i= 0; $i < self::SIZE + 1; $i++) {
+        yield 'element';
+      }
+    };
+    $headers= [];
+    $this->newFixture()->paginate($generator(), newinstance(Response::class, [], [
+      '__construct' => function() { /* Shadow parent */ },
+      'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
+    ]));
+    $this->assertEquals(['Link' => '<http://localhost/?page=2>; rel="next"'], $headers);
+  }
+
+  #[@test]
+  public function link_header_to_previous() {
+    $headers= [];
+    $this->newFixture('?page=2')->paginate([1, 2, 3], newinstance(Response::class, [], [
+      '__construct' => function() { /* Shadow parent */ },
+      'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
+    ]));
+    $this->assertEquals(['Link' => '<http://localhost/?page=1>; rel="prev"'], $headers);
+  }
+
+
+  #[@test]
+  public function link_header_to_previous_and_next() {
+    $elements= array_fill(0, self::SIZE + 1, 'element');
+    $headers= [];
+    $this->newFixture('?page=2')->paginate($elements, newinstance(Response::class, [], [
+      '__construct' => function() { /* Shadow parent */ },
+      'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
+    ]));
+    $this->assertEquals(['Link' => '<http://localhost/?page=1>; rel="prev", <http://localhost/?page=3>; rel="next"'], $headers);
   }
 }

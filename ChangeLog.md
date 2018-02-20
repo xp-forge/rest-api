@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.3.1 / 2018-02-20
+
+* Fixed `Link: ... rel="next"` header not being shown for items produced
+  by a generator (e.g., `yield`).
+  (@thekid)
+
 ## 0.3.0 / 2018-02-13
 
 * Added `web.rest.Response::export()` for easier unittest - @thekid
