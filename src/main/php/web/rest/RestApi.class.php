@@ -14,11 +14,16 @@ class RestApi implements Handler {
   private $delegates= [];
   private $marshalling;
 
-  /** @param object $instance */
-  public function __construct($instance) {
+  /**
+   * Creates a new REST API instance for a given handler instance
+   *
+   * @param  object $instance
+   * @param  string $base
+   */
+  public function __construct($instance, $base= '/') {
     foreach (typeof($instance)->getMethods() as $method) {
       foreach ($method->getAnnotations() as $verb => $path) { 
-        $pattern= '#^'.$verb.':'.preg_replace('/\{([^}]+)\}/', '(?<$1>[^/]+)', $path).'$#';
+        $pattern= '#^'.$verb.':'.rtrim($base, '/').preg_replace('/\{([^}]+)\}/', '(?<$1>[^/]+)', $path).'$#';
         $this->delegates[$pattern]= new Delegate($instance, $method);
       }
     }

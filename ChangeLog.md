@@ -3,6 +3,13 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.4.0 / 2018-02-20
+
+* Added optional `base` argument to RestApi constructor. This way, an
+  API instance can be mounted at a given base, e.g. `/api/1.0` without
+  having to rewrite all the handlers.
+  (@thekid)
+
 ## 0.3.1 / 2018-02-20
 
 * Fixed `Link: ... rel="next"` header not being shown for items produced

@@ -148,4 +148,10 @@ class RestApiTest extends TestCase {
     $res= $this->run(new RestApi(new Monitoring()), 'PUT', '/monitoring/responsible', $headers, $body);
     $this->assertPayload(200, 'application/json', $body, $res);
   }
+
+  #[@test]
+  public function rest_api_base() {
+    $res= $this->run(new RestApi(new Users(), '/api/1.0'), 'GET', '/api/1.0/users');
+    $this->assertPayload(200, 'application/json', '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}', $res);
+  }
 }
