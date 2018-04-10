@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.5.0 / 2018-04-10
+
+* Changed dependency on `xp-forge/web` to version 1.0.0 since it has
+  been released
+  (@thekid)
+
 ## 0.4.0 / 2018-02-20
 
 * Added optional `base` argument to RestApi constructor. This way, an
