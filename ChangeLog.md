@@ -3,8 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
-## 0.5.1 / 2018-05-23
+## 0.6.0 / 2018-05-23
 
+* Added support for patterns in path segments, e.g. `/users/{id:[0-9]+}`
+  (@thekid)
 * Fixed `request` injection when parameter was type-hinted - @thekid
 * Fixed marshalling not recursing into value objects - @thekid
 

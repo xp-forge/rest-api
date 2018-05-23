@@ -22,9 +22,12 @@ class RestApi implements Handler {
    */
   public function __construct($instance, $base= '/') {
     foreach (typeof($instance)->getMethods() as $method) {
-      foreach ($method->getAnnotations() as $verb => $path) { 
-        $pattern= '#^'.$verb.':'.rtrim($base, '/').preg_replace('/\{([^}]+)\}/', '(?<$1>[^/]+)', $path).'$#';
-        $this->delegates[$pattern]= new Delegate($instance, $method);
+      foreach ($method->getAnnotations() as $verb => $segment) {
+        $pattern= $segment
+          ? preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment)
+          : '.+'
+        ;
+        $this->delegates['#^'.$verb.':'.rtrim($base, '/').$pattern.'$#']= new Delegate($instance, $method);
       }
     }
 

@@ -17,7 +17,7 @@ class Users {
     yield 6100 => $this->users[6100];
   }
 
-  #[@get('/users/{id}')]
+  #[@get('/users/{id:[0-9]+}')]
   public function findUser($id) {
     if (!isset($this->users[$id])) {
       throw new ElementNotFoundException('No such user #'.$id);
