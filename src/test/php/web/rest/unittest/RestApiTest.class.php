@@ -154,4 +154,10 @@ class RestApiTest extends TestCase {
     $res= $this->run(new RestApi(new Users(), '/api/1.0'), 'GET', '/api/1.0/users');
     $this->assertPayload(200, 'application/json', '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}', $res);
   }
+
+  #[@test]
+  public function typed_request_instances_can_be_injected() {
+    $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/systems?page=3');
+    $this->assertPayload(200, 'application/json', '{"page":"3"}', $res);
+  }
 }

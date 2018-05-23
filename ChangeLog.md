@@ -3,6 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.5.1 / 2018-05-23
+
+* Fixed `request` injection when parameter was type-hinted - @thekid
 * Fixed marshalling not recursing into value objects - @thekid
 
 ## 0.5.0 / 2018-04-10

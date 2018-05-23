@@ -44,6 +44,8 @@ class Marshalling {
         return $type->cast($value);
       } else if ($type->isEnum()) {
         return Enum::valueOf($type, $value);
+      } else if ($type->isInstance($value)) {
+        return $value;
       } else if ($type->isAssignableFrom(Date::class)) {
         return new Date($value);
       } else if ($type->isAssignableFrom(Money::class)) {

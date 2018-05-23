@@ -1,5 +1,6 @@
 <?php namespace web\rest\unittest;
 
+use web\Request;
 use web\rest\Response;
 use util\Date;
 use util\Money;
@@ -14,6 +15,11 @@ class Monitoring {
     $this->responsible= new Person(1549, 'Timm');
   }
  
+  #[@get('/monitoring/systems'), @$req: request]
+  public function systems(Request $req) {
+    return Response::ok()->entity(['page' => $req->param('page')]);
+  }
+
   #[@get('/monitoring/status')]
   public function status() {
     return Response::ok()->type('text/plain')->body('OK');
