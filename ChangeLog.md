@@ -3,6 +3,8 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Fixed marshalling not recursing into value objects - @thekid
+
 ## 0.5.0 / 2018-04-10
 
 * Changed dependency on `xp-forge/web` to version 1.0.0 since it has

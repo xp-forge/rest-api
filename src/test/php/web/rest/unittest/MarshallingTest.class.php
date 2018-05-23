@@ -64,6 +64,15 @@ class MarshallingTest extends TestCase {
   }
 
   #[@test]
+  public function marshal_value_object_in_value_object() {
+    $this->assertEquals(
+      ['list' => [['id' => 6100, 'name' => 'Test']]],
+      (new Marshalling())->marshal(new People(new Person(6100, 'Test')))
+    );
+  }
+
+
+  #[@test]
   public function marshal_generator() {
     $generator= function() { yield 1; yield 2; yield 3; };
     $this->assertEquals([1, 2, 3], iterator_to_array((new Marshalling())->marshal($generator())));

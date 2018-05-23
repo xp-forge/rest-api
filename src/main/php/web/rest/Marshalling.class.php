@@ -130,14 +130,15 @@ class Marshalling {
 
         $n= $field->getName();
         if ($m & MODIFIER_PUBLIC) {
-          $r[$n]= $field->get($value);
+          $v= $field->get($value);
         } else if ($type->hasMethod($n)) {
-          $r[$n]= $type->getMethod($n)->invoke($value, []);
+          $v= $type->getMethod($n)->invoke($value, []);
         } else if ($type->hasMethod($get= 'get'.ucfirst($n))) {
-          $r[$n]= $type->getMethod($get)->invoke($value, []);
+          $v= $type->getMethod($get)->invoke($value, []);
         } else {
-          $r[$n]= $field->setAccessible(true)->get($value);
+          $v= $field->setAccessible(true)->get($value);
         }
+        $r[$n]= $this->marshal($v);
       }
       return $r;
     } else if (is_array($value)) {
