@@ -10,7 +10,15 @@ use lang\IllegalArgumentException;
 use lang\Throwable;
 
 class RestApi implements Handler {
-  private static $METHODS= ['get', 'head', 'post', 'put', 'patch', 'delete', 'options'];
+  private static $METHODS= [
+    'get'     => null,
+    'head'    => null,
+    'post'    => null,
+    'put'     => null,
+    'patch'   => null,
+    'delete'  => null,
+    'options' => null
+  ];
 
   private $formats= [];
   private $delegates= [];
@@ -24,14 +32,12 @@ class RestApi implements Handler {
    */
   public function __construct($instance, $base= '/') {
     foreach (typeof($instance)->getMethods() as $method) {
-      foreach ($method->getAnnotations() as $verb => $segment) {
-        if (in_array($verb, self::$METHODS)) {
-          $pattern= $segment
-            ? preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment)
-            : '.+'
-          ;
-          $this->delegates['#^'.$verb.':'.rtrim($base, '/').$pattern.'$#']= new Delegate($instance, $method);
-        }
+      foreach (array_intersect_key($method->getAnnotations(), self::$METHODS) as $verb => $segment) {
+        $pattern= $segment
+          ? preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment)
+          : '.+'
+        ;
+        $this->delegates['#^'.$verb.':'.rtrim($base, '/').$pattern.'$#']= new Delegate($instance, $method);
       }
     }
 
