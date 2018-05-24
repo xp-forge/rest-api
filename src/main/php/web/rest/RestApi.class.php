@@ -12,7 +12,7 @@ use lang\reflect\TargetInvocationException;
 class RestApi implements Handler {
   private $formats= [];
   private $delegates= [];
-  private $marshalling;
+  private $marshalling, $invocations;
 
   /**
    * Creates a new REST API instance for a given handler instance
@@ -34,6 +34,7 @@ class RestApi implements Handler {
     $this->formats['#(application|text)/.*json#']= new Json();
     $this->formats['#application/octet-stream#']= new OctetStream();
     $this->marshalling= new Marshalling();
+    $this->invocations= function($delegate, $args) { return $delegate->invoke($args); };
   }
 
   /**
@@ -45,6 +46,11 @@ class RestApi implements Handler {
    */
   public function register($pattern, EntityFormat $format) {
     $this->formats['#'.preg_quote($pattern, '#').'#i']= $format;
+    return $this;
+  }
+
+  public function invoking($invocations) {
+    $this->invocations= $invocations;
     return $this;
   }
 
@@ -87,7 +93,8 @@ class RestApi implements Handler {
             }
           }
 
-          $result= $delegate->invoke($args);
+          $i= $this->invocations;
+          $result= $i($delegate, $args);
         } catch (IllegalArgumentException $e) {
           $result= Response::error(400, $e);
         } catch (TargetInvocationException $e) {
