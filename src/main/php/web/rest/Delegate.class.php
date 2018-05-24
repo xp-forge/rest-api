@@ -96,6 +96,9 @@ class Delegate {
   /** @return string */
   public function name() { return nameof($this->instance).'::'.$this->method->getName(); }
 
+  /** @return [:var] */
+  public function annotations() { return $this->method->getAnnotations(); }
+
   /** @return [:function(web.Request, web.rest.format.EntityFormat): var] */
   public function params() { return $this->params; }
 

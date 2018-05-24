@@ -72,4 +72,14 @@ class InvocationsTest extends TestCase {
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/0');
     $this->assertEquals(['lang.ElementNotFoundException', 'No such user #0'], $caught);
   }
-}
+
+  #[@test]
+  public function intercepting_can_access_annotations() {
+    $invocations= function($delegate, $args) use(&$cached) {
+      $cached= $delegate->annotations()['cached'];
+      return $delegate->invoke($args);
+    };
+
+    $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549/avatar');
+    $this->assertEquals(['ttl' => 3600], $cached);
+  }}
