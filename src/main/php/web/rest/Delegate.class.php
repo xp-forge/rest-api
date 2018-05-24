@@ -69,18 +69,25 @@ class Delegate {
    * @param  lang.reflect.Parameter $param
    * @param  string $name
    * @param  string $source
+   * @return void
    */
   private function param($param, $name, $source) {
     if ($param->isOptional()) {
       $default= $param->getDefaultValue();
       $read= function($req, $format) use($source, $name, $default) {
         $f= self::$SOURCES[$source];
-        return null === ($value= $f($req, $format, $name)) ? $default : $value;
+        if (null === ($value= $f($req, $format, $name))) {
+          return $default;
+        }
+        return $value;
       };
     } else {
       $read= function($req, $format) use($source, $name) {
         $f= self::$SOURCES[$source];
-        return $f($req, $format, $name);
+        if (null === ($value= $f($req, $format, $name))) {
+          throw new IllegalArgumentException('Missing argument '.$name);
+        }
+        return $value;
       };
     }
     $this->params[$name]= ['type' => $param->getType(), 'read' => $read];

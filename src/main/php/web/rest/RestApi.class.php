@@ -108,10 +108,8 @@ class RestApi implements Handler {
           foreach ($delegate->params() as $name => $definition) {
             if (isset($matches[$name])) {
               $args[]= $this->marshalling->unmarshal($matches[$name], $definition['type']);
-            } else if (null !== ($arg= $definition['read']($req, $format))) {
-              $args[]= $this->marshalling->unmarshal($arg, $definition['type']);
             } else {
-              throw new IllegalArgumentException('Missing argument '.$name);
+              $args[]= $this->marshalling->unmarshal($definition['read']($req, $format), $definition['type']);
             }
           }
         } catch (IllegalArgumentException $e) {
