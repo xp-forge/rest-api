@@ -47,12 +47,12 @@ class InvocationsTest extends TestCase {
 
   #[@test]
   public function invoking_callable() {
-    $invocation= function($delegate, $args) use(&$invoked) {
+    $invocations= function($delegate, $args) use(&$invoked) {
       $invoked= [$delegate->name(), $args];
       return $delegate->invoke($args);
     };
 
-    $this->run((new RestApi(new Users()))->invoking($invocation), 'GET', '/users/1549');
+    $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
     $this->assertEquals(['web.rest.unittest.Users::findUser', ['1549']], $invoked);
   }
 }
