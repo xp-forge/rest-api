@@ -7,7 +7,7 @@ use web\rest\format\Json;
 use web\rest\format\OctetStream;
 use web\routing\CannotRoute;
 use lang\IllegalArgumentException;
-use lang\reflect\TargetInvocationException;
+use lang\Throwable;
 
 class RestApi implements Handler {
   private $formats= [];
@@ -75,6 +75,22 @@ class RestApi implements Handler {
   }
 
   /**
+   * Transmits a given result to the response
+   *
+   * @param  web.Response $res
+   * @param  var $result
+   * @param  string $format
+   * @return void
+   */
+  private function transmit($res, $result, $format) {
+    if ($result instanceof Response) {
+      $result->transmit($res, $format, $this->marshalling);
+    } else {
+      $format->transmit($res, $this->marshalling->marshal($result));
+    }
+  }
+
+  /**
    * Handle request
    *
    * @param  web.Request $req
@@ -98,21 +114,16 @@ class RestApi implements Handler {
               throw new IllegalArgumentException('Missing argument '.$name);
             }
           }
-
-          $i= $this->invocations;
-          $result= $i($delegate, $args);
         } catch (IllegalArgumentException $e) {
-          $result= Response::error(400, $e);
-        } catch (TargetInvocationException $e) {
-          $result= Response::error(500, $e->getCause());
+          return $this->transmit($res, Response::error(400, $e), $format);
         }
 
-        if ($result instanceof Response) {
-          $result->transmit($res, $format, $this->marshalling);
-        } else {
-          $format->transmit($res, $this->marshalling->marshal($result));
+        try {
+          $i= $this->invocations;
+          return $this->transmit($res, $i($delegate, $args), $format);
+        } catch (Throwable $e) {
+          return $this->transmit($res, Response::error(500, $e), $format);
         }
-        return;
       }
     }
 

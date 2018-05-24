@@ -4,6 +4,7 @@ use io\streams\InputStream;
 use io\streams\Streams;
 use lang\XPClass;
 use lang\IllegalArgumentException;
+use lang\reflect\TargetInvocationException;
 
 class Delegate {
   private static $SOURCES;
@@ -14,29 +15,17 @@ class Delegate {
   static function __static() {
     self::$INPUTSTREAM= new XPClass(InputStream::class);
     self::$SOURCES= [
-      'param'    => function($req, $format, $name) {
-        return $req->param($name);
-      },
-      'value'    => function($req, $format, $name) {
-        return $req->value($name);
-      },
-      'header'   => function($req, $format, $name) {
-        return $req->header($name);
-      },
-      'stream'   => function($req, $format, $name) {
-        return $req->stream();
-      },
+      'param'    => function($req, $format, $name) { return $req->param($name); },
+      'value'    => function($req, $format, $name) { return $req->value($name); },
+      'header'   => function($req, $format, $name) { return $req->header($name); },
+      'stream'   => function($req, $format, $name) { return $req->stream(); },
+      'entity'   => function($req, $format, $name) { return $format->read($req, $name); },
+      'request'  => function($req, $format, $name) { return $req; },
       'body'     => function($req, $format, $name) {
         if (null === ($stream= $req->stream())) {
           throw new IllegalArgumentException('Expecting a request body, none transmitted');
         }
         return Streams::readAll($stream);
-      },
-      'entity'   => function($req, $format, $name) {
-        return $format->read($req, $name);
-      },
-      'request'  => function($req, $format, $name) {
-        return $req;
       },
       'default'  => function($req, $format, $name) {
         if (null !== ($v= $req->param($name))) {
@@ -108,9 +97,13 @@ class Delegate {
    *
    * @param  var[] $arguments
    * @return var
-   * @throws lang.reflect.TargetInvocationException
+   * @throws lang.Throwable
    */
   public function invoke($args) {
-    return $this->method->invoke($this->instance, $args);
+    try {
+      return $this->method->invoke($this->instance, $args);
+    } catch (TargetInvocationException $e) {
+      throw $e->getCause();
+    }
   }
 }

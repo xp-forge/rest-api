@@ -6,6 +6,8 @@ use web\Request;
 use web\Response;
 use web\io\TestInput;
 use web\io\TestOutput;
+use lang\ElementNotFoundException;
+use web\rest\Response as RestResponse;
 
 class InvocationsTest extends TestCase {
 
@@ -46,7 +48,7 @@ class InvocationsTest extends TestCase {
   }
 
   #[@test]
-  public function invoking_callable() {
+  public function intercepting_with_callable() {
     $invocations= function($delegate, $args) use(&$invoked) {
       $invoked= [$delegate->name(), $args];
       return $delegate->invoke($args);
@@ -54,5 +56,20 @@ class InvocationsTest extends TestCase {
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
     $this->assertEquals(['web.rest.unittest.Users::findUser', ['1549']], $invoked);
+  }
+
+  #[@test]
+  public function intercepting_catching_exceptions() {
+    $invocations= function($delegate, $args) use(&$caught) {
+      try {
+        return $delegate->invoke($args);
+      } catch (ElementNotFoundException $e) {
+        $caught= [nameof($e), $e->getMessage()];
+        return RestResponse::error(404, $e);
+      }
+    };
+
+    $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/0');
+    $this->assertEquals(['lang.ElementNotFoundException', 'No such user #0'], $caught);
   }
 }
