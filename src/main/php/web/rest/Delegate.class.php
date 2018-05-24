@@ -99,7 +99,7 @@ class Delegate {
   /** @return [:var] */
   public function annotations() { return $this->method->getAnnotations(); }
 
-  /** @return [:function(web.Request, web.rest.format.EntityFormat): var] */
+  /** @return [:var] */
   public function params() { return $this->params; }
 
   /**
