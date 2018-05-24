@@ -170,4 +170,20 @@ class MarshallingTest extends TestCase {
       iterator_to_array((new Marshalling())->unmarshal(['one' => 1, 'two' => 2], Type::$ITERABLE))
     );
   }
+
+  #[@test]
+  public function unmarshal_object_noconstructor_regression() {
+    $this->assertEquals(
+      (new PersonWithoutConstructor())->setId(6100)->setName('Test'),
+      (new Marshalling())->unmarshal(['id' => 6100, 'name' => 'Test'], Type::forName(PersonWithoutConstructor::class))
+    );
+  }
+
+  #[@test]
+  public function unmarshal_object_less_arguments_regression() {
+    $this->assertEquals(
+      (new PersonWithoutConstructor())->setId(6100),
+      (new Marshalling())->unmarshal(['id' => 6100], Type::forName(PersonWithoutConstructor::class))
+    );
+  }
 }

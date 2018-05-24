@@ -50,7 +50,7 @@ class Marshalling {
         return new Date($value);
       } else if ($type->isAssignableFrom(Money::class)) {
         return new Money($value['amount'], Currency::getInstance($value['currency']));
-      } else if (1 === $type->getConstructor()->numParameters()) {
+      } else if ($type->hasConstructor() && 1 === $type->getConstructor()->numParameters()) {
         return $type->newInstance($value);
       }
 
@@ -61,6 +61,8 @@ class Marshalling {
         if ($m & MODIFIER_STATIC) continue;
 
         $n= $field->getName();
+        if (!isset($value[$n])) continue;
+
         if ($m & MODIFIER_PUBLIC) {
           $field->set($r, $this->unmarshal($value[$n], $field->getType()));
         } else if ($type->hasMethod($set= 'set'.ucfirst($n))) {
