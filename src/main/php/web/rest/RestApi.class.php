@@ -22,7 +22,8 @@ class RestApi implements Handler {
 
   private $formats= [];
   private $delegates= [];
-  private $marshalling, $invocations;
+  private $invocations= [];
+  private $marshalling;
 
   /**
    * Creates a new REST API instance for a given handler instance
@@ -44,7 +45,6 @@ class RestApi implements Handler {
     $this->formats['#(application|text)/.*json#']= new Json();
     $this->formats['#application/octet-stream#']= new OctetStream();
     $this->marshalling= new Marshalling();
-    $this->invocations= function($delegate, $args) { return $delegate->invoke($args); };
   }
 
   /**
@@ -62,11 +62,11 @@ class RestApi implements Handler {
   /**
    * Intercept invocations using a given handler
    *
-   * @param  function(web.rest.Delegate, var[]): var $invocations
+   * @param  function(web.rest.Delegate, var[]): var $interceptor
    * @return self
    */
-  public function intercepting($invocations) {
-    $this->invocations= $invocations;
+  public function intercepting($interceptor) {
+    $this->invocations[]= $interceptor;
     return $this;
   }
 
@@ -126,9 +126,9 @@ class RestApi implements Handler {
           return $this->transmit($res, Response::error(400, $e), $format);
         }
 
+        $invocation= new Invocation($this->invocations, $delegate);
         try {
-          $i= $this->invocations;
-          return $this->transmit($res, $i($delegate, $args), $format);
+          return $this->transmit($res, $invocation->proceed($args), $format);
         } catch (Throwable $e) {
           return $this->transmit($res, Response::error(500, $e), $format);
         }

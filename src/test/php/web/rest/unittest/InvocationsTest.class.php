@@ -49,9 +49,9 @@ class InvocationsTest extends TestCase {
 
   #[@test]
   public function intercepting_with_callable() {
-    $invocations= function($delegate, $args) use(&$invoked) {
-      $invoked= [$delegate->name(), $args];
-      return $delegate->invoke($args);
+    $invocations= function($invocation, $args) use(&$invoked) {
+      $invoked= [$invocation->target()->name(), $args];
+      return $invocation->proceed($args);
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
@@ -60,9 +60,9 @@ class InvocationsTest extends TestCase {
 
   #[@test]
   public function intercepting_catching_exceptions() {
-    $invocations= function($delegate, $args) use(&$caught) {
+    $invocations= function($invocation, $args) use(&$caught) {
       try {
-        return $delegate->invoke($args);
+        return $invocation->proceed($args);
       } catch (ElementNotFoundException $e) {
         $caught= [nameof($e), $e->getMessage()];
         return RestResponse::error(404, $e);
@@ -75,9 +75,9 @@ class InvocationsTest extends TestCase {
 
   #[@test]
   public function intercepting_can_access_annotations() {
-    $invocations= function($delegate, $args) use(&$cached) {
-      $cached= $delegate->annotations()['cached'];
-      return $delegate->invoke($args);
+    $invocations= function($invocation, $args) use(&$cached) {
+      $cached= $invocation->target()->annotations()['cached'];
+      return $invocation->proceed($args);
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549/avatar');
