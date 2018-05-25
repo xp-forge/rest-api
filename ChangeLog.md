@@ -5,6 +5,7 @@ Rest API change log
 
 ## 0.7.0 / 2018-05-25
 
+* Merged PR #3: Two Bugfixes in Marshalling - @johannes85
 * Merged PR #4: Intercept invocations, which allow passing functions or
   `web.rest.Interceptor` instances to `RestApi`s to intercept calls to
   the delegates. Usecases are logging, performance profiling, caching,
