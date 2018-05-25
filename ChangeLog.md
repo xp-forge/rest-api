@@ -3,6 +3,14 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.7.0 / 2018-05-25
+
+* Merged PR #4: Intercept invocations, which allow passing functions or
+  `web.rest.Interceptor` instances to `RestApi`s to intercept calls to
+  the delegates. Usecases are logging, performance profiling, caching,
+  input validation and exception handling, for example.
+  (@thekid)
+
 ## 0.6.0 / 2018-05-23
 
 * Added support for patterns in path segments, e.g. `/users/{id:[0-9]+}`
