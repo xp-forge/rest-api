@@ -4,6 +4,7 @@ use io\streams\InputStream;
 use io\streams\Streams;
 use lang\XPClass;
 use lang\IllegalArgumentException;
+use lang\reflect\TargetInvocationException;
 
 class Delegate {
   private static $SOURCES;
@@ -14,29 +15,17 @@ class Delegate {
   static function __static() {
     self::$INPUTSTREAM= new XPClass(InputStream::class);
     self::$SOURCES= [
-      'param'    => function($req, $format, $name) {
-        return $req->param($name);
-      },
-      'value'    => function($req, $format, $name) {
-        return $req->value($name);
-      },
-      'header'   => function($req, $format, $name) {
-        return $req->header($name);
-      },
-      'stream'   => function($req, $format, $name) {
-        return $req->stream();
-      },
+      'param'    => function($req, $format, $name) { return $req->param($name); },
+      'value'    => function($req, $format, $name) { return $req->value($name); },
+      'header'   => function($req, $format, $name) { return $req->header($name); },
+      'stream'   => function($req, $format, $name) { return $req->stream(); },
+      'entity'   => function($req, $format, $name) { return $format->read($req, $name); },
+      'request'  => function($req, $format, $name) { return $req; },
       'body'     => function($req, $format, $name) {
         if (null === ($stream= $req->stream())) {
           throw new IllegalArgumentException('Expecting a request body, none transmitted');
         }
         return Streams::readAll($stream);
-      },
-      'entity'   => function($req, $format, $name) {
-        return $format->read($req, $name);
-      },
-      'request'  => function($req, $format, $name) {
-        return $req;
       },
       'default'  => function($req, $format, $name) {
         if (null !== ($v= $req->param($name))) {
@@ -80,18 +69,25 @@ class Delegate {
    * @param  lang.reflect.Parameter $param
    * @param  string $name
    * @param  string $source
+   * @return void
    */
   private function param($param, $name, $source) {
     if ($param->isOptional()) {
       $default= $param->getDefaultValue();
       $read= function($req, $format) use($source, $name, $default) {
         $f= self::$SOURCES[$source];
-        return null === ($value= $f($req, $format, $name)) ? $default : $value;
+        if (null === ($value= $f($req, $format, $name))) {
+          return $default;
+        }
+        return $value;
       };
     } else {
       $read= function($req, $format) use($source, $name) {
         $f= self::$SOURCES[$source];
-        return $f($req, $format, $name);
+        if (null === ($value= $f($req, $format, $name))) {
+          throw new IllegalArgumentException('Missing argument '.$name);
+        }
+        return $value;
       };
     }
     $this->params[$name]= ['type' => $param->getType(), 'read' => $read];
@@ -100,7 +96,10 @@ class Delegate {
   /** @return string */
   public function name() { return nameof($this->instance).'::'.$this->method->getName(); }
 
-  /** @return [:function(web.Request, web.rest.format.EntityFormat): var] */
+  /** @return [:var] */
+  public function annotations() { return $this->method->getAnnotations(); }
+
+  /** @return [:var] */
   public function params() { return $this->params; }
 
   /**
@@ -108,9 +107,13 @@ class Delegate {
    *
    * @param  var[] $arguments
    * @return var
-   * @throws lang.reflect.TargetInvocationException
+   * @throws lang.Throwable
    */
   public function invoke($args) {
-    return $this->method->invoke($this->instance, $args);
+    try {
+      return $this->method->invoke($this->instance, $args);
+    } catch (TargetInvocationException $e) {
+      throw $e->getCause();
+    }
   }
 }
