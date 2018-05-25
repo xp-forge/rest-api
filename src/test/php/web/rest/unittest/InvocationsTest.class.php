@@ -7,6 +7,7 @@ use web\Response;
 use web\io\TestInput;
 use web\io\TestOutput;
 use lang\ElementNotFoundException;
+use lang\IllegalStateException;
 use web\rest\Response as RestResponse;
 
 class InvocationsTest extends TestCase {
@@ -82,4 +83,36 @@ class InvocationsTest extends TestCase {
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549/avatar');
     $this->assertEquals(['ttl' => 3600], $cached);
-  }}
+  }
+
+  #[@test]
+  public function can_use_multiple_interceptors() {
+    $api= (new RestApi(new Users()))
+      ->intercepting(function($invocation, $args) use(&$invoked) {
+        $invoked[]= 'one';
+        return $invocation->proceed($args);
+      })
+      ->intercepting(function($invocation, $args) use(&$invoked) {
+        $invoked[]= 'two';
+        return $invocation->proceed($args);
+      })
+    ;
+
+    $this->run($api, 'GET', '/users/1549/avatar');
+    $this->assertEquals(['one', 'two'], $invoked);
+  }
+
+  #[@test]
+  public function can_break_chain_of_interceptors_by_not_invoking_proceed() {
+    $api= (new RestApi(new Users()))
+      ->intercepting(function($invocation, $args) {
+        return true;
+      })
+      ->intercepting(function($invocation, $args) {
+        throw new IllegalStateException('Will not be reached');
+      })
+    ;
+
+    $this->run($api, 'GET', '/users/1549/avatar');
+  }
+}
