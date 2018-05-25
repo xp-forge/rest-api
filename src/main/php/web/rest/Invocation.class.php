@@ -1,16 +1,23 @@
 <?php namespace web\rest;
 
 class Invocation {
-  private $interceptors, $target;
+  private $interceptors= [];
+  private $target;
 
   /**
    * Creates a new invocation
    *
-   * @param  (function(web.rest.Invocation, var[]): var)[] $interceptors
+   * @param  (web.rest.Interceptor|function(web.rest.Invocation, var[]): var)[] $interceptors
    * @param  web.rest.Delegate $target
    */
   public function __construct($interceptors, $target) {
-    $this->interceptors= $interceptors;
+    foreach ($interceptors as $interceptor) {
+      if ($interceptor instanceof Interceptor) {
+        $this->interceptors[]= [$interceptor, 'intercept'];
+      } else {
+        $this->interceptors[]= $interceptor;
+      }
+    }
     $this->interceptors[]= function($self, $args) { return $this->target->invoke($args); };
     $this->target= $target;
   }

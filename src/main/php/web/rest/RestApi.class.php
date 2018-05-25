@@ -62,7 +62,7 @@ class RestApi implements Handler {
   /**
    * Intercept invocations using a given handler
    *
-   * @param  function(web.rest.Delegate, var[]): var $interceptor
+   * @param  web.rest.Interceptor|function(web.rest.Invocation, var[]): var $interceptor
    * @return self
    */
   public function intercepting($interceptor) {

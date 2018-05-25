@@ -2,6 +2,7 @@
 
 use unittest\TestCase;
 use web\rest\RestApi;
+use web\rest\Interceptor;
 use web\Request;
 use web\Response;
 use web\io\TestInput;
@@ -46,6 +47,19 @@ class InvocationsTest extends TestCase {
 
     $api->handle($req, $res);
     return $res;
+  }
+
+  #[@test]
+  public function intercepting() {
+    $invocations= newinstance(Interceptor::class, [], [
+      'intercept' => function($invocation, $args) use(&$invoked) {
+        $invoked= [$invocation->target()->name(), $args];
+        return $invocation->proceed($args);
+      }
+    ]);
+
+    $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
+    $this->assertEquals(['web.rest.unittest.Users::findUser', ['1549']], $invoked);
   }
 
   #[@test]
