@@ -1,9 +1,9 @@
 <?php namespace web\rest\unittest;
 
-use web\rest\Response;
 use io\streams\InputStream;
 use io\streams\MemoryInputStream;
 use lang\ElementNotFoundException;
+use web\rest\Response;
 
 class Users {
   private $users= [
@@ -15,6 +15,11 @@ class Users {
   public function listUsers() {
     yield 1549 => $this->users[1549];
     yield 6100 => $this->users[6100];
+  }
+
+  #[@get('/users/count')]
+  public function numUsers() {
+    return Response::ok()->entity(sizeof($this->users));
   }
 
   #[@get('/users/{id:[0-9]+}')]

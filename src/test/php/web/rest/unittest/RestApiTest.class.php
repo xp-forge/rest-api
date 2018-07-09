@@ -16,6 +16,12 @@ class RestApiTest extends RunTest {
   }
 
   #[@test]
+  public function count_users_returns_json() {
+    $res= $this->run(new RestApi(new Users()), 'GET', '/users/count');
+    $this->assertPayload(200, 'application/json', '2', $res);
+  }
+
+  #[@test]
   public function find_user_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549');
     $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
