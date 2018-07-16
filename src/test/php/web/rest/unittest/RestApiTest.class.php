@@ -3,6 +3,7 @@
 use web\rest\ClassesIn;
 use web\rest\MethodsIn;
 use web\rest\RestApi;
+use web\rest\unittest\api\Monitoring;
 use web\rest\unittest\api\Users;
 
 class RestApiTest extends RunTest {

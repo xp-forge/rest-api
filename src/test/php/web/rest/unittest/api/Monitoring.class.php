@@ -1,10 +1,11 @@
-<?php namespace web\rest\unittest;
+<?php namespace web\rest\unittest\api;
 
-use web\Request;
-use web\rest\Response;
+use util\Currency;
 use util\Date;
 use util\Money;
-use util\Currency;
+use web\Request;
+use web\rest\Response;
+use web\rest\unittest\Person;
 
 class Monitoring {
   private $startup, $responsible;

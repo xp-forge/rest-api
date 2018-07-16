@@ -1,11 +1,11 @@
 <?php namespace web\rest\unittest;
 
+use lang\Type;
 use unittest\TestCase;
-use web\rest\Marshalling;
+use util\Currency;
 use util\Date;
 use util\Money;
-use util\Currency;
-use lang\Type;
+use web\rest\Marshalling;
 
 class MarshallingTest extends TestCase {
 
