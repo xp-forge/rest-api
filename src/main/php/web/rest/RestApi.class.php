@@ -23,7 +23,6 @@ class RestApi implements Handler {
     $this->delegates= $arg instanceof Delegates ? $arg : new MethodsIn($arg);
     $this->base= rtrim($base, '/');
     $this->marshalling= new Marshalling();
-
     $this->formats= [
       '#(application|text)/.*json#' => new Json(),
       '#application/octet-stream#'  => new OctetStream()
@@ -98,8 +97,8 @@ class RestApi implements Handler {
     if (null === ($target= $this->delegates->target($verb, $path))) {
       throw new CannotRoute($req);
     }
-    list($delegate, $matches)= $target;
 
+    list($delegate, $matches)= $target;
     try {
       $args= [];
       foreach ($delegate->params() as $name => $definition) {
