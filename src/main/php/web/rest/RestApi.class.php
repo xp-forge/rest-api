@@ -10,10 +10,8 @@ use web\rest\format\OctetStream;
 use web\routing\CannotRoute;
 
 class RestApi implements Handler {
-  private $formats= [];
-  private $delegates= [];
+  private $delegates, $base, $marshalling, $formats;
   private $invocations= [];
-  private $marshalling;
 
   /**
    * Creates a new REST API instance for a given handler
@@ -24,9 +22,12 @@ class RestApi implements Handler {
   public function __construct($arg, $base= '/') {
     $this->delegates= $arg instanceof Delegates ? $arg : new MethodsIn($arg);
     $this->base= rtrim($base, '/');
-    $this->formats['#(application|text)/.*json#']= new Json();
-    $this->formats['#application/octet-stream#']= new OctetStream();
     $this->marshalling= new Marshalling();
+
+    $this->formats= [
+      '#(application|text)/.*json#' => new Json(),
+      '#application/octet-stream#'  => new OctetStream()
+    ];
   }
 
   /**
