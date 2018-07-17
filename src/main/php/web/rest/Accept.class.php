@@ -1,8 +1,9 @@
 <?php namespace web\rest;
 
 class Accept {
-  public $values= [];
+  private $values= [];
 
+  /** @param string $header */
   public function __construct($header) {
     $prec= 1.0;
     foreach (explode(',', $header) as $t) {
@@ -17,6 +18,13 @@ class Accept {
     arsort($this->values, SORT_NUMERIC);
   }
 
+  /**
+   * Returns one of the supported mime types, or NULL if none of them match
+   * the list of accepted types.
+   *
+   * @param  string|string[] $supported Supported mime type(s)
+   * @return string
+   */
   public function matches($supported) {
     $s= is_array($supported) ? implode(' ', $supported) : $supported;
     foreach ($this->values as $preference => $q) {
