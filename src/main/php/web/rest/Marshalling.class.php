@@ -1,13 +1,13 @@
 <?php namespace web\rest;
 
-use util\Date;
-use util\Money;
-use util\Currency;
-use lang\XPClass;
 use lang\ArrayType;
+use lang\Enum;
 use lang\MapType;
 use lang\Type;
-use lang\Enum;
+use lang\XPClass;
+use util\Currency;
+use util\Date;
+use util\Money;
 
 /**
  * Takes care of converting objects from and to maps
@@ -67,7 +67,7 @@ class Marshalling {
           $field->set($r, $this->unmarshal($value[$n], $field->getType()));
         } else if ($type->hasMethod($set= 'set'.ucfirst($n))) {
           $method= $type->getMethod($set);
-          $method->invoke($r, $this->unmarshal($value[$n], $method->getParameter(0)->getType()));
+          $method->invoke($r, [$this->unmarshal($value[$n], $method->getParameter(0)->getType())]);
         } else {
           $field->setAccessible(true)->set($r, $this->unmarshal($value[$n], $field->getType()));
         }

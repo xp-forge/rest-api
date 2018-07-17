@@ -90,7 +90,8 @@ class RestApi implements Handler {
    * @return var
    */
   public function handle($req, $res) {
-    $format= $this->format($req->header('Content-Type') ?: 'application/json');
+    $in= $this->format($req->header('Content-Type') ?: 'application/json');
+    $out= $this->format($req->header('Accept') ?: 'application/json');
 
     $verb= strtolower($req->method());
     $path= $this->base ? preg_replace('#^'.$this->base.'#', '', $req->uri()->path()) : $req->uri()->path();
@@ -105,18 +106,18 @@ class RestApi implements Handler {
         if (isset($matches[$name])) {
           $args[]= $this->marshalling->unmarshal($matches[$name], $definition['type']);
         } else {
-          $args[]= $this->marshalling->unmarshal($definition['read']($req, $format), $definition['type']);
+          $args[]= $this->marshalling->unmarshal($definition['read']($req, $in), $definition['type']);
         }
       }
     } catch (IllegalArgumentException $e) {
-      return $this->transmit($res, Response::error(400, $e), $format);
+      return $this->transmit($res, Response::error(400, $e), $out);
     }
 
     $invocation= new Invocation($this->invocations, $delegate);
     try {
-      return $this->transmit($res, $invocation->proceed($args), $format);
+      return $this->transmit($res, $invocation->proceed($args), $out);
     } catch (Throwable $e) {
-      return $this->transmit($res, Response::error(500, $e), $format);
+      return $this->transmit($res, Response::error(500, $e), $out);
     }
   }
 }

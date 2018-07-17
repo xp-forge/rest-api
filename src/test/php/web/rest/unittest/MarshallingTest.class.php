@@ -186,4 +186,13 @@ class MarshallingTest extends TestCase {
       (new Marshalling())->unmarshal(['id' => 6100], Type::forName(PersonWithoutConstructor::class))
     );
   }
+
+  #[@test]
+  public function unmarshal_activity() {
+    $subscribables= ['one' => 1, 'two' => 2];
+    $this->assertEquals(
+      (new Activity())->setSubscribables($subscribables),
+      (new Marshalling())->unmarshal(['subscribables' => $subscribables], Type::forName(Activity::class))
+    );
+  }
 }
