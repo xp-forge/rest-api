@@ -3,6 +3,8 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.8.0 / 2018-07-17
+
 * Implemented content type negotation via the HTTP `Accept` header
   (@thekid)
 * Merged PR #5: Accept instances or delegates in RestApi constructor
