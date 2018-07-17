@@ -1,5 +1,11 @@
 <?php namespace web\rest;
 
+/**
+ * Content negotiation
+ *
+ * @see   https://en.wikipedia.org/wiki/Content_negotiation
+ * @test  xp://web.rest.unittest.AcceptTest
+ */
 class Accept {
   private $values= [];
 
