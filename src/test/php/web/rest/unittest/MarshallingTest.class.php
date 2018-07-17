@@ -1,11 +1,11 @@
 <?php namespace web\rest\unittest;
 
+use lang\Type;
 use unittest\TestCase;
-use web\rest\Marshalling;
+use util\Currency;
 use util\Date;
 use util\Money;
-use util\Currency;
-use lang\Type;
+use web\rest\Marshalling;
 
 class MarshallingTest extends TestCase {
 
@@ -184,6 +184,15 @@ class MarshallingTest extends TestCase {
     $this->assertEquals(
       (new PersonWithoutConstructor())->setId(6100),
       (new Marshalling())->unmarshal(['id' => 6100], Type::forName(PersonWithoutConstructor::class))
+    );
+  }
+
+  #[@test]
+  public function unmarshal_activity() {
+    $subscribables= ['one' => 1, 'two' => 2];
+    $this->assertEquals(
+      (new Activity())->setSubscribables($subscribables),
+      (new Marshalling())->unmarshal(['subscribables' => $subscribables], Type::forName(Activity::class))
     );
   }
 }

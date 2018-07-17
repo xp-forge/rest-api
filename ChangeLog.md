@@ -3,6 +3,11 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.7.1 / 2018-07-17
+
+* Fixed unmarshalling when invoking setter methods with an array or map
+  (@thekid)
+
 ## 0.7.0 / 2018-05-25
 
 * Merged PR #3: Two Bugfixes in Marshalling - @johannes85
