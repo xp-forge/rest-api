@@ -158,6 +158,7 @@ class RestApiTest extends RunTest {
 
   #[@test, @expect(class= Error::class, withMessage= 'Unsupported mime type'), @values([
   #  'text/html, application/xhtml+xml, application/xml; q=0.9',
+  #  'application/xml',
   #  'text/xml'
   #])]
   public function does_not_accept($mime) {
