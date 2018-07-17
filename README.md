@@ -108,3 +108,8 @@ Body:
 * `$response->entity(var $value)` will sent a value, serializing it
 * `$response->stream(io.streams.InputStream $in, int? $size)` will stream a response
 * `$response->body(string $bytes)` will write the given raw bytes to the response
+
+See also
+--------
+
+https://github.com/thekid/shorturl - URL Shortener service 
