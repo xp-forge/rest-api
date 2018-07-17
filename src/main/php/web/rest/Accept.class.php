@@ -31,7 +31,7 @@ class Accept {
    * @param  string|string[] $supported Supported mime type(s)
    * @return string
    */
-  public function matches($supported) {
+  public function match($supported) {
     $s= is_array($supported) ? implode(' ', $supported) : $supported;
     foreach ($this->values as $preference => $q) {
       if (preg_match('#('.strtr(preg_quote($preference, '#'), ['\*' => '[^ ]+']).')#', $s, $matches)) return $matches[1];

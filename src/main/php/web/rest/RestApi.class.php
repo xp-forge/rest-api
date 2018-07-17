@@ -92,7 +92,7 @@ class RestApi implements Handler {
     $in= $this->format($req->header('Content-Type', 'application/json'));
 
     $accept= new Accept($req->header('Accept', '*/*'));
-    if (null === ($format= $accept->matches(array_keys($this->formats)))) {
+    if (null === ($format= $accept->match(array_keys($this->formats)))) {
       throw new Error(406, 'Unsupported mime type');
     }
     $out= $this->format($format);
