@@ -16,6 +16,11 @@ class AcceptTest extends TestCase {
   }
 
   #[@test]
+  public function unmatched() {
+    $this->assertNull((new Accept('application/json'))->matches('text/html'));
+  }
+
+  #[@test]
   public function text_all_selects_first_text_type() {
     $this->assertEquals(
       'text/html',
