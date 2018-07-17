@@ -1,4 +1,4 @@
-<?php namespace web\rest\unittest;
+<?php namespace web\rest\unittest\api;
 
 use io\streams\InputStream;
 use io\streams\MemoryInputStream;

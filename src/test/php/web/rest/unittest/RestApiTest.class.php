@@ -1,12 +1,26 @@
 <?php namespace web\rest\unittest;
 
+use web\rest\ClassesIn;
+use web\rest\MethodsIn;
 use web\rest\RestApi;
+use web\rest\unittest\api\Monitoring;
+use web\rest\unittest\api\Users;
 
 class RestApiTest extends RunTest {
 
   #[@test]
   public function can_create() {
     new RestApi(new Users());
+  }
+
+  #[@test]
+  public function can_create_with_methods_delegates() {
+    new RestApi(new MethodsIn(new Users()));
+  }
+
+  #[@test]
+  public function can_create_with_classes_delegates() {
+    new RestApi(new ClassesIn('web.rest.unittest.api'));
   }
 
   #[@test]

@@ -5,6 +5,7 @@ use lang\IllegalStateException;
 use web\rest\Interceptor;
 use web\rest\Response;
 use web\rest\RestApi;
+use web\rest\unittest\api\Users;
 
 class InvocationsTest extends RunTest {
 
@@ -18,7 +19,7 @@ class InvocationsTest extends RunTest {
     ]);
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
-    $this->assertEquals(['web.rest.unittest.Users::findUser', ['1549']], $invoked);
+    $this->assertEquals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
   }
 
   #[@test]
@@ -29,7 +30,7 @@ class InvocationsTest extends RunTest {
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
-    $this->assertEquals(['web.rest.unittest.Users::findUser', ['1549']], $invoked);
+    $this->assertEquals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
   }
 
   #[@test]

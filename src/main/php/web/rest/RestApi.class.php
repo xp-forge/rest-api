@@ -11,42 +11,24 @@ use web\rest\format\OctetStream;
 use web\routing\CannotRoute;
 
 class RestApi implements Handler {
-  private static $METHODS= [
-    'get'     => null,
-    'head'    => null,
-    'post'    => null,
-    'put'     => null,
-    'patch'   => null,
-    'delete'  => null,
-    'options' => null
-  ];
-
-  private $formats= [];
-  private $delegates= [];
+  private $delegates, $base, $marshalling, $formats;
   private $invocations= [];
-  private $marshalling;
 
   /**
-   * Creates a new REST API instance for a given handler instance
+   * Creates a new REST API instance for a given handler
    *
-   * @param  object $instance
+   * @param  web.rest.Delegates|object $arg
    * @param  string $base
    */
-  public function __construct($instance, $base= '/') {
-    foreach (typeof($instance)->getMethods() as $method) {
-      foreach (array_intersect_key($method->getAnnotations(), self::$METHODS) as $verb => $segment) {
-        $pattern= $segment
-          ? preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment)
-          : '.+'
-        ;
-        $this->delegates['#^'.$verb.':'.rtrim($base, '/').$pattern.'$#']= new Delegate($instance, $method);
-      }
-    }
-
-    $this->formats['#(application|text)/.*json#']= new Json();
-    $this->formats['#application/x-www-form-urlencoded#']= new FormUrlEncoded();
-    $this->formats['#application/octet-stream#']= new OctetStream();
+  public function __construct($arg, $base= '/') {
+    $this->delegates= $arg instanceof Delegates ? $arg : new MethodsIn($arg);
+    $this->base= rtrim($base, '/');
     $this->marshalling= new Marshalling();
+    $this->formats= [
+      '#(application|text)/.*json#'         => new Json(),
+      '#application/x-www-form-urlencoded#' => new FormUrlEncoded(),
+      '#application/octet-stream#'          => new OctetStream()
+    ];
   }
 
   /**
@@ -113,31 +95,31 @@ class RestApi implements Handler {
     $in= $this->format($req->header('Content-Type') ?: 'application/json');
     $out= $this->format($req->header('Accept') ?: 'application/json');
 
-    $match= strtolower($req->method()).':'.$req->uri()->path();
-    foreach ($this->delegates as $pattern => $delegate) { 
-      if (preg_match($pattern, $match, $matches)) {
-        try {
-          $args= [];
-          foreach ($delegate->params() as $name => $definition) {
-            if (isset($matches[$name])) {
-              $args[]= $this->marshalling->unmarshal($matches[$name], $definition['type']);
-            } else {
-              $args[]= $this->marshalling->unmarshal($definition['read']($req, $in), $definition['type']);
-            }
-          }
-        } catch (IllegalArgumentException $e) {
-          return $this->transmit($res, Response::error(400, $e), $out);
-        }
-
-        $invocation= new Invocation($this->invocations, $delegate);
-        try {
-          return $this->transmit($res, $invocation->proceed($args), $out);
-        } catch (Throwable $e) {
-          return $this->transmit($res, Response::error(500, $e), $out);
-        }
-      }
+    $verb= strtolower($req->method());
+    $path= $this->base ? preg_replace('#^'.$this->base.'#', '', $req->uri()->path()) : $req->uri()->path();
+    if (null === ($target= $this->delegates->target($verb, $path))) {
+      throw new CannotRoute($req);
     }
 
-    throw new CannotRoute($req);
+    list($delegate, $matches)= $target;
+    try {
+      $args= [];
+      foreach ($delegate->params() as $name => $definition) {
+        if (isset($matches[$name])) {
+          $args[]= $this->marshalling->unmarshal($matches[$name], $definition['type']);
+        } else {
+          $args[]= $this->marshalling->unmarshal($definition['read']($req, $in), $definition['type']);
+        }
+      }
+    } catch (IllegalArgumentException $e) {
+      return $this->transmit($res, Response::error(400, $e), $out);
+    }
+
+    $invocation= new Invocation($this->invocations, $delegate);
+    try {
+      return $this->transmit($res, $invocation->proceed($args), $out);
+    } catch (Throwable $e) {
+      return $this->transmit($res, Response::error(500, $e), $out);
+    }
   }
 }
