@@ -89,13 +89,13 @@ return Response::created('/users/'.$id)->type('application/vnd.example.customer-
 Creation:
 
 * `Response::ok()` - 200 OK
-* `Response::created(string? $location)` - 201 Created, optionally with a *Location* header
+* `Response::created([string $location])` - 201 Created, optionally with a *Location* header
 * `Response::noContent()` - 204 No content
 * `Response::see(string $location)` - 302 Found and a *Location* header
 * `Response::notModified()` - 304 Not modified
-* `Response::notFound(string? $message)` - 404 Not found and an optional message, which is serialized
-* `Response::notAcceptable(string? $message)` - 406 Not acceptable and an optional message, which is serialized
-* `Response::error(int $code, string? $message)` - An error and an optional message, which is serialized
+* `Response::notFound([string $message])` - 404 Not found and an optional message, which is serialized
+* `Response::notAcceptable([string $message])` - 406 Not acceptable and an optional message, which is serialized
+* `Response::error(int $code[, string $message])` - An error and an optional message, which is serialized
 * `Response::status(int $code)` - Any other status code
 
 Headers:
@@ -106,7 +106,7 @@ Headers:
 Body:
 
 * `$response->entity(var $value)` will sent a value, serializing it
-* `$response->stream(io.streams.InputStream $in, int? $size)` will stream a response
+* `$response->stream(io.streams.InputStream $in[, int $size])` will stream a response
 * `$response->body(string $bytes)` will write the given raw bytes to the response
 
 See also
