@@ -45,10 +45,12 @@ class RestApiTest extends RunTest {
     $this->assertPayload(400, 'application/json', '{"status":400,"message":"Expecting a request body, none transmitted"}', $res);
   }
 
-  #[@test]
-  public function create_user_returns_created() {
-    $body= '{"name":"New"}';
-    $headers= ['Content-Type' => 'application/json', 'Content-Length' => strlen($body)];
+  #[@test, @values([
+  #  ['application/json', '{"name":"New"}'],
+  #  ['application/x-www-form-urlencoded', 'name=New']
+  #])]
+  public function create_user_returns_created($type, $body) {
+    $headers= ['Content-Type' => $type, 'Content-Length' => strlen($body)];
 
     $res= $this->run(new RestApi(new Users()), 'POST', '/users', $headers, $body);
     $this->assertPayload(201, 'application/json', '{"id":6101,"name":"New"}', $res);

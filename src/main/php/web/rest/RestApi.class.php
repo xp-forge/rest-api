@@ -5,6 +5,7 @@ use lang\Throwable;
 use web\Error;
 use web\Handler;
 use web\rest\format\EntityFormat;
+use web\rest\format\FormUrlEncoded;
 use web\rest\format\Json;
 use web\rest\format\OctetStream;
 use web\routing\CannotRoute;
@@ -43,6 +44,7 @@ class RestApi implements Handler {
     }
 
     $this->formats['#(application|text)/.*json#']= new Json();
+    $this->formats['#application/x-www-form-urlencoded#']= new FormUrlEncoded();
     $this->formats['#application/octet-stream#']= new OctetStream();
     $this->marshalling= new Marshalling();
   }
