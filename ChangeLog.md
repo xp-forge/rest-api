@@ -3,6 +3,8 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #5: Accept instances or delegates in RestApi constructor
+  (@thekid)
 * Merged PR #6: Add support for "application/x-www-form-urlencoded"
   (@thekid)
 
