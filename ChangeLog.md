@@ -3,6 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #6: Add support for "application/x-www-form-urlencoded"
+  (@thekid)
+
 ## 0.7.1 / 2018-07-17
 
 * Fixed unmarshalling when invoking setter methods with an array or map
