@@ -1,8 +1,10 @@
 <?php namespace web\rest\unittest;
 
+use web\Error;
 use web\rest\ClassesIn;
 use web\rest\MethodsIn;
 use web\rest\RestApi;
+use web\rest\format\Json;
 use web\rest\unittest\api\Monitoring;
 use web\rest\unittest\api\Users;
 
@@ -140,5 +142,25 @@ class RestApiTest extends RunTest {
   public function typed_request_instances_can_be_injected() {
     $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/systems?page=3');
     $this->assertPayload(200, 'application/json', '{"page":"3"}', $res);
+  }
+
+  #[@test]
+  public function accept_all_defaults_to_json() {
+    $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => '*/*']);
+    $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
+  }
+
+  #[@test]
+  public function accept_json_returns_json() {
+    $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => 'application/json']);
+    $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
+  }
+
+  #[@test, @expect(class= Error::class, withMessage= 'Unsupported mime type'), @values([
+  #  'text/html, application/xhtml+xml, application/xml; q=0.9',
+  #  'text/xml'
+  #])]
+  public function does_not_accept($mime) {
+    $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => $mime]);
   }
 }

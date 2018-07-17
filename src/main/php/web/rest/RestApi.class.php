@@ -25,21 +25,21 @@ class RestApi implements Handler {
     $this->base= rtrim($base, '/');
     $this->marshalling= new Marshalling();
     $this->formats= [
-      '#(application|text)/.*json#'         => new Json(),
-      '#application/x-www-form-urlencoded#' => new FormUrlEncoded(),
-      '#application/octet-stream#'          => new OctetStream()
+      'application/json'                  => new Json(),
+      'application/x-www-form-urlencoded' => new FormUrlEncoded(),
+      'application/octet-stream'          => new OctetStream(),
     ];
   }
 
   /**
    * Register a format
    *
-   * @param  string $pattern Mime type regular expression pattern, not including the delimiters!
-   * @param  web.rest.EntityFormat $format
+   * @param  string $mime Mime type
+   * @param  web.rest.format.EntityFormat $format
    * @return self
    */
-  public function register($pattern, EntityFormat $format) {
-    $this->formats['#'.preg_quote($pattern, '#').'#i']= $format;
+  public function register($mime, EntityFormat $format) {
+    $this->formats[$mime]= $format;
     return $this;
   }
 
@@ -55,18 +55,15 @@ class RestApi implements Handler {
   }
 
   /**
-   * Determines format from Content-Type header. Defaults to `application/octet-stream`. 
+   * Determines format from mime type. Defaults to `application/octet-stream`. 
    *
    * @param  string $mime
-   * @return web.rest.EntityFormat
+   * @return web.rest.format.EntityFormat
    */
   private function format($mime) {
-    foreach ($this->formats as $pattern => $format) {
-      if (preg_match($pattern, $mime)) return $format;
-    }
-
-    return $this->formats['#application/octet-stream#'];
+    return isset($this->formats[$mime]) ? $this->formats[$mime] : $this->formats['application/octet-stream'];
   }
+
 
   /**
    * Transmits a given result to the response
@@ -92,8 +89,13 @@ class RestApi implements Handler {
    * @return var
    */
   public function handle($req, $res) {
-    $in= $this->format($req->header('Content-Type') ?: 'application/json');
-    $out= $this->format($req->header('Accept') ?: 'application/json');
+    $in= $this->format($req->header('Content-Type', 'application/json'));
+
+    $accept= new Accept($req->header('Accept', '*/*'));
+    if (null === ($format= $accept->matches(array_keys($this->formats)))) {
+      throw new Error(406, 'Unsupported mime type');
+    }
+    $out= $this->format($format);
 
     $verb= strtolower($req->method());
     $path= $this->base ? preg_replace('#^'.$this->base.'#', '', $req->uri()->path()) : $req->uri()->path();
