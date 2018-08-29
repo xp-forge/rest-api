@@ -2,6 +2,7 @@
 
 use lang\IllegalArgumentException;
 use lang\Throwable;
+use util\data\Marshalling;
 use web\Error;
 use web\Handler;
 use web\rest\format\EntityFormat;
