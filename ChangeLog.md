@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 0.9.0 / 2018-08-29
+
+* Merged PR #9: Extract built-in marshalling to xp-forge/marshalling
+  library; see https://github.com/xp-forge/marshalling
+  (@thekid)
+
 ## 0.8.0 / 2018-07-17
 
 * Implemented content type negotation via the HTTP `Accept` header
