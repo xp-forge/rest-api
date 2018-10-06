@@ -4,6 +4,8 @@ use lang\reflect\Package;
 
 /**
  * Creates routing based on classes in a given package
+ *
+ * @deprecated Use ResourcesIn instead!
  */
 class ClassesIn extends Delegates {
 
