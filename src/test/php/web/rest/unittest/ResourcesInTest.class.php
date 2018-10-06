@@ -25,6 +25,7 @@ class ResourcesInTest extends TestCase {
       $classes[]= $class->getName();
       return $class->newInstance();
     });
+    sort($classes);
     $this->assertEquals(['web.rest.unittest.api.Monitoring', 'web.rest.unittest.api.Users'], $classes);
   }
 }
