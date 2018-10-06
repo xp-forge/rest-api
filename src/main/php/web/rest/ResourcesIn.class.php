@@ -3,11 +3,11 @@
 use lang\reflect\Package;
 
 /**
- * Creates routing based on classes in a given package
+ * Creates routing based on resource classes in a given package
  *
- * @deprecated Use ResourcesIn instead!
+ * @test  xp://web.rest.unittest.ResourcesInTest
  */
-class ClassesIn extends Delegates {
+class ResourcesIn extends Delegates {
 
   /**
    * Creates this delegates instance
@@ -18,8 +18,8 @@ class ClassesIn extends Delegates {
   public function __construct($package, $new= null) {
     $p= $package instanceof Package ? $package : Package::forName($package);
     foreach ($p->getClasses() as $class) {
-      if ($class->reflect()->isInstantiable()) {
-        $this->with($new ? $new($class) : $class->newInstance());
+      if ($class->hasAnnotation('resource')) {
+        $this->with($new ? $new($class) : $class->newInstance(), $class->getAnnotation('resource'));
       }
     }
     uksort($this->patterns, function($a, $b) { return strlen($b) - strlen($a); });

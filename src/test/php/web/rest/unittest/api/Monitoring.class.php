@@ -7,6 +7,7 @@ use web\Request;
 use web\rest\Response;
 use web\rest\unittest\Person;
 
+#[@resource]
 class Monitoring {
   private $startup, $responsible;
 
@@ -28,12 +29,12 @@ class Monitoring {
 
   #[@get('/monitoring/details')]
   public function startup() {
-    return [
+    return new Details([
       'startup'     => $this->startup,
       'core'        => 'XP9',
       'responsible' => $this->responsible,
       'cost'        => new Money(3.50, Currency::$EUR)
-    ];
+    ]);
   }
 
   #[@put('/monitoring/startup'), @$startup: entity]

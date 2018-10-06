@@ -16,19 +16,20 @@ Example
 ```php
 use web\rest\Response;
 
+#[@resource('/users')]
 class Users {
 
-  #[@get('/users'), @$max: param]
+  #[@get('/'), @$max: param]
   public function listUsers($max= 10) {
     // ...
   }
 
-  #[@get('/users/{id}')]
+  #[@get('/{id}')]
   public function getUser($id) {
     // ...
   }
 
-  #[@post('/users'), @$user: entity]
+  #[@post('/'), @$user: entity]
   public function createUser($user) {
     // ...
     return Response::created('/users/'.$id)->entity($created);
