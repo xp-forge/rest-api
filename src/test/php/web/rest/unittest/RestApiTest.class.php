@@ -1,8 +1,8 @@
 <?php namespace web\rest\unittest;
 
 use web\Error;
-use web\rest\ClassesIn;
 use web\rest\MethodsIn;
+use web\rest\ResourcesIn;
 use web\rest\RestApi;
 use web\rest\format\Json;
 use web\rest\unittest\api\Monitoring;
@@ -22,7 +22,7 @@ class RestApiTest extends RunTest {
 
   #[@test]
   public function can_create_with_classes_delegates() {
-    new RestApi(new ClassesIn('web.rest.unittest.api'));
+    new RestApi(new ResourcesIn('web.rest.unittest.api'));
   }
 
   #[@test]
@@ -105,12 +105,12 @@ class RestApiTest extends RunTest {
   #[@test]
   public function objects_are_marshalled() {
     $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/details');
-    $details= '{'.
+    $details= '{"values":{'.
       '"startup":"2018-06-02T14:12:11+0200",'.
       '"core":"XP9",'.
       '"responsible":{"id":1549,"name":"Timm"},'.
       '"cost":{"amount":"3.5","currency":"EUR"}'.
-    '}';
+    '}}';
     $this->assertPayload(200, 'application/json', $details, $res);
   }
 

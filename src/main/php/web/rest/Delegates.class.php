@@ -21,20 +21,25 @@ class Delegates {
    * Routes to instance methods based on annotations
    *
    * @param  object $instance
+   * @param  string $base
    * @return self
    * @throws lang.IllegalArgumentException
    */
-  public function with($instance) {
+  public function with($instance, $base= '/') {
     if (!is_object($instance)) {
       throw new IllegalArgumentException('Expected an object, have '.typeof($instance));
     }
 
+    $base= rtrim($base, '/');
     foreach (typeof($instance)->getMethods() as $method) {
       foreach (array_intersect_key($method->getAnnotations(), self::$METHODS) as $verb => $segment) {
-        $pattern= $segment
-          ? preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment)
-          : '.+'
-        ;
+        if (null === $segment) {
+          $pattern= $base.'(/.+)?';
+        } else if ('/' === $segment || '' === $segment) {
+          $pattern= $base.'/?';
+        } else {
+          $pattern= $base.preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment);
+        }
         $this->patterns['#^'.$verb.$pattern.'$#']= new Delegate($instance, $method);
       }
     }
