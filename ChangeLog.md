@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 1.0.0 / 2018-10-06
+
+* **Heads up**: Deprecated `web.rest.ClassesIn`, which is superseded by
+  the new `ResourcesIn` class. See PR #10 for migration guide.
+  (@thekid)
+
 ## 0.9.0 / 2018-08-29
 
 * Merged PR #9: Extract built-in marshalling to xp-forge/marshalling
