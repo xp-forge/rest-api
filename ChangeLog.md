@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 1.1.0 / 2018-10-19
+
+* Merged PR #11: Handle `web.Error` - @johannes85, @thekid
+
 ## 1.0.0 / 2018-10-06
 
 * **Heads up**: Deprecated `web.rest.ClassesIn`, which is superseded by
