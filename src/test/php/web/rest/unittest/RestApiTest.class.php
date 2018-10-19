@@ -49,6 +49,12 @@ class RestApiTest extends RunTest {
     $this->assertPayload(500, 'application/json', '{"status":500,"message":"No such user #0"}', $res);
   }
 
+  #[@test]
+  public function error_raised_from_delete_user_renderd_with_statuscode() {
+    $res= $this->run(new RestApi(new Users()), 'DELETE', '/users/0');
+    $this->assertPayload(402, 'application/json', '{"status":402,"message":"Payment Required"}', $res);
+  }
+
   #[@test, @ignore('Not yet implemented')]
   public function type_errors_for_arguments_rendered_as_bad_request() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/not.an.int');

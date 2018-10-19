@@ -3,6 +3,7 @@
 use io\streams\InputStream;
 use io\streams\MemoryInputStream;
 use lang\ElementNotFoundException;
+use web\Error;
 use web\rest\Response;
 
 #[@resource('/users')]
@@ -40,6 +41,11 @@ class Users {
 
     $this->users[$id]= $new;
     return Response::created('/'.$id)->entity($new);
+  }
+
+  #[@delete('/{id:[0-9]+}')]
+  public function deleteUser($id) {
+    throw new Error(402, 'Payment Required');
   }
 
   #[@get('/{id}/avatar'), @cached(ttl= 3600)]
