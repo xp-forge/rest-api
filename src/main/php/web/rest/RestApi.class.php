@@ -121,6 +121,8 @@ class RestApi implements Handler {
     $invocation= new Invocation($this->invocations, $delegate);
     try {
       return $this->transmit($res, $invocation->proceed($args), $out);
+    } catch (Error $e) {
+      return $this->transmit($res, Response::error($e->status(), $e), $out);
     } catch (Throwable $e) {
       return $this->transmit($res, Response::error(500, $e), $out);
     }
