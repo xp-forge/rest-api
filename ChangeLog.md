@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 1.1.1 / 2019-01-22
+
+* Made compatible with `xp-forge/marshalling` 0.3.0 - @thekid
+
 ## 1.1.0 / 2018-10-19
 
 * Merged PR #11: Handle `web.Error` - @johannes85, @thekid
