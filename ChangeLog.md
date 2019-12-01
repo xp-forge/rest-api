@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 1.1.2 / 2019-12-01
+
+* Made compatible with XP 10 - @thekid
+
 ## 1.1.1 / 2019-01-22
 
 * Made compatible with `xp-forge/marshalling` 0.3.0 - @thekid
