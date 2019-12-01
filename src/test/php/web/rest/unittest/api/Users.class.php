@@ -48,7 +48,7 @@ class Users {
     throw new Error(402, 'Payment Required');
   }
 
-  #[@get('/{id}/avatar'), @cached(ttl= 3600)]
+  #[@get('/{id}/avatar'), @cached(['ttl' => 3600])]
   public function userAvatar($id) {
     if (!isset($this->users[$id])) {
       return Response::notFound('No such user #'.$id);
