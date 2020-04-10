@@ -3,6 +3,11 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 1.1.3 / 2020-04-10
+
+* Implemented RFC #335: Remove deprecated key/value pair annotation syntax
+  (@thekid)
+
 ## 1.1.2 / 2019-12-01
 
 * Made compatible with XP 10 - @thekid

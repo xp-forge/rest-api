@@ -162,7 +162,7 @@ class RestApiTest extends RunTest {
     $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
   }
 
-  #[@test, @expect(class= Error::class, withMessage= 'Unsupported mime type'), @values([
+  #[@test, @expect(['class' => Error::class, 'withMessage' => 'Unsupported mime type']), @values([
   #  'text/html, application/xhtml+xml, application/xml; q=0.9',
   #  'application/xml',
   #  'text/xml'
