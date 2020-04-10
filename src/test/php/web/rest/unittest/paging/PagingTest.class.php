@@ -4,9 +4,7 @@ use unittest\TestCase;
 use util\NoSuchElementException;
 use web\Request;
 use web\io\TestInput;
-use web\rest\paging\PageParameters;
-use web\rest\paging\Pagination;
-use web\rest\paging\Paging;
+use web\rest\paging\{PageParameters, Pagination, Paging};
 
 class PagingTest extends TestCase {
 

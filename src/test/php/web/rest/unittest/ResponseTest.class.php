@@ -1,8 +1,8 @@
 <?php namespace web\rest\unittest;
 
+use lang\IllegalAccessException;
 use unittest\TestCase;
 use web\rest\Response;
-use lang\IllegalAccessException;
 
 class ResponseTest extends TestCase {
   const URI = 'http://example.com/';

@@ -1,8 +1,6 @@
 <?php namespace web\rest\unittest\api;
 
-use util\Currency;
-use util\Date;
-use util\Money;
+use util\{Currency, Date, Money};
 use web\Request;
 use web\rest\Response;
 use web\rest\unittest\Person;

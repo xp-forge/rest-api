@@ -1,10 +1,8 @@
 <?php namespace web\rest\unittest;
 
 use unittest\TestCase;
-use web\Request;
-use web\Response;
-use web\io\TestInput;
-use web\io\TestOutput;
+use web\{Request, Response};
+use web\io\{TestInput, TestOutput};
 
 abstract class RunTest extends TestCase {
 

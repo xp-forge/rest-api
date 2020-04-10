@@ -1,12 +1,9 @@
 <?php namespace web\rest\unittest;
 
 use web\Error;
-use web\rest\MethodsIn;
-use web\rest\ResourcesIn;
-use web\rest\RestApi;
+use web\rest\{MethodsIn, ResourcesIn, RestApi};
 use web\rest\format\Json;
-use web\rest\unittest\api\Monitoring;
-use web\rest\unittest\api\Users;
+use web\rest\unittest\api\{Monitoring, Users};
 
 class RestApiTest extends RunTest {
 

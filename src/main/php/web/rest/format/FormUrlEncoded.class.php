@@ -1,8 +1,7 @@
 <?php namespace web\rest\format;
 
 use io\streams\Streams;
-use lang\FormatException;
-use lang\IllegalArgumentException;
+use lang\{FormatException, IllegalArgumentException};
 
 class FormUrlEncoded extends EntityFormat {
 

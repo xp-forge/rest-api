@@ -1,9 +1,7 @@
 <?php namespace web\rest\format;
 
-use text\json\Format;
-use text\json\StreamOutput;
-use text\json\StreamInput;
 use lang\IllegalArgumentException;
+use text\json\{Format, StreamInput, StreamOutput};
 
 class Json extends EntityFormat {
   private static $FORMAT;

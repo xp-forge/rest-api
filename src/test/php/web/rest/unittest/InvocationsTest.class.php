@@ -1,10 +1,7 @@
 <?php namespace web\rest\unittest;
 
-use lang\ElementNotFoundException;
-use lang\IllegalStateException;
-use web\rest\Interceptor;
-use web\rest\Response;
-use web\rest\RestApi;
+use lang\{ElementNotFoundException, IllegalStateException};
+use web\rest\{Interceptor, Response, RestApi};
 use web\rest\unittest\api\Users;
 
 class InvocationsTest extends RunTest {

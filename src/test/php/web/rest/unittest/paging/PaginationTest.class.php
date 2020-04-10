@@ -1,10 +1,9 @@
 <?php namespace web\rest\unittest\paging;
 
-use web\rest\Response;
-use web\rest\paging\Pagination;
-use web\rest\paging\PageParameters;
 use web\Request;
 use web\io\TestInput;
+use web\rest\Response;
+use web\rest\paging\{PageParameters, Pagination};
 
 class PaginationTest extends \unittest\TestCase {
   const SIZE = 5;

@@ -1,9 +1,7 @@
 <?php namespace web\rest;
 
-use io\streams\InputStream;
-use io\streams\Streams;
-use lang\XPClass;
-use lang\IllegalArgumentException;
+use io\streams\{InputStream, Streams};
+use lang\{IllegalArgumentException, XPClass};
 use lang\reflect\TargetInvocationException;
 
 class Delegate {

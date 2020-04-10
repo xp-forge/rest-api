@@ -1,14 +1,9 @@
 <?php namespace web\rest;
 
-use lang\IllegalArgumentException;
-use lang\Throwable;
+use lang\{IllegalArgumentException, Throwable};
 use util\data\Marshalling;
-use web\Error;
-use web\Handler;
-use web\rest\format\EntityFormat;
-use web\rest\format\FormUrlEncoded;
-use web\rest\format\Json;
-use web\rest\format\OctetStream;
+use web\{Error, Handler};
+use web\rest\format\{EntityFormat, FormUrlEncoded, Json, OctetStream};
 use web\routing\CannotRoute;
 
 class RestApi implements Handler {
