@@ -2,9 +2,9 @@
 
 use lang\{IllegalArgumentException, Throwable};
 use util\data\Marshalling;
-use web\{Error, Handler};
 use web\rest\format\{EntityFormat, FormUrlEncoded, Json, OctetStream};
 use web\routing\CannotRoute;
+use web\{Error, Handler};
 
 class RestApi implements Handler {
   private $delegates, $base, $marshalling, $formats;
@@ -57,7 +57,7 @@ class RestApi implements Handler {
    * @return web.rest.format.EntityFormat
    */
   private function format($mime) {
-    return isset($this->formats[$mime]) ? $this->formats[$mime] : $this->formats['application/octet-stream'];
+    return $this->formats[$mime] ?? $this->formats['application/octet-stream'];
   }
 
 
