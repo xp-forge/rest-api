@@ -13,23 +13,29 @@ Example
 -------
 
 ```php
-use web\rest\Response;
+use web\rest\{Get, Post, Resource, Response, Param, Entity};
 
-#[@resource('/users')]
+#[Resource('/users')]
 class Users {
 
-  #[@get('/'), @$max: param]
-  public function listUsers($max= 10) {
+  #[Get('/')]
+  public function listUsers(
+    #[Param]
+    $max= 10
+  ) {
     // ...
   }
 
-  #[@get('/{id}')]
+  #[Get('/{id}')]
   public function getUser($id) {
     // ...
   }
 
-  #[@post('/'), @$user: entity]
-  public function createUser($user) {
+  #[Post('/')]
+  public function createUser(
+    #[Entity]
+    $user
+  ) {
     // ...
     return Response::created('/users/'.$id)->entity($created);
   }
@@ -63,16 +69,16 @@ Then call `curl -i localhost:8080/users/1549`.
 Parameter sources
 -----------------
 
-Method parameters are automatically extracted from URI segments if their name matches the string in the curly braces. For other sources, you will need to supply a method annotation in the form `$<param>: <source>[(<name>)]`:
+Method parameters are automatically extracted from URI segments if their name matches the string in the curly braces. For other sources, you will need to supply a method attribute:
 
-* `@$max: param` will fetch the $max parameter from the request parameter named "max".
-* `@$max: param('maximum')` will fetch the $max parameter from the request parameter named "maximum".
-* `@$user: value` will use a request value (which was previously passed e.g. inside a filter via `pass()`) for $user
-* `@$type: header('Content-Type')` will use the *Content-Type* header as value for $type
-* `@$attributes: entity` will deserialize the request body and pass its value to $attributes
-* `@$upload: stream` will pass an `io.streams.InputStream` instance to stream the request body to $upload
-* `@$bytes: body` will pass the request body as a string
-* `@$req: request` will pass the complete request object
+* `#[Param]` will fetch the parameter from the request parameter named "max".
+* `#[Param('maximum')]` will fetch the parameter from the request parameter named "maximum".
+* `#[Value]` will use a request value (which was previously passed e.g. inside a filter via `pass()`) for the parameter
+* `#[Header('Content-Type')]` will use the *Content-Type* header as value for the parameter
+* `#[Entity]` will deserialize the request body and pass its value to the parameter
+* `#[Stream]` will pass an `io.streams.InputStream` instance to stream the request body to the parameter
+* `#[Body]` will pass the request body as a string
+* `#[Request]` will pass the complete request object
 
 
 Return types
