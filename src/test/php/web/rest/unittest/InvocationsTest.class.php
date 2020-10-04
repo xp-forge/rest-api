@@ -1,12 +1,13 @@
 <?php namespace web\rest\unittest;
 
 use lang\{ElementNotFoundException, IllegalStateException};
-use web\rest\{Interceptor, Response, RestApi};
+use unittest\Test;
 use web\rest\unittest\api\Users;
+use web\rest\{Interceptor, Response, RestApi};
 
 class InvocationsTest extends RunTest {
 
-  #[@test]
+  #[Test]
   public function intercepting() {
     $invocations= newinstance(Interceptor::class, [], [
       'intercept' => function($invocation, $args) use(&$invoked) {
@@ -19,7 +20,7 @@ class InvocationsTest extends RunTest {
     $this->assertEquals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
   }
 
-  #[@test]
+  #[Test]
   public function intercepting_with_callable() {
     $invocations= function($invocation, $args) use(&$invoked) {
       $invoked= [$invocation->target()->name(), $args];
@@ -30,7 +31,7 @@ class InvocationsTest extends RunTest {
     $this->assertEquals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
   }
 
-  #[@test]
+  #[Test]
   public function intercepting_catching_exceptions() {
     $invocations= function($invocation, $args) use(&$caught) {
       try {
@@ -45,7 +46,7 @@ class InvocationsTest extends RunTest {
     $this->assertEquals(['lang.ElementNotFoundException', 'No such user #0'], $caught);
   }
 
-  #[@test]
+  #[Test]
   public function intercepting_can_access_annotations() {
     $invocations= function($invocation, $args) use(&$cached) {
       $cached= $invocation->target()->annotations()['cached'];
@@ -56,7 +57,7 @@ class InvocationsTest extends RunTest {
     $this->assertEquals(['ttl' => 3600], $cached);
   }
 
-  #[@test]
+  #[Test]
   public function can_use_multiple_interceptors() {
     $api= (new RestApi(new Users()))
       ->intercepting(function($invocation, $args) use(&$invoked) {
@@ -73,7 +74,7 @@ class InvocationsTest extends RunTest {
     $this->assertEquals(['one', 'two'], $invoked);
   }
 
-  #[@test]
+  #[Test]
   public function can_break_chain_of_interceptors_by_not_invoking_proceed() {
     $api= (new RestApi(new Users()))
       ->intercepting(function($invocation, $args) {

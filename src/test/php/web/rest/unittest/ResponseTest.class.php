@@ -1,13 +1,13 @@
 <?php namespace web\rest\unittest;
 
 use lang\IllegalAccessException;
-use unittest\TestCase;
+use unittest\{Test, TestCase};
 use web\rest\Response;
 
 class ResponseTest extends TestCase {
   const URI = 'http://example.com/';
 
-  #[@test]
+  #[Test]
   public function ok() {
     $this->assertEquals(
       ['status' => 200, 'headers' => [], 'body' => null],
@@ -15,7 +15,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function created() {
     $this->assertEquals(
       ['status' => 201, 'headers' => [], 'body' => null],
@@ -23,7 +23,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function created_with_location() {
     $this->assertEquals(
       ['status' => 201, 'headers' => ['Location' => self::URI], 'body' => null],
@@ -31,7 +31,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function no_content() {
     $this->assertEquals(
       ['status' => 204, 'headers' => [], 'body' => null],
@@ -39,7 +39,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function see() {
     $this->assertEquals(
       ['status' => 302, 'headers' => ['Location' => self::URI], 'body' => null],
@@ -47,7 +47,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function not_modified() {
     $this->assertEquals(
       ['status' => 304, 'headers' => [], 'body' => null],
@@ -55,7 +55,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function not_found() {
     $this->assertEquals(
       ['status' => 404, 'headers' => [], 'body' => null],
@@ -63,7 +63,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function not_found_with_message() {
     $this->assertEquals(
       ['status' => 404, 'headers' => [], 'body' => ['error' => ['status' => 404, 'message' => 'No such user #0']]],
@@ -71,7 +71,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function not_acceptable() {
     $this->assertEquals(
       ['status' => 406, 'headers' => [], 'body' => null],
@@ -79,7 +79,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function not_acceptable_with_message() {
     $this->assertEquals(
       ['status' => 406, 'headers' => [], 'body' => ['error' => ['status' => 406, 'message' => 'Missing argument "user"']]],
@@ -87,7 +87,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function error() {
     $this->assertEquals(
       ['status' => 500, 'headers' => [], 'body' => null],
@@ -95,7 +95,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function error_with_status() {
     $this->assertEquals(
       ['status' => 503, 'headers' => [], 'body' => null],
@@ -103,7 +103,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function error_with_status_and_message() {
     $this->assertEquals(
       ['status' => 503, 'headers' => [], 'body' => ['error' => ['status' => 503, 'message' => 'Database error']]],
@@ -111,7 +111,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function error_with_status_and_exception() {
     $this->assertEquals(
       ['status' => 403, 'headers' => [], 'body' => ['error' => ['status' => 403, 'message' => 'Not allowed']]],
@@ -119,7 +119,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function status() {
     $this->assertEquals(
       ['status' => 402, 'headers' => [], 'body' => null],
@@ -127,7 +127,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function type() {
     $this->assertEquals(
       ['status' => 200, 'headers' => ['Content-Type' => 'text/plain'], 'body' => null],
@@ -135,7 +135,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function header() {
     $this->assertEquals(
       ['status' => 200, 'headers' => ['Age' => 12], 'body' => null],
@@ -143,7 +143,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function multiple_headers() {
     $this->assertEquals(
       ['status' => 200, 'headers' => ['Age' => 12, 'Content-Language' => 'de'], 'body' => null],
@@ -151,7 +151,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function entity() {
     $this->assertEquals(
       ['status' => 200, 'headers' => [], 'body' => ['value' => [1, 2, 3]]],
@@ -159,7 +159,7 @@ class ResponseTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function body() {
     $this->assertEquals(
       ['status' => 200, 'headers' => [], 'body' => ['bytes' => 'Test']],

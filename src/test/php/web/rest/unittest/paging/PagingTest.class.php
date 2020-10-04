@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest\paging;
 
-use unittest\TestCase;
+use unittest\{Expect, Test, TestCase};
 use util\NoSuchElementException;
 use web\Request;
 use web\io\TestInput;
@@ -8,12 +8,12 @@ use web\rest\paging\{PageParameters, Pagination, Paging};
 
 class PagingTest extends TestCase {
 
-  #[@test]
+  #[Test]
   public function can_create() {
     new Paging(5, []);
   }
 
-  #[@test]
+  #[Test]
   public function on_request() {
     $request= new Request(new TestInput('GET', '/'));
     $parameters= new PageParameters('page', 'per_page');
@@ -24,7 +24,7 @@ class PagingTest extends TestCase {
     );
   }
 
-  #[@test, @expect(NoSuchElementException::class)]
+  #[Test, Expect(NoSuchElementException::class)]
   public function raises_exception_when_no_behavior_applies() {
     (new Paging(5, []))->on(new Request(new TestInput('GET', '/')));
   }

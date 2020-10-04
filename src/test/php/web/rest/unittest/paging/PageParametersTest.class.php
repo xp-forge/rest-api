@@ -1,5 +1,6 @@
 <?php namespace web\rest\unittest\paging;
 
+use unittest\Test;
 use web\Request;
 use web\io\TestInput;
 use web\rest\Response;
@@ -29,42 +30,42 @@ class PageParametersTest extends \unittest\TestCase {
     $this->fixture= new PageParameters('page', 'per_page');
   }
 
-  #[@test]
+  #[Test]
   public function paginates() {
     $this->assertTrue($this->fixture->paginates($this->newRequest()));
   }
 
-  #[@test]
+  #[Test]
   public function start_for_empty_request() {
     $this->assertNull($this->fixture->start($this->newRequest(), self::SIZE));
   }
 
-  #[@test]
+  #[Test]
   public function start_in_request() {
     $this->assertEquals(0, $this->fixture->start($this->newRequest('?page=1'), self::SIZE));
   }
 
-  #[@test]
+  #[Test]
   public function end_for_empty_request() {
     $this->assertEquals(self::SIZE, $this->fixture->end($this->newRequest(), self::SIZE));
   }
 
-  #[@test]
+  #[Test]
   public function end_via_limit_in_request() {
     $this->assertEquals(10, $this->fixture->end($this->newRequest('?page=2&per_page=5'), self::SIZE));
   }
 
-  #[@test]
+  #[Test]
   public function limit_for_empty_request() {
     $this->assertEquals(self::SIZE, $this->fixture->limit($this->newRequest(), self::SIZE));
   }
 
-  #[@test]
+  #[Test]
   public function limit_in_request() {
     $this->assertEquals(5, $this->fixture->limit($this->newRequest('?per_page=5'), self::SIZE));
   }
 
-  #[@test]
+  #[Test]
   public function no_headers_when_first_page_is_also_last_page() {
     $response= newinstance(Response::class, [], [
       '__construct' => function() { /* Shadow parent */ },
@@ -76,7 +77,7 @@ class PageParametersTest extends \unittest\TestCase {
     $this->assertEquals([], $headers);
   }
 
-  #[@test]
+  #[Test]
   public function next_header_on_first_page() {
     $response= newinstance(Response::class, [], [
       '__construct' => function() { /* Shadow parent */ },
@@ -91,7 +92,7 @@ class PageParametersTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function next_and_prev_header_on_second_page() {
     $response= newinstance(Response::class, [], [
       '__construct' => function() { /* Shadow parent */ },
@@ -106,7 +107,7 @@ class PageParametersTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function prev_header_on_last_page() {
     $response= newinstance(Response::class, [], [
       '__construct' => function() { /* Shadow parent */ },

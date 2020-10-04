@@ -1,26 +1,26 @@
 <?php namespace web\rest\unittest;
 
-use unittest\TestCase;
+use unittest\{Test, TestCase, Values};
 use web\rest\Accept;
 
 class AcceptTest extends TestCase {
 
-  #[@test]
+  #[Test]
   public function can_create() {
     new Accept('*/*');
   }
 
-  #[@test]
+  #[Test]
   public function all_simply_selects_first() {
     $this->assertEquals('text/html', (new Accept('*/*'))->match('text/html'));
   }
 
-  #[@test]
+  #[Test]
   public function unmatched() {
     $this->assertNull((new Accept('application/json'))->match('text/html'));
   }
 
-  #[@test]
+  #[Test]
   public function text_all_selects_first_text_type() {
     $this->assertEquals(
       'text/html',
@@ -28,7 +28,7 @@ class AcceptTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function concrete_type_matched() {
     $this->assertEquals(
       'text/plain',
@@ -36,12 +36,7 @@ class AcceptTest extends TestCase {
     );
   }
 
-  #[@test, @values([
-  #  'text/*; q=0.8, text/plain; q=1.0',
-  #  'text/plain; q=1.0, text/*; q=0.8',
-  #  'text/plain; q=1.0, text/*',
-  #  'text/plain, text/*'
-  #])]
+  #[Test, Values(['text/*; q=0.8, text/plain; q=1.0', 'text/plain; q=1.0, text/*; q=0.8', 'text/plain; q=1.0, text/*', 'text/plain, text/*'])]
   public function selects_type_with_higher_q($header) {
     $this->assertEquals(
       'text/plain',
@@ -49,7 +44,7 @@ class AcceptTest extends TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function wikipedia_example_match_html_vs_plaintext() {
     $this->assertEquals(
       'text/html', 

@@ -1,11 +1,10 @@
 <?php namespace web\rest\unittest\api;
 
 use util\{Currency, Date, Money};
-use web\Request;
-use web\rest\Response;
 use web\rest\unittest\Person;
+use web\rest\{Request, Response, Resource, Entity, Get, Put};
 
-#[@resource]
+#[Resource]
 class Monitoring {
   private $startup, $responsible;
 
@@ -15,17 +14,20 @@ class Monitoring {
     $this->responsible= new Person(1549, 'Timm');
   }
  
-  #[@get('/monitoring/systems'), @$req: request]
-  public function systems(Request $req) {
+  #[Get('/monitoring/systems')]
+  public function systems(
+    #[Request]
+    $req
+  ) {
     return Response::ok()->entity(['page' => $req->param('page')]);
   }
 
-  #[@get('/monitoring/status')]
+  #[Get('/monitoring/status')]
   public function status() {
     return Response::ok()->type('text/plain')->body('OK');
   }
 
-  #[@get('/monitoring/details')]
+  #[Get('/monitoring/details')]
   public function startup() {
     return new Details([
       'startup'     => $this->startup,
@@ -35,14 +37,20 @@ class Monitoring {
     ]);
   }
 
-  #[@put('/monitoring/startup'), @$startup: entity]
-  public function reset(Date $startup) {
+  #[Put('/monitoring/startup')]
+  public function reset(
+    #[Entity]
+    Date $startup
+  ) {
     $this->startup= $startup;
     return Response::ok()->entity($this->startup);
   }
 
-  #[@put('/monitoring/responsible'), @$responsible: entity]
-  public function change(Person $responsible) {
+  #[Put('/monitoring/responsible')]
+  public function change(
+    #[Entity]
+    Person $responsible
+  ) {
     $this->responsible= $responsible;
     return Response::ok()->entity($this->responsible);
   }
