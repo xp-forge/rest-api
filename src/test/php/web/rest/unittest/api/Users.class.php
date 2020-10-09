@@ -3,7 +3,7 @@
 use io\streams\{InputStream, MemoryInputStream};
 use lang\ElementNotFoundException;
 use web\Error;
-use web\rest\{Response, Resource, Cached, Get, Post, Delete, Put, Entity};
+use web\rest\{Response, Resource, Get, Post, Delete, Put};
 
 #[Resource('/users')]
 class Users {
@@ -33,10 +33,7 @@ class Users {
   }
 
   #[Post('/')]
-  public function newUser(
-    #[Entity]
-    $user
-  ) {
+  public function newUser($user) {
     end($this->users);
     $id= key($this->users) + 1;
     $new= ['id' => $id, 'name' => $user['name']]; 

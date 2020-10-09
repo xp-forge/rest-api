@@ -7,13 +7,13 @@ use lang\IllegalArgumentException;
  */
 class Delegates {
   private static $METHODS= [
-    'get'     => null,
-    'head'    => null,
-    'post'    => null,
-    'put'     => null,
-    'patch'   => null,
-    'delete'  => null,
-    'options' => null
+    'get'     => 'default',
+    'head'    => 'default',
+    'post'    => 'payload',
+    'put'     => 'payload',
+    'patch'   => 'payload',
+    'delete'  => 'default',
+    'options' => 'default'
   ];
   public $patterns= [];
 
@@ -40,7 +40,7 @@ class Delegates {
         } else {
           $pattern= $base.preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment);
         }
-        $this->patterns['#^'.$verb.$pattern.'$#']= new Delegate($instance, $method);
+        $this->patterns['#^'.$verb.$pattern.'$#']= new Delegate($instance, $method, self::$METHODS[$verb]);
       }
     }
     return $this;
