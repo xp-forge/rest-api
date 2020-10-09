@@ -3,7 +3,7 @@
 use io\streams\{InputStream, MemoryInputStream};
 use lang\ElementNotFoundException;
 use web\Error;
-use web\rest\{Response, Resource, Cahed, Get, Post, Delete, Put, Entity};
+use web\rest\{Response, Resource, Cached, Get, Post, Delete, Put, Entity};
 
 #[Resource('/users')]
 class Users {
@@ -50,7 +50,7 @@ class Users {
     throw new Error(402, 'Payment Required');
   }
 
-  #[Get('/{id}/avatar'), Cached(['ttl' => 3600])]
+  #[Get('/{id}/avatar'), Cached(ttl: 3600)]
   public function userAvatar($id) {
     if (!isset($this->users[$id])) {
       return Response::notFound('No such user #'.$id);
