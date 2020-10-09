@@ -88,7 +88,7 @@ Methods can return anything, which is then serialized and written to the respons
 Example:
 
 ```php
-return Response::created('/users/{id}', $id)->type('application/vnd.example.customer-v2+json')->entity($user);
+return Response::created('/users/{id}', $id)->type('application/vnd.example.type-v2+json')->entity($user);
 ```
 
 Creation:
