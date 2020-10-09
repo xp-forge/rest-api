@@ -3,6 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #14: Expand curly braces inside location in `Response::see()`
+  and `Response::created()`.
+  (@thekid)
 * Merged PR #12: Inject request into parameters with `web.Request` type
   (@thekid)
 
