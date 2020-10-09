@@ -24,12 +24,6 @@ class Delegate {
         }
         return Streams::readAll($stream);
       },
-      'payload'  => function($req, $format, $name) {
-        return $req->param($name) ?? $req->value($name) ?? $req->header($name) ?? $format->read($req, $name);
-      },
-      'default'  => function($req, $format, $name) {
-        return $req->param($name) ?? $req->value($name) ?? $req->header($name) ?? null;
-      }
     ];
   }
 
@@ -56,14 +50,13 @@ class Delegate {
       // Source derived from parameter type
       $type= $param->getType();
       if ('var' === $type->getName()) {
-        $this->param($param, $param->getName(), $source);
+        // NOOP
       } else if ($type->isAssignableFrom(InputStream::class)) {
-        $this->param($param, $param->getName(), 'stream');
+        $source= 'stream';
       } else if ($type->isAssignableFrom(Request::class)) {
-        $this->param($param, $param->getName(), 'request');
-      } else {
-        $this->param($param, $param->getName(), $source);
+        $source= 'request';
       }
+      $this->param($param, $param->getName(), $source);
     }
   }
 

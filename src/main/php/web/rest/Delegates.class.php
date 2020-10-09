@@ -7,13 +7,13 @@ use lang\IllegalArgumentException;
  */
 class Delegates {
   private static $METHODS= [
-    'get'     => 'default',
-    'head'    => 'default',
-    'post'    => 'payload',
-    'put'     => 'payload',
-    'patch'   => 'payload',
-    'delete'  => 'default',
-    'options' => 'default'
+    'get'     => 'param',
+    'head'    => 'param',
+    'post'    => 'entity',
+    'put'     => 'entity',
+    'patch'   => 'entity',
+    'delete'  => 'param',
+    'options' => 'param'
   ];
   public $patterns= [];
 
