@@ -13,16 +13,13 @@ Example
 -------
 
 ```php
-use web\rest\{Get, Post, Resource, Response, Param, Entity};
+use web\rest\{Get, Post, Resource, Response};
 
 #[Resource('/users')]
 class Users {
 
   #[Get('/')]
-  public function listUsers(
-    #[Param]
-    $max= 10
-  ) {
+  public function listUsers($max= 10) {
     // ...
   }
 
@@ -32,10 +29,7 @@ class Users {
   }
 
   #[Post('/')]
-  public function createUser(
-    #[Entity]
-    $user
-  ) {
+  public function createUser($user) {
     // ...
     return Response::created('/users/'.$id)->entity($created);
   }
@@ -69,16 +63,18 @@ Then call `curl -i localhost:8080/users/1549`.
 Parameter sources
 -----------------
 
-Method parameters are automatically extracted from URI segments if their name matches the string in the curly braces. For other sources, you will need to supply a method attribute:
+Method parameters are automatically extracted from URI segments if their name matches the path segment in the curly braces. For requests without bodies (GET, HEAD, DELETE, OPTIONS), the value is extracted from request parameters. For requests with bodies (POST, PUT and PATCH), the body is deserialized and passed.
+
+To supply the source explicitely, you can use parameter attributes:
 
 * `#[Param]` will fetch the parameter from the request parameter named "max".
 * `#[Param('maximum')]` will fetch the parameter from the request parameter named "maximum".
 * `#[Value]` will use a request value (which was previously passed e.g. inside a filter via `pass()`) for the parameter
 * `#[Header('Content-Type')]` will use the *Content-Type* header as value for the parameter
 * `#[Entity]` will deserialize the request body and pass its value to the parameter
-* `#[Stream]` will pass an `io.streams.InputStream` instance to stream the request body to the parameter
 * `#[Body]` will pass the request body as a string
-* `#[Request]` will pass the complete request object
+* `#[Stream]` will pass an `io.streams.InputStream` instance to stream the request body to the parameter
+* `#[Request]` will pass the complete `web.Request` object
 
 
 Return types

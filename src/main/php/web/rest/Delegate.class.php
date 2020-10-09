@@ -24,9 +24,6 @@ class Delegate {
         }
         return Streams::readAll($stream);
       },
-      'default'  => function($req, $format, $name) {
-        return $req->param($name) ?? $req->value($name) ?? $req->header($name) ?? null;
-      }
     ];
   }
 
@@ -35,8 +32,9 @@ class Delegate {
    *
    * @param  object $instance
    * @param  lang.reflect.Method $method
+   * @param  string $source Default source
    */
-  public function __construct($instance, $method) {
+  public function __construct($instance, $method, $source) {
     $this->instance= $instance;
     $this->method= $method;
     foreach ($method->getParameters() as $param) {
@@ -44,20 +42,21 @@ class Delegate {
       // Source explicitely set by annotation
       foreach ($param->getAnnotations() as $source => $name) {
         if (isset(self::$SOURCES[$source])) {
-          $this->param($param, $name ?? $param->getName(), self::$SOURCES[$source]);
+          $this->param($param, $name ?? $param->getName(), $source);
           continue 2;
         }
       }
 
       // Source derived from parameter type
       $type= $param->getType();
-      if ($type->isAssignableFrom(InputStream::class)) {
-        $this->param($param, $param->getName(), self::$SOURCES['stream']);
+      if ('var' === $type->getName()) {
+        // NOOP
+      } else if ($type->isAssignableFrom(InputStream::class)) {
+        $source= 'stream';
       } else if ($type->isAssignableFrom(Request::class)) {
-        $this->param($param, $param->getName(), self::$SOURCES['request']);
-      } else {
-        $this->param($param, $param->getName(), self::$SOURCES['default']);
+        $source= 'request';
       }
+      $this->param($param, $param->getName(), $source);
     }
   }
 
@@ -70,14 +69,16 @@ class Delegate {
    * @return void
    */
   private function param($param, $name, $source) {
+    $extract= self::$SOURCES[$source];
+
     if ($param->isOptional()) {
       $default= $param->getDefaultValue();
-      $read= function($req, $format) use($source, $name, $default) {
-        return $source($req, $format, $name) ?? $default;
+      $read= function($req, $format) use($extract, $name, $default) {
+        return $extract($req, $format, $name) ?? $default;
       };
     } else {
-      $read= function($req, $format) use($source, $name) {
-        if (null === ($value= $source($req, $format, $name))) {
+      $read= function($req, $format) use($extract, $name) {
+        if (null === ($value= $extract($req, $format, $name))) {
           throw new IllegalArgumentException('Missing argument '.$name);
         }
         return $value;
