@@ -31,7 +31,7 @@ class Users {
   #[Post('/')]
   public function createUser($user) {
     // ...
-    return Response::created('/users/'.$id)->entity($created);
+    return Response::created('/users/{id}', $id)->entity($created);
   }
 }
 ```
