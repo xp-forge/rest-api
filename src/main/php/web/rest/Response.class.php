@@ -27,15 +27,35 @@ class Response {
   }
 
   /**
+   * Expands segments inside a given location
+   *
+   * @param  string $location
+   * @param  array $arguments
+   * @return string
+   */
+  private static function expand($location, $arguments) {
+    if (empty($arguments)) return $location;
+    $i= 0;
+    return preg_replace_callback(
+      '/{([^}]+)}/',
+      function($matches) use($arguments, &$i) { return rawurlencode($arguments[$matches[1]] ?? $arguments[$i++]); },
+      $location
+    );
+  }
+
+  /**
    * Creates a new response instance with the status code set to 201 (Created)
    * and an optional location.
    *
    * @param  string $location
+   * @param  var... $arguments
    * @return self
    */
-  public static function created($location= null) {
+  public static function created($location= null, ... $arguments) {
     $self= new self(201);
-    if (null !== $location) $self->headers['Location']= $location;
+    if (null !== $location) {
+      $self->headers['Location']= self::expand($location, $arguments);
+    }
     return $self;
   }
 
@@ -53,11 +73,12 @@ class Response {
    * and a specified location.
    *
    * @param  string $location
+   * @param  var... $arguments
    * @return self
    */
-  public static function see($location) {
+  public static function see($location, ... $arguments) {
     $self= new self(302);
-    $self->headers['Location']= $location;
+    $self->headers['Location']= self::expand($location, $arguments);
     return $self;
   }
 
