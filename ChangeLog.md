@@ -3,7 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
-* Merged PR #13 Parameter defaults. With this pull request, it's no longer
+## 3.0.0 / 2020-10-10
+
+* Merged PR #13: Parameter defaults. With this pull request, it's no longer
   necessary to supply parameter annotations for the typical case.
   (@thekid)
 * Merged PR #14: Expand curly braces inside location in `Response::see()`
