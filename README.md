@@ -20,7 +20,7 @@ class Users {
 
   #[Get('/')]
   public function listUsers($max= 10) {
-    // $max comes from request parameter "max", defaultin to 10
+    // $max comes from request parameter "max", defaulting to 10
     // ...
   }
 
