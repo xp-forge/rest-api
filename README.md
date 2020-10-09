@@ -20,16 +20,19 @@ class Users {
 
   #[Get('/')]
   public function listUsers($max= 10) {
+    // $max comes from request parameter "max", defaultin to 10
     // ...
   }
 
   #[Get('/{id}')]
   public function findUser($id) {
+    // $id is extracted from URL segment
     // ...
   }
 
   #[Post('/')]
   public function createUser($user) {
+    // $user is deserialized from the request body according to its content type
     // ...
     return Response::created('/users/{id}', $id)->entity($created);
   }
