@@ -52,7 +52,7 @@ class Delegate {
       // Source explicitely set by annotation
       foreach ($param->getAnnotations() as $source => $name) {
         if (isset(self::$SOURCES[$source])) {
-          $this->param($param, $name ?? $param->getName(), $source);
+          $this->param($param, $name ?? $param->getName(), self::$SOURCES[$source]);
           continue 2;
         }
       }
@@ -60,11 +60,11 @@ class Delegate {
       // Source derived from parameter type
       $type= $param->getType();
       if ($type->isAssignableFrom(InputStream::class)) {
-        $this->param($param, $param->getName(), 'stream');
+        $this->param($param, $param->getName(), self::$SOURCES['stream']);
       } else if ($type->isAssignableFrom(Request::class)) {
-        $this->param($param, $param->getName(), 'request');
+        $this->param($param, $param->getName(), self::$SOURCES['request']);
       } else {
-        $this->param($param, $param->getName(), 'default');
+        $this->param($param, $param->getName(), self::$SOURCES['default']);
       }
     }
   }
@@ -74,23 +74,18 @@ class Delegate {
    *
    * @param  lang.reflect.Parameter $param
    * @param  string $name
-   * @param  string $source
+   * @param  function(web.Request, web.rest.format.EntityFormat, string): var $source
    * @return void
    */
   private function param($param, $name, $source) {
     if ($param->isOptional()) {
       $default= $param->getDefaultValue();
       $read= function($req, $format) use($source, $name, $default) {
-        $f= self::$SOURCES[$source];
-        if (null === ($value= $f($req, $format, $name))) {
-          return $default;
-        }
-        return $value;
+        return $source($req, $format, $name) ?? $default;
       };
     } else {
       $read= function($req, $format) use($source, $name) {
-        $f= self::$SOURCES[$source];
-        if (null === ($value= $f($req, $format, $name))) {
+        if (null === ($value= $source($req, $format, $name))) {
           throw new IllegalArgumentException('Missing argument '.$name);
         }
         return $value;
