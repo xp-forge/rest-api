@@ -1,17 +1,16 @@
 <?php namespace web\rest;
 
 use io\streams\{InputStream, Streams};
-use lang\{IllegalArgumentException, XPClass};
+use lang\IllegalArgumentException;
 use lang\reflect\TargetInvocationException;
+use web\Request;
 
 class Delegate {
   private static $SOURCES;
-  private static $INPUTSTREAM;
   private $instance, $method;
   private $params= [];
 
   static function __static() {
-    self::$INPUTSTREAM= new XPClass(InputStream::class);
     self::$SOURCES= [
       'param'    => function($req, $format, $name) { return $req->param($name); },
       'value'    => function($req, $format, $name) { return $req->value($name); },
@@ -49,15 +48,24 @@ class Delegate {
     $this->instance= $instance;
     $this->method= $method;
     foreach ($method->getParameters() as $param) {
+
+      // Source explicitely set by annotation
       foreach ($param->getAnnotations() as $source => $name) {
         if (isset(self::$SOURCES[$source])) {
-          $this->param($param, $name ?: $param->getName(), $source);
+          $this->param($param, $name ?? $param->getName(), $source);
           continue 2;
         }
       }
 
-      $source= self::$INPUTSTREAM->isAssignableFrom($param->getType()) ? 'stream' : 'default';
-      $this->param($param, $param->getName(), $source);
+      // Source derived from parameter type
+      $type= $param->getType();
+      if ($type->isAssignableFrom(InputStream::class)) {
+        $this->param($param, $param->getName(), 'stream');
+      } else if ($type->isAssignableFrom(Request::class)) {
+        $this->param($param, $param->getName(), 'request');
+      } else {
+        $this->param($param, $param->getName(), 'default');
+      }
     }
   }
 
