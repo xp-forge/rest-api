@@ -32,6 +32,14 @@ class ResponseTest extends TestCase {
   }
 
   #[Test]
+  public function created_with_location_and_arguments() {
+    $this->assertEquals(
+      ['status' => 201, 'headers' => ['Location' => '/users/~friebe/avatars/1'], 'body' => null],
+      Response::created('/users/{user}/avatars/{id}', '~friebe', 1)->export()
+    );
+  }
+
+  #[Test]
   public function no_content() {
     $this->assertEquals(
       ['status' => 204, 'headers' => [], 'body' => null],
@@ -44,6 +52,14 @@ class ResponseTest extends TestCase {
     $this->assertEquals(
       ['status' => 302, 'headers' => ['Location' => self::URI], 'body' => null],
       Response::see(self::URI)->export()
+    );
+  }
+
+  #[Test]
+  public function see_with_arguments() {
+    $this->assertEquals(
+      ['status' => 302, 'headers' => ['Location' => '/users/~friebe/avatars/1'], 'body' => null],
+      Response::see('/users/{user}/avatars/{id}', '~friebe', 1)->export()
     );
   }
 
