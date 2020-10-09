@@ -1,8 +1,9 @@
 <?php namespace web\rest\unittest\api;
 
 use util\{Currency, Date, Money};
+use web\Request;
 use web\rest\unittest\Person;
-use web\rest\{Request, Response, Resource, Entity, Get, Put};
+use web\rest\{Response, Resource, Entity, Get, Put};
 
 #[Resource]
 class Monitoring {
@@ -15,10 +16,7 @@ class Monitoring {
   }
  
   #[Get('/monitoring/systems')]
-  public function systems(
-    #[Request]
-    $req
-  ) {
+  public function systems(Request $req) {
     return Response::ok()->entity(['page' => $req->param('page')]);
   }
 
