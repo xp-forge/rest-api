@@ -24,7 +24,7 @@ class Users {
   }
 
   #[Get('/{id}')]
-  public function getUser($id) {
+  public function findUser($id) {
     // ...
   }
 
