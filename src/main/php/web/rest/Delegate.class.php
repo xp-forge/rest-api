@@ -25,15 +25,7 @@ class Delegate {
         return Streams::readAll($stream);
       },
       'default'  => function($req, $format, $name) {
-        if (null !== ($v= $req->param($name))) {
-          return $v;
-        } else if (null !== ($v= $req->value($name))) {
-          return $v;
-        } else if (null !== ($v= $req->header($name))) {
-          return $v;
-        } else {
-          return null;
-        }
+        return $req->param($name) ?? $req->value($name) ?? $req->header($name) ?? null;
       }
     ];
   }
