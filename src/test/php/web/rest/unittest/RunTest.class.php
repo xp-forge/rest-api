@@ -34,7 +34,7 @@ abstract class RunTest extends TestCase {
    * @param  string $body
    * @return web.Response
    */
-  protected function run($api, $method, $uri, $headers= [], $body= null) {
+  protected function run($api, $method, $uri, $headers= [], $body= '') {
     $req= new Request(new TestInput($method, $uri, $headers, $body));
     $res= new Response(new TestOutput());
 

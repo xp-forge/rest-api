@@ -5,6 +5,7 @@ Rest API change log
 
 ## 3.0.1 / 2021-09-26
 
+* Fixed PHP 8.1 compatibility - @thekid
 * Made compatible with XP web 3.0, see xp-forge/web#83 - @thekid
 
 ## 3.0.0 / 2020-10-10

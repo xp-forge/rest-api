@@ -19,7 +19,7 @@ class ResourcesIn extends Delegates {
     $p= $package instanceof Package ? $package : Package::forName($package);
     foreach ($p->getClasses() as $class) {
       if ($class->hasAnnotation('resource')) {
-        $this->with($new ? $new($class) : $class->newInstance(), $class->getAnnotation('resource'));
+        $this->with($new ? $new($class) : $class->newInstance(), $class->getAnnotation('resource') ?? '');
       }
     }
     uksort($this->patterns, function($a, $b) { return strlen($b) - strlen($a); });
