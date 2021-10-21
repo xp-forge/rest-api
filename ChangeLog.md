@@ -3,6 +3,13 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 3.0.2 / 2021-10-21
+
+* Made library compatible with new major release of `xp-forge/json`
+  (@thekid)
+* Made library compatible with XP 11, newer `xp-framework/zip` library
+  (@thekid)
+
 ## 3.0.1 / 2021-09-26
 
 * Fixed PHP 8.1 compatibility - @thekid
