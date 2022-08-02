@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest;
 
-use unittest\{Expect, Ignore, Test, Values};
+use unittest\{Assert, Expect, Ignore, Test, Values};
 use web\Error;
 use web\rest\format\Json;
 use web\rest\unittest\api\{Monitoring, Users};
@@ -85,7 +85,7 @@ class RestApiTest extends RunTest {
     $headers= ['Content-Type' => 'image/png', 'Content-Length' => strlen($body)];
 
     $res= $this->run(new RestApi(new Users()), 'PUT', '/users/1549/avatar', $headers, $body);
-    $this->assertEquals(204, $res->status());
+    Assert::equals(204, $res->status());
   }
 
   #[Test]
@@ -97,7 +97,7 @@ class RestApiTest extends RunTest {
   #[Test]
   public function plain_output() {
     $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/status');
-    $this->assertEquals(
+    Assert::equals(
       "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK",
       $res->output()->bytes()
     );

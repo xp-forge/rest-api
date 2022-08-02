@@ -1,12 +1,12 @@
 <?php namespace web\rest\unittest\paging;
 
-use unittest\{Expect, Test, TestCase};
+use unittest\{Assert, Expect, Test, TestCase};
 use util\NoSuchElementException;
 use web\Request;
 use web\io\TestInput;
 use web\rest\paging\{PageParameters, Pagination, Paging};
 
-class PagingTest extends TestCase {
+class PagingTest {
 
   #[Test]
   public function can_create() {
@@ -18,7 +18,7 @@ class PagingTest extends TestCase {
     $request= new Request(new TestInput('GET', '/'));
     $parameters= new PageParameters('page', 'per_page');
 
-    $this->assertEquals(
+    Assert::equals(
       new Pagination($request, $parameters, 5),
       (new Paging(5, [$parameters]))->on($request)
     );

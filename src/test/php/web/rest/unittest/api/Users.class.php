@@ -3,7 +3,7 @@
 use io\streams\{InputStream, MemoryInputStream};
 use lang\ElementNotFoundException;
 use web\Error;
-use web\rest\{Response, Resource, Get, Post, Delete, Put};
+use web\rest\{Delete, Get, Post, Put, Resource, Response};
 
 #[Resource('/users')]
 class Users {

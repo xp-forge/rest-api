@@ -1,7 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use lang\{ElementNotFoundException, IllegalStateException};
-use unittest\Test;
+use unittest\{Assert, Test};
 use web\rest\unittest\api\Users;
 use web\rest\{Interceptor, Response, RestApi};
 
@@ -17,7 +17,7 @@ class InvocationsTest extends RunTest {
     ]);
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
-    $this->assertEquals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
+    Assert::equals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
   }
 
   #[Test]
@@ -28,7 +28,7 @@ class InvocationsTest extends RunTest {
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
-    $this->assertEquals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
+    Assert::equals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
   }
 
   #[Test]
@@ -43,7 +43,7 @@ class InvocationsTest extends RunTest {
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/0');
-    $this->assertEquals(['lang.ElementNotFoundException', 'No such user #0'], $caught);
+    Assert::equals(['lang.ElementNotFoundException', 'No such user #0'], $caught);
   }
 
   #[Test]
@@ -54,7 +54,7 @@ class InvocationsTest extends RunTest {
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549/avatar');
-    $this->assertEquals(['ttl' => 3600], $cached);
+    Assert::equals(['ttl' => 3600], $cached);
   }
 
   #[Test]
@@ -71,7 +71,7 @@ class InvocationsTest extends RunTest {
     ;
 
     $this->run($api, 'GET', '/users/1549/avatar');
-    $this->assertEquals(['one', 'two'], $invoked);
+    Assert::equals(['one', 'two'], $invoked);
   }
 
   #[Test]

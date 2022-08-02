@@ -3,7 +3,7 @@
 use util\{Currency, Date, Money};
 use web\Request;
 use web\rest\unittest\Person;
-use web\rest\{Response, Resource, Entity, Get, Put};
+use web\rest\{Entity, Get, Put, Resource, Response};
 
 #[Resource]
 class Monitoring {

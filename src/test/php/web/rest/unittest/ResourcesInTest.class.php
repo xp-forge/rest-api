@@ -1,21 +1,21 @@
 <?php namespace web\rest\unittest;
 
 use lang\reflect\Package;
-use unittest\{Test, TestCase};
+use unittest\{Assert, Test};
 use web\rest\ResourcesIn;
 
-class ResourcesInTest extends TestCase {
+class ResourcesInTest {
 
   #[Test]
   public function using_package_name() {
     $r= new ResourcesIn('web.rest.unittest.api');
-    $this->assertNotEquals(null, $r->target('get', '/monitoring/status'));
+    Assert::notEquals(null, $r->target('get', '/monitoring/status'));
   }
 
   #[Test]
   public function using_package_instance() {
     $r= new ResourcesIn(Package::forName('web.rest.unittest.api'));
-    $this->assertNotEquals(null, $r->target('get', '/monitoring/status'));
+    Assert::notEquals(null, $r->target('get', '/monitoring/status'));
   }
 
   #[Test]
@@ -26,6 +26,6 @@ class ResourcesInTest extends TestCase {
       return $class->newInstance();
     });
     sort($classes);
-    $this->assertEquals(['web.rest.unittest.api.Monitoring', 'web.rest.unittest.api.Users'], $classes);
+    Assert::equals(['web.rest.unittest.api.Monitoring', 'web.rest.unittest.api.Users'], $classes);
   }
 }

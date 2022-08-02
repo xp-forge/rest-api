@@ -1,10 +1,10 @@
 <?php namespace web\rest\unittest;
 
-use unittest\TestCase;
+use unittest\Assert;
 use web\io\{TestInput, TestOutput};
 use web\{Request, Response};
 
-abstract class RunTest extends TestCase {
+abstract class RunTest {
 
   /**
    * Assertion helper - tests HTTP payload. Assumes chunked transfer-encoding.
@@ -18,7 +18,7 @@ abstract class RunTest extends TestCase {
    */
   protected function assertPayload($status, $mime, $body, $res) {
     $bytes= $res->output()->bytes();
-    $this->assertEquals(
+    Assert::equals(
       ['status' => $status, 'mime' => $mime, 'body' => dechex(strlen($body))."\r\n".$body."\r\n0\r\n\r\n"],
       ['status' => $res->status(), 'mime' => $res->headers()['Content-Type'], 'body' => substr($bytes, strpos($bytes, "\r\n\r\n") + 4)]
     );

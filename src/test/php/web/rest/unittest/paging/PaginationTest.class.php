@@ -1,12 +1,12 @@
 <?php namespace web\rest\unittest\paging;
 
-use unittest\{Test, Values};
+use unittest\{Assert, Test, Values};
 use web\Request;
 use web\io\TestInput;
 use web\rest\Response;
 use web\rest\paging\{PageParameters, Pagination};
 
-class PaginationTest extends \unittest\TestCase {
+class PaginationTest {
   const SIZE = 5;
 
   /**
@@ -30,22 +30,22 @@ class PaginationTest extends \unittest\TestCase {
 
   #[Test, Values([['', 0], ['?page=1', 0], ['?page=2', self::SIZE], ['?page=1&per_page=10', 0], ['?page=2&per_page=10', 10]])]
   public function start($queryString, $offset) {
-    $this->assertEquals($offset, $this->newFixture($queryString)->start(0));
+    Assert::equals($offset, $this->newFixture($queryString)->start(0));
   }
 
   #[Test, Values([['', self::SIZE], ['?page=1', self::SIZE], ['?page=1&per_page=10', 10], ['?page=2&per_page=10', 20]])]
   public function end($queryString, $offset) {
-    $this->assertEquals($offset, $this->newFixture($queryString)->end(0));
+    Assert::equals($offset, $this->newFixture($queryString)->end(0));
   }
 
   #[Test]
   public function limit_defaults_to_size() {
-    $this->assertEquals(self::SIZE, $this->newFixture()->limit());
+    Assert::equals(self::SIZE, $this->newFixture()->limit());
   }
 
   #[Test]
   public function limit_explicitely_given() {
-    $this->assertEquals(10, $this->newFixture('?per_page=10')->limit());
+    Assert::equals(10, $this->newFixture('?per_page=10')->limit());
   }
 
   #[Test]
@@ -54,7 +54,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
-    $this->assertEquals([], $entity);
+    Assert::equals([], $entity);
   }
 
   #[Test, Values(eval: '[[[1, 2, 3]], [new \ArrayIterator([1, 2, 3])], [new \ArrayObject([1, 2, 3])]]')]
@@ -63,7 +63,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
-    $this->assertEquals([1, 2, 3], $entity);
+    Assert::equals([1, 2, 3], $entity);
   }
 
   #[Test]
@@ -73,7 +73,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
-    $this->assertEquals([1, 2, 3], $entity);
+    Assert::equals([1, 2, 3], $entity);
   }
 
   #[Test, Values([1, 2, self::SIZE])]
@@ -83,7 +83,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
-    $this->assertEquals($elements, $entity);
+    Assert::equals($elements, $entity);
   }
 
   #[Test, Values([1, 2, self::SIZE])]
@@ -93,7 +93,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
-    $this->assertEquals(array_fill(0, self::SIZE, 'element'), $entity);
+    Assert::equals(array_fill(0, self::SIZE, 'element'), $entity);
   }
 
   #[Test, Values([1, 2, self::SIZE])]
@@ -107,7 +107,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'entity'      => function($value) use(&$entity) { $entity= $value; return $this; }
     ]));
-    $this->assertEquals(array_fill(0, self::SIZE, 'element'), $entity);
+    Assert::equals(array_fill(0, self::SIZE, 'element'), $entity);
   }
 
   #[Test]
@@ -118,7 +118,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
     ]));
-    $this->assertEquals([], $headers);
+    Assert::equals([], $headers);
   }
 
   #[Test]
@@ -133,7 +133,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
     ]));
-    $this->assertEquals([], $headers);
+    Assert::equals([], $headers);
   }
 
   #[Test]
@@ -144,7 +144,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
     ]));
-    $this->assertEquals(['Link' => '<http://localhost/?page=2>; rel="next"'], $headers);
+    Assert::equals(['Link' => '<http://localhost/?page=2>; rel="next"'], $headers);
   }
 
   #[Test]
@@ -159,7 +159,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
     ]));
-    $this->assertEquals(['Link' => '<http://localhost/?page=2>; rel="next"'], $headers);
+    Assert::equals(['Link' => '<http://localhost/?page=2>; rel="next"'], $headers);
   }
 
   #[Test]
@@ -169,7 +169,7 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
     ]));
-    $this->assertEquals(['Link' => '<http://localhost/?page=1>; rel="prev"'], $headers);
+    Assert::equals(['Link' => '<http://localhost/?page=1>; rel="prev"'], $headers);
   }
 
 
@@ -181,6 +181,6 @@ class PaginationTest extends \unittest\TestCase {
       '__construct' => function() { /* Shadow parent */ },
       'header'      => function($name, $value) use(&$headers) { $headers[$name]= (string)$value; }
     ]));
-    $this->assertEquals(['Link' => '<http://localhost/?page=1>; rel="prev", <http://localhost/?page=3>; rel="next"'], $headers);
+    Assert::equals(['Link' => '<http://localhost/?page=1>; rel="prev", <http://localhost/?page=3>; rel="next"'], $headers);
   }
 }
