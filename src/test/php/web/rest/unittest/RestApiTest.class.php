@@ -26,7 +26,12 @@ class RestApiTest extends RunTest {
   #[Test]
   public function list_users_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users');
-    $this->assertPayload(200, 'application/json', '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}', $res);
+    $this->assertPayload(
+      200,
+      'application/json',
+      '{"1549":{"id":1549,"handle":"thekid","name":"Timm"},"6100":{"id":6100,"handle":"test","name":"Test"}}',
+      $res
+    );
   }
 
   #[Test]
@@ -36,9 +41,15 @@ class RestApiTest extends RunTest {
   }
 
   #[Test]
-  public function find_user_returns_json() {
+  public function find_user_by_name_returns_json() {
+    $res= $this->run(new RestApi(new Users()), 'GET', '/users/@thekid');
+    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
+  }
+
+  #[Test]
+  public function find_user_by_id_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549');
-    $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
+    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test]
@@ -136,7 +147,12 @@ class RestApiTest extends RunTest {
   #[Test]
   public function rest_api_base() {
     $res= $this->run(new RestApi(new Users(), '/api/1.0'), 'GET', '/api/1.0/users');
-    $this->assertPayload(200, 'application/json', '{"1549":{"id":1549,"name":"Timm"},"6100":{"id":6100,"name":"Test"}}', $res);
+    $this->assertPayload(
+      200,
+      'application/json',
+      '{"1549":{"id":1549,"handle":"thekid","name":"Timm"},"6100":{"id":6100,"handle":"test","name":"Test"}}',
+      $res
+    );
   }
 
   #[Test]
@@ -148,13 +164,13 @@ class RestApiTest extends RunTest {
   #[Test]
   public function accept_all_defaults_to_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => '*/*']);
-    $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
+    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test]
   public function accept_json_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => 'application/json']);
-    $this->assertPayload(200, 'application/json', '{"id":1549,"name":"Timm"}', $res);
+    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test, Expect(['class' => Error::class, 'withMessage' => 'Unsupported mime type']), Values(['text/html, application/xhtml+xml, application/xml; q=0.9', 'application/xml', 'text/xml'])]

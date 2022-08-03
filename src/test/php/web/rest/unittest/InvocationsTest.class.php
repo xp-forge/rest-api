@@ -17,7 +17,7 @@ class InvocationsTest extends RunTest {
     ]);
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
-    Assert::equals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
+    Assert::equals(['web.rest.unittest.api.Users::findUserById', ['1549']], $invoked);
   }
 
   #[Test]
@@ -28,7 +28,7 @@ class InvocationsTest extends RunTest {
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549');
-    Assert::equals(['web.rest.unittest.api.Users::findUser', ['1549']], $invoked);
+    Assert::equals(['web.rest.unittest.api.Users::findUserById', ['1549']], $invoked);
   }
 
   #[Test]

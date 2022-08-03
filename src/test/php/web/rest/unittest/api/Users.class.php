@@ -8,8 +8,8 @@ use web\rest\{Delete, Get, Post, Put, Resource, Response};
 #[Resource('/users')]
 class Users {
   private $users= [
-    1549 => ['id' => 1549, 'name' => 'Timm'],
-    6100 => ['id' => 6100, 'name' => 'Test'],
+    1549 => ['id' => 1549, 'handle' => 'thekid', 'name' => 'Timm'],
+    6100 => ['id' => 6100, 'handle' => 'test', 'name' => 'Test'],
   ];
 
   #[Get('/')]
@@ -24,12 +24,21 @@ class Users {
   }
 
   #[Get('/{id:[0-9]+}')]
-  public function findUser($id) {
+  public function findUserById($id) {
     if (!isset($this->users[$id])) {
       throw new ElementNotFoundException('No such user #'.$id);
     }
 
     return $this->users[$id];
+  }
+
+  #[Get('/@{handle:[a-z]+}')]
+  public function findUserByName($handle) {
+    foreach ($this->users as $user) {
+      if ($handle === $user['handle']) return $user;
+    }
+
+    throw new ElementNotFoundException('No such user @'.$handle);
   }
 
   #[Post('/')]
