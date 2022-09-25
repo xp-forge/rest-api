@@ -113,6 +113,8 @@ class RestApi implements Handler {
       return $this->transmit($res, Response::error(400, $e), $out);
     }
 
+    // We've come here, signal to the client to continue
+    if ('100-continue' === $req->header('Expect')) $res->hint(100, 'Continue');
     $invocation= new Invocation($this->invocations, $delegate);
     try {
       return $this->transmit($res, $invocation->proceed($args), $out);

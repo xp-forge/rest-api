@@ -35,6 +35,15 @@ class RestApiTest extends RunTest {
   }
 
   #[Test]
+  public function returns_100_continue_if_expect_sent() {
+    $payload= $this->run(new RestApi(new Users()), 'GET', '/users', ['Expect' => '100-continue'])
+      ->output()
+      ->bytes()
+    ;
+    Assert::equals('HTTP/1.1 100 Continue', substr($payload, 0, strpos($payload, "\r\n")));
+  }
+
+  #[Test]
   public function count_users_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/count');
     $this->assertPayload(200, 'application/json', '2', $res);
