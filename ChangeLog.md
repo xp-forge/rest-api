@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 3.1.0 / 2022-09-26
+
+* Merged PR #16: Send a "HTTP/1.1 100 Continue" if we get an *Expect*
+  header with "100-continue"
+  (@thekid)
+
 ## 3.0.2 / 2021-10-21
 
 * Made library compatible with new major release of `xp-forge/json`
