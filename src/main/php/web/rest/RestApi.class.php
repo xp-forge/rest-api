@@ -72,6 +72,10 @@ class RestApi implements Handler {
   private function transmit($res, $result, $format) {
     if ($result instanceof Response) {
       $result->transmit($res, $format, $this->marshalling);
+    } else if ($result instanceof Async) {
+      $routine= $result->awaitable();
+      yield from $routine;
+      yield from $this->transmit($res, $routine->getReturn(), $format);
     } else {
       $format->transmit($res, $this->marshalling->marshal($result));
     }

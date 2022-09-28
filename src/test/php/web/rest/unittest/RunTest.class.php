@@ -34,11 +34,11 @@ abstract class RunTest {
    * @param  string $body
    * @return web.Response
    */
-  protected function run($api, $method, $uri, $headers= [], $body= '') {
+  protected function run($api, $method= 'GET', $uri= '/', $headers= [], $body= '') {
     $req= new Request(new TestInput($method, $uri, $headers, $body));
     $res= new Response(new TestOutput());
 
-    $api->handle($req, $res);
+    foreach ($api->handle($req, $res) ?? [] as $_) { }
     return $res;
   }
 }
