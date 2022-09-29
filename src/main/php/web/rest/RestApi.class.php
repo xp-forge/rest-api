@@ -1,5 +1,6 @@
 <?php namespace web\rest;
 
+use Generator;
 use lang\{IllegalArgumentException, Throwable};
 use util\data\Marshalling;
 use web\rest\format\{EntityFormat, FormUrlEncoded, Json, OctetStream};
@@ -72,6 +73,9 @@ class RestApi implements Handler {
   private function transmit($res, $result, $format) {
     if ($result instanceof Response) {
       $result->transmit($res, $format, $this->marshalling);
+    } else if ($result instanceof Generator) {
+      yield from $result;
+      yield from $this->transmit($res, $result->getReturn(), $format);
     } else {
       $format->transmit($res, $this->marshalling->marshal($result));
     }

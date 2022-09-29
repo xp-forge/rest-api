@@ -1,5 +1,6 @@
 <?php namespace web\rest;
 
+use Closure;
 use lang\Throwable;
 
 /**
@@ -209,6 +210,20 @@ class Response {
       $out= $res->stream(strlen($bytes));
       $out->write($bytes);
       $out->close();
+    };
+    return $this;
+  }
+
+  /**
+   * Sends given iterable
+   *
+   * @param  function(): iterable|iterable $arg
+   * @return self
+   */
+  public function yield($arg) {
+    $it= $arg instanceof Closure ? $arg() : $arg;
+    $this->body= function($res, $format, $marshalling) use($it) {
+      $format->write($res, $marshalling->marshal($it));
     };
     return $this;
   }

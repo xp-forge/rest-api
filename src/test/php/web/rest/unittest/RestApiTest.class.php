@@ -4,7 +4,7 @@ use unittest\{Assert, Expect, Ignore, Test, Values};
 use web\Error;
 use web\rest\format\Json;
 use web\rest\unittest\api\{Monitoring, Users};
-use web\rest\{MethodsIn, ResourcesIn, RestApi};
+use web\rest\{MethodsIn, ResourcesIn, RestApi, Response};
 
 class RestApiTest extends RunTest {
 
@@ -185,5 +185,53 @@ class RestApiTest extends RunTest {
   #[Test, Expect(['class' => Error::class, 'withMessage' => 'Unsupported mime type']), Values(['text/html, application/xhtml+xml, application/xml; q=0.9', 'application/xml', 'text/xml'])]
   public function does_not_accept($mime) {
     $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => $mime]);
+  }
+
+  #[Test]
+  public function async_usage() {
+    $res= $this->run(new RestApi(new class() {
+
+      #[Get('/')]
+      public function run() {
+        yield;
+        return Response::noContent();
+      }
+    }));
+
+    Assert::equals(204, $res->status());
+  }
+
+  #[Test]
+  public function yield_given_array() {
+    $res= $this->run(new RestApi(new class() {
+
+      #[Get('/')]
+      public function run() {
+        return Response::ok()->yield(function() {
+          yield 1;
+          yield 2;
+          yield 3;
+        });
+      }
+    }));
+
+    $this->assertPayload(200, 'application/json', '[1,2,3]', $res);
+  }
+
+  #[Test]
+  public function yield_given_map() {
+    $res= $this->run(new RestApi(new class() {
+
+      #[Get('/')]
+      public function run() {
+        return Response::ok()->yield(function() {
+          yield 'one' => 1;
+          yield 'two' => 2;
+          yield 'three' => 3;
+        });
+      }
+    }));
+
+    $this->assertPayload(200, 'application/json', '{"one":1,"two":2,"three":3}', $res);
   }
 }

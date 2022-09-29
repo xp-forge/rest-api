@@ -14,8 +14,7 @@ class Users {
 
   #[Get('/')]
   public function listUsers() {
-    yield 1549 => $this->users[1549];
-    yield 6100 => $this->users[6100];
+    return $this->users;
   }
 
   #[Get('/count')]
