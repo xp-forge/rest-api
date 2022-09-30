@@ -38,7 +38,7 @@ abstract class RunTest {
     $req= new Request(new TestInput($method, $uri, $headers, $body));
     $res= new Response(new TestOutput());
 
-    $api->handle($req, $res);
+    foreach ($api->handle($req, $res) ?? [] as $_) { }
     return $res;
   }
 }
