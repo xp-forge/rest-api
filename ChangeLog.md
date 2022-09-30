@@ -3,6 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #17: Add support for asynchronously running handler code
+  (@thekid)
+
 ## 3.1.0 / 2022-09-26
 
 * Merged PR #16: Send a "HTTP/1.1 100 Continue" if we get an *Expect*
