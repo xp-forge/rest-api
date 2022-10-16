@@ -5,6 +5,7 @@ use web\io\{TestInput, TestOutput};
 use web\{Request, Response};
 
 abstract class RunTest {
+  const JSON = 'application/json; charset=utf-8';
 
   /**
    * Assertion helper - tests HTTP payload. Assumes chunked transfer-encoding.

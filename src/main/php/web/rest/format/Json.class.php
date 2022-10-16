@@ -11,7 +11,7 @@ class Json extends EntityFormat {
   }
 
   /** @return string */
-  public function mimeType() { return 'application/json'; }
+  public function mimeType() { return 'application/json; charset=utf-8'; }
 
   /**
    * Reads entity from request
