@@ -36,11 +36,11 @@ class AcceptTest {
     );
   }
 
-  #[Test]
-  public function may_include_charset() {
+  #[Test, Values(['application/json; charset=utf-8', 'application/json; charset=utf-8; q=1.0'])]
+  public function may_include_charset($header) {
     Assert::equals(
       'application/json',
-      (new Accept('application/json; charset=utf-8'))->match('application/json')
+      (new Accept($header))->match('application/json')
     );
   }
 
