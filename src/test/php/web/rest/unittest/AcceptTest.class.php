@@ -36,6 +36,14 @@ class AcceptTest {
     );
   }
 
+  #[Test]
+  public function may_include_charset() {
+    Assert::equals(
+      'application/json',
+      (new Accept('application/json; charset=utf-8'))->match('application/json')
+    );
+  }
+
   #[Test, Values(['text/*; q=0.8, text/plain; q=1.0', 'text/plain; q=1.0, text/*; q=0.8', 'text/plain; q=1.0, text/*', 'text/plain, text/*'])]
   public function selects_type_with_higher_q($header) {
     Assert::equals(
