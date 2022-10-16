@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 3.3.0 / 2022-10-16
+
+* Merged PR #20: Return "application/json; charset=utf-8" as content
+  type, requested to be changed in #19.
+  (@thekid)
+
 ## 3.2.0 / 2022-09-30
 
 * Merged PR #17: Add support for asynchronously running handler code
