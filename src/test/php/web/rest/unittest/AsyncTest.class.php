@@ -34,7 +34,7 @@ class AsyncTest extends RunTest {
       }
     }));
 
-    $this->assertPayload(200, 'application/json', '{"success":true}', $res);
+    $this->assertPayload(200, self::JSON, '{"success":true}', $res);
   }
 
   #[Test]

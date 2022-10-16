@@ -28,7 +28,7 @@ class RestApiTest extends RunTest {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users');
     $this->assertPayload(
       200,
-      'application/json',
+      self::JSON,
       '{"1549":{"id":1549,"handle":"thekid","name":"Timm"},"6100":{"id":6100,"handle":"test","name":"Test"}}',
       $res
     );
@@ -46,43 +46,43 @@ class RestApiTest extends RunTest {
   #[Test]
   public function count_users_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/count');
-    $this->assertPayload(200, 'application/json', '2', $res);
+    $this->assertPayload(200, self::JSON, '2', $res);
   }
 
   #[Test]
   public function find_user_by_name_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/@thekid');
-    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
+    $this->assertPayload(200, self::JSON, '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test]
   public function find_user_by_id_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549');
-    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
+    $this->assertPayload(200, self::JSON, '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test]
   public function exception_raised_from_find_user_rendered_as_internal_server_error() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/0');
-    $this->assertPayload(500, 'application/json', '{"status":500,"message":"No such user #0"}', $res);
+    $this->assertPayload(500, self::JSON, '{"status":500,"message":"No such user #0"}', $res);
   }
 
   #[Test]
   public function error_raised_from_delete_user_renderd_with_statuscode() {
     $res= $this->run(new RestApi(new Users()), 'DELETE', '/users/0');
-    $this->assertPayload(402, 'application/json', '{"status":402,"message":"Payment Required"}', $res);
+    $this->assertPayload(402, self::JSON, '{"status":402,"message":"Payment Required"}', $res);
   }
 
   #[Test, Ignore('Not yet implemented')]
   public function type_errors_for_arguments_rendered_as_bad_request() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/not.an.int');
-    $this->assertPayload(400, 'application/json', '{"status":400,"message":"Expected integer for argument $id, have string"}', $res);
+    $this->assertPayload(400, self::JSON, '{"status":400,"message":"Expected integer for argument $id, have string"}', $res);
   }
 
   #[Test]
   public function missing_body_rendered_as_bad_request() {
     $res= $this->run(new RestApi(new Users()), 'POST', '/users');
-    $this->assertPayload(400, 'application/json', '{"status":400,"message":"Expecting a request body, none transmitted"}', $res);
+    $this->assertPayload(400, self::JSON, '{"status":400,"message":"Expecting a request body, none transmitted"}', $res);
   }
 
   #[Test, Values([['application/json', '{"name":"New"}'], ['application/x-www-form-urlencoded', 'name=New']])]
@@ -90,7 +90,7 @@ class RestApiTest extends RunTest {
     $headers= ['Content-Type' => $type, 'Content-Length' => strlen($body)];
 
     $res= $this->run(new RestApi(new Users()), 'POST', '/users', $headers, $body);
-    $this->assertPayload(201, 'application/json', '{"id":6101,"name":"New"}', $res);
+    $this->assertPayload(201, self::JSON, '{"id":6101,"name":"New"}', $res);
   }
 
   #[Test]
@@ -111,7 +111,7 @@ class RestApiTest extends RunTest {
   #[Test]
   public function not_found() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/not.a.user/avatar');
-    $this->assertPayload(404, 'application/json', '{"status":404,"message":"No such user #not.a.user"}', $res);
+    $this->assertPayload(404, self::JSON, '{"status":404,"message":"No such user #not.a.user"}', $res);
   }
 
   #[Test]
@@ -132,7 +132,7 @@ class RestApiTest extends RunTest {
       '"responsible":{"id":1549,"name":"Timm"},'.
       '"cost":{"amount":"3.5","currency":"EUR"}'.
     '}}';
-    $this->assertPayload(200, 'application/json', $details, $res);
+    $this->assertPayload(200, self::JSON, $details, $res);
   }
 
   #[Test]
@@ -141,7 +141,7 @@ class RestApiTest extends RunTest {
     $headers= ['Content-Type' => 'application/json', 'Content-Length' => strlen($body)];
 
     $res= $this->run(new RestApi(new Monitoring()), 'PUT', '/monitoring/startup', $headers, $body);
-    $this->assertPayload(200, 'application/json', $body, $res);
+    $this->assertPayload(200, self::JSON, $body, $res);
   }
 
   #[Test]
@@ -150,7 +150,7 @@ class RestApiTest extends RunTest {
     $headers= ['Content-Type' => 'application/json', 'Content-Length' => strlen($body)];
 
     $res= $this->run(new RestApi(new Monitoring()), 'PUT', '/monitoring/responsible', $headers, $body);
-    $this->assertPayload(200, 'application/json', $body, $res);
+    $this->assertPayload(200, self::JSON, $body, $res);
   }
 
   #[Test]
@@ -158,7 +158,7 @@ class RestApiTest extends RunTest {
     $res= $this->run(new RestApi(new Users(), '/api/1.0'), 'GET', '/api/1.0/users');
     $this->assertPayload(
       200,
-      'application/json',
+      self::JSON,
       '{"1549":{"id":1549,"handle":"thekid","name":"Timm"},"6100":{"id":6100,"handle":"test","name":"Test"}}',
       $res
     );
@@ -167,19 +167,19 @@ class RestApiTest extends RunTest {
   #[Test]
   public function typed_request_instances_can_be_injected() {
     $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/systems?page=3');
-    $this->assertPayload(200, 'application/json', '{"page":"3"}', $res);
+    $this->assertPayload(200, self::JSON, '{"page":"3"}', $res);
   }
 
   #[Test]
   public function accept_all_defaults_to_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => '*/*']);
-    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
+    $this->assertPayload(200, self::JSON, '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test]
   public function accept_json_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => 'application/json']);
-    $this->assertPayload(200, 'application/json', '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
+    $this->assertPayload(200, self::JSON, '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
   #[Test, Expect(['class' => Error::class, 'withMessage' => 'Unsupported mime type']), Values(['text/html, application/xhtml+xml, application/xml; q=0.9', 'application/xml', 'text/xml'])]

@@ -1,10 +1,12 @@
 <?php namespace web\rest;
 
+use web\Headers;
+
 /**
  * Content negotiation
  *
  * @see   https://en.wikipedia.org/wiki/Content_negotiation
- * @test  xp://web.rest.unittest.AcceptTest
+ * @test  web.rest.unittest.AcceptTest
  */
 class Accept {
   private $values= [];
@@ -12,13 +14,13 @@ class Accept {
   /** @param string $header */
   public function __construct($header) {
     $prec= 1.0;
-    foreach (explode(',', $header) as $t) {
-      preg_match('# ?(.+); ?q=([0-9\.]+)#', $t, $matches);
-      if (empty($matches)) {
-        $this->values[trim($t, ' ')]= $prec - 0.00001 * substr_count($t, '*') + 0.0001 * substr_count($t, ';');
-        $prec-= 0.000001;
+    foreach (Headers::values(Headers::parameterized())->parse($header) as $accept) {
+      $value= $accept->value();
+      if (null === ($q= $accept->param('q'))) {
+        $this->values[$value]= $prec - 0.0001 * substr_count($value, '*');
+        $prec-= 0.00001;
       } else {
-        $this->values[$matches[1]]= (float)$matches[2];
+        $this->values[$value]= (float)$q;
       }
     }
     arsort($this->values, SORT_NUMERIC);
