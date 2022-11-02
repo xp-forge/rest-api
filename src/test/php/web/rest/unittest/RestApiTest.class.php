@@ -114,6 +114,13 @@ class RestApiTest extends RunTest {
     $this->assertPayload(404, self::JSON, '{"status":404,"message":"No such user #not.a.user"}', $res);
   }
 
+  #[Test, Values(['/monitoring/status', '/monitoring/details'])]
+  public function default_headers_for($resource) {
+    $res= $this->run(new RestApi(new Monitoring()), 'GET', $resource);
+    Assert::equals('nosniff', $res->headers()['X-Content-Type-Options']);
+    Assert::equals('no-cache', $res->headers()['Cache-Control']);
+  }
+
   #[Test]
   public function plain_output() {
     $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/status');

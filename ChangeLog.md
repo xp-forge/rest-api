@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 3.4.1 / 2022-11-03
+
+* Ensured default headers are always set, not just when returning a
+  `web.rest.Reponse` instance
+  (@thekid)
+
 ## 3.4.0 / 2022-11-02
 
 * Added *X-Content-Type-Options: nosniff* and *Cache-Control: no-cache*
