@@ -118,7 +118,13 @@ class RestApiTest extends RunTest {
   public function plain_output() {
     $res= $this->run(new RestApi(new Monitoring()), 'GET', '/monitoring/status');
     Assert::equals(
-      "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK",
+      "HTTP/1.1 200 OK\r\n".
+      "Content-Type: text/plain\r\n".
+      "X-Content-Type-Options: nosniff\r\n".
+      "Cache-Control: no-cache\r\n".
+      "Content-Length: 2\r\n".
+      "\r\n".
+      "OK",
       $res->output()->bytes()
     );
   }

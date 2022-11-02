@@ -223,6 +223,8 @@ class Response {
   public function transmit($response, $format, $marshalling) {
     $response->answer($this->status);
     $response->header('Content-Type', $format->mimeType());
+    $response->header('X-Content-Type-Options', 'nosniff');
+    $response->header('Cache-Control', 'no-cache');
 
     // Copy headers, overwriting default content type if necessary
     foreach ($this->headers as $name => $value) {

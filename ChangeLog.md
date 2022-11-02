@@ -3,6 +3,13 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 3.4.0 / 2022-11-02
+
+* Added *X-Content-Type-Options: nosniff* and *Cache-Control: no-cache*
+  to prevent errors in the browser console when using REST APIs via
+  XHR / fetch. See issue #21
+  (@thekid)
+
 ## 3.3.0 / 2022-10-16
 
 * Merged PR #20: Return "application/json; charset=utf-8" as content
