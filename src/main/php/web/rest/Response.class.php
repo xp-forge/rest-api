@@ -177,23 +177,15 @@ class Response {
   }
 
   /**
-   * Sends a stream
+   * Sends a stream. Closes input source after completing.
    *
-   * @param  io.streams.InputStream $in
+   * @param  io.Channel|io.streams.InputStream $source
    * @param  int $size Optional size (in bytes), omit to use chunked transfer
    * @return self
    */
-  public function stream($in, $size= null) {
-    $this->body= function($res, $format, $marshalling) use($in, $size) {
-      $out= $res->stream($size);
-      try {
-        while ($in->available()) {
-          $out->write($in->read());
-        }
-      } finally {
-        $in->close();
-        $out->close();
-      }
+  public function stream($source, $size= null) {
+    $this->body= function($res, $format, $marshalling) use($source, $size) {
+      yield from $res->transmit($source, $this->headers['Content-Type'] ?? 'application/octet-stream', $size);
     };
     return $this;
   }
@@ -218,7 +210,7 @@ class Response {
    *
    * @param  web.Response $response
    * @param  web.rest.format.EntityFormat $format
-   * @return void
+   * @return iterable
    */
   public function transmit($response, $format, $marshalling) {
     $response->answer($this->status);
@@ -230,7 +222,9 @@ class Response {
     }
 
     if ($f= $this->body) {
-      $f($response, $format, $marshalling);
+      return $f($response, $format, $marshalling) ?? [];
+    } else {
+      return [];
     }
   }
 

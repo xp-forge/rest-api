@@ -72,8 +72,9 @@ class RestApi implements Handler {
   private function transmit($res, $result, $format) {
     $res->header('X-Content-Type-Options', 'nosniff');
     $res->header('Cache-Control', 'no-cache');
+
     if ($result instanceof Response) {
-      $result->transmit($res, $format, $this->marshalling);
+      yield from $result->transmit($res, $format, $this->marshalling);
     } else if ($result instanceof Async) {
       $routine= $result->awaitable();
       yield from $routine;
