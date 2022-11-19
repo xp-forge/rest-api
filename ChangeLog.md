@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 3.5.0 / 2022-11-19
+
+* Merged PR #22: Change `Response::stream()` to use async APIs - @thekid
+
 ## 3.4.1 / 2022-11-03
 
 * Ensured default headers are always set, not just when returning a
