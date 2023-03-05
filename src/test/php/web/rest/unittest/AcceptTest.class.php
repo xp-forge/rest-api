@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest;
 
-use unittest\{Assert, Test, Values};
+use test\{Assert, Test, Values};
 use web\rest\Accept;
 
 class AcceptTest {

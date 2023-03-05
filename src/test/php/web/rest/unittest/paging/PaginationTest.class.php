@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest\paging;
 
-use unittest\{Assert, Test, Values};
+use test\{Assert, Test, Values};
 use web\Request;
 use web\io\TestInput;
 use web\rest\Response;
