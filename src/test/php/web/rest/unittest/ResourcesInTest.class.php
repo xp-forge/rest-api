@@ -1,7 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use lang\reflect\Package;
-use unittest\{Assert, Test};
+use test\{Assert, Test};
 use web\rest\ResourcesIn;
 
 class ResourcesInTest {

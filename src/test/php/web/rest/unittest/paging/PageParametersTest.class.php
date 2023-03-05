@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest\paging;
 
-use unittest\{Assert, Test};
+use test\{Assert, Before, Test};
 use web\Request;
 use web\io\TestInput;
 use web\rest\Response;
@@ -21,13 +21,8 @@ class PageParametersTest {
     return new Request(new TestInput('GET', '/'.$queryString));
   }
 
-  /**
-   * Creates fixture
-   *
-   * @return void
-   */
   #[Before]
-  public function setUp() {
+  public function fixture() {
     $this->fixture= new PageParameters('page', 'per_page');
   }
 

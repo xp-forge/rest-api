@@ -1,7 +1,7 @@
 <?php namespace web\rest\unittest;
 
-use unittest\{Assert, Expect, Test};
-use web\rest\{Async, RestApi, Get, Response};
+use test\{Assert, Expect, Test};
+use web\rest\{Async, Get, Response, RestApi};
 
 class AsyncTest extends RunTest {
 

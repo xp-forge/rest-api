@@ -1,7 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use lang\IllegalAccessException;
-use unittest\{Assert, Test, TestCase};
+use test\{Assert, Test, TestCase};
 use web\rest\Response;
 
 class ResponseTest {

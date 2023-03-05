@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest\paging;
 
-use unittest\{Assert, Expect, Test, TestCase};
+use test\{Assert, Expect, Test, TestCase};
 use util\NoSuchElementException;
 use web\Request;
 use web\io\TestInput;

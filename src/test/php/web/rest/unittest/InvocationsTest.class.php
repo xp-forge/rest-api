@@ -1,7 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use lang\{ElementNotFoundException, IllegalStateException};
-use unittest\{Assert, Test};
+use test\{Assert, Test};
 use web\rest\unittest\api\Users;
 use web\rest\{Interceptor, Response, RestApi};
 

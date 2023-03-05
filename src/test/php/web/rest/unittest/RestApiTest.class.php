@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest;
 
-use unittest\{Assert, Expect, Ignore, Test, Values};
+use test\{Assert, Expect, Ignore, Test, Values};
 use web\Error;
 use web\rest\format\Json;
 use web\rest\unittest\api\{Monitoring, Users};
@@ -195,7 +195,7 @@ class RestApiTest extends RunTest {
     $this->assertPayload(200, self::JSON, '{"id":1549,"handle":"thekid","name":"Timm"}', $res);
   }
 
-  #[Test, Expect(['class' => Error::class, 'withMessage' => 'Unsupported mime type']), Values(['text/html, application/xhtml+xml, application/xml; q=0.9', 'application/xml', 'text/xml'])]
+  #[Test, Expect(class: Error::class, message: 'Unsupported mime type'), Values(['text/html, application/xhtml+xml, application/xml; q=0.9', 'application/xml', 'text/xml'])]
   public function does_not_accept($mime) {
     $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => $mime]);
   }
