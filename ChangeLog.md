@@ -3,6 +3,8 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #23: Migrate to new testing library - @thekid
+
 ## 3.5.0 / 2022-11-19
 
 * Merged PR #22: Change `Response::stream()` to use async APIs - @thekid
