@@ -2,7 +2,7 @@
 
 use io\streams\{InputStream, Streams};
 use lang\reflection\{Method, TargetException};
-use lang\{IllegalArgumentException, Reflection};
+use lang\{IllegalArgumentException, Reflection, Type};
 use web\Request;
 
 class Delegate {
@@ -41,15 +41,15 @@ class Delegate {
 
       // Source explicitely set by annotation
       foreach ($param->annotations() as $annotation) {
-        if ($source= self::$SOURCES[$annotation->name()] ?? null) {
-          $this->param($param, $name ?? $param->name(), $source);
+        if ($accessor= self::$SOURCES[$annotation->name()] ?? null) {
+          $this->param($param, $name ?? $param->name(), $accessor);
           continue 2;
         }
       }
 
       // Source derived from parameter type
       $type= $param->constraint()->type();
-      if ('var' === $type->getName()) {
+      if (Type::$VAR === $type) {
         // NOOP
       } else if ($type->isAssignableFrom(InputStream::class)) {
         $source= 'stream';
@@ -65,18 +65,18 @@ class Delegate {
    *
    * @param  lang.reflection.Parameter $param
    * @param  string $name
-   * @param  function(web.Request, web.rest.format.EntityFormat, string): var $source
+   * @param  function(web.Request, web.rest.format.EntityFormat, string): var $accessor
    * @return void
    */
-  private function param($param, $name, $source) {
+  private function param($param, $name, $accessor) {
     if ($param->optional()) {
       $default= $param->default();
-      $read= function($req, $format) use($source, $name, $default) {
-        return $source($req, $format, $name) ?? $default;
+      $read= function($req, $format) use($accessor, $name, $default) {
+        return $accessor($req, $format, $name) ?? $default;
       };
     } else {
-      $read= function($req, $format) use($source, $name) {
-        if (null === ($value= $source($req, $format, $name))) {
+      $read= function($req, $format) use($accessor, $name) {
+        if (null === ($value= $accessor($req, $format, $name))) {
           throw new IllegalArgumentException('Missing argument '.$name);
         }
         return $value;
