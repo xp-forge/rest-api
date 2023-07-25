@@ -1,6 +1,6 @@
 <?php namespace web\rest;
 
-use lang\IllegalArgumentException;
+use lang\{IllegalArgumentException, Reflection};
 
 /**
  * Matches request and routes to correct delegate
@@ -31,8 +31,13 @@ class Delegates {
     }
 
     $base= rtrim($base, '/');
-    foreach (typeof($instance)->getMethods() as $method) {
-      foreach (array_intersect_key($method->getAnnotations(), self::$METHODS) as $verb => $segment) {
+    foreach (Reflection::type($instance)->methods() as $method) {
+
+      foreach ($method->annotations() as $annotation) {
+        $verb= $annotation->name();
+        if (null === ($source= self::$METHODS[$verb] ?? null)) continue;
+
+        $segment= $annotation->argument(0);
         if (null === $segment) {
           $pattern= $base.'(/.+)?';
         } else if ('/' === $segment || '' === $segment) {
@@ -40,7 +45,7 @@ class Delegates {
         } else {
           $pattern= $base.preg_replace(['/\{([^:}]+):([^}]+)\}/', '/\{([^}]+)\}/'], ['(?<$1>$2)', '(?<$1>[^/]+)'], $segment);
         }
-        $this->patterns['#^'.$verb.$pattern.'$#']= new Delegate($instance, $method, self::$METHODS[$verb]);
+        $this->patterns['#^'.$verb.$pattern.'$#']= new Delegate($instance, $method, $source);
       }
     }
     return $this;

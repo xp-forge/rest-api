@@ -1,6 +1,6 @@
 <?php namespace web\rest\unittest;
 
-use lang\reflect\Package;
+use lang\reflection\Package;
 use test\{Assert, Test};
 use web\rest\ResourcesIn;
 
@@ -14,7 +14,7 @@ class ResourcesInTest {
 
   #[Test]
   public function using_package_instance() {
-    $r= new ResourcesIn(Package::forName('web.rest.unittest.api'));
+    $r= new ResourcesIn(new Package('web.rest.unittest.api'));
     Assert::notEquals(null, $r->target('get', '/monitoring/status'));
   }
 
