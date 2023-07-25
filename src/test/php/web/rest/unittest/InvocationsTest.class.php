@@ -2,7 +2,7 @@
 
 use lang\{ElementNotFoundException, IllegalStateException};
 use test\{Assert, Test};
-use web\rest\unittest\api\Users;
+use web\rest\unittest\api\{Users, Cached};
 use web\rest\{Interceptor, Response, RestApi};
 
 class InvocationsTest extends RunTest {
@@ -49,12 +49,12 @@ class InvocationsTest extends RunTest {
   #[Test]
   public function intercepting_can_access_annotations() {
     $invocations= function($invocation, $args) use(&$cached) {
-      $cached= $invocation->target()->annotations()['cached'];
+      $cached= $invocation->target()->annotations()->type(Cached::class);
       return $invocation->proceed($args);
     };
 
     $this->run((new RestApi(new Users()))->intercepting($invocations), 'GET', '/users/1549/avatar');
-    Assert::equals(['ttl' => 3600], $cached);
+    Assert::equals(['ttl' => 3600], $cached->arguments());
   }
 
   #[Test]
