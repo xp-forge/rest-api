@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 4.0.0 / 2023-07-25
+
+* **Heads up:** Removed deprecated `web.rest.ClassesIn` - @thekid
+* Merged PR #24: Migrate to new reflection library - @thekid
 * Merged PR #23: Migrate to new testing library - @thekid
 
 ## 3.5.0 / 2022-11-19
