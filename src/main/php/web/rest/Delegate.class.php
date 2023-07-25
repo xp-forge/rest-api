@@ -1,8 +1,8 @@
 <?php namespace web\rest;
 
 use io\streams\{InputStream, Streams};
-use lang\IllegalArgumentException;
-use lang\reflect\TargetInvocationException;
+use lang\reflection\{Method, TargetException};
+use lang\{IllegalArgumentException, Reflection};
 use web\Request;
 
 class Delegate {
@@ -31,24 +31,24 @@ class Delegate {
    * Creates a new delegate
    *
    * @param  object $instance
-   * @param  lang.reflect.Method $method
+   * @param  string|lang.reflection.Method $method
    * @param  string $source Default source
    */
   public function __construct($instance, $method, $source) {
     $this->instance= $instance;
-    $this->method= $method;
-    foreach ($method->getParameters() as $param) {
+    $this->method= $method instanceof Method ? $method : Reflection::type($instance)->method($method);
+    foreach ($this->method->parameters() as $param) {
 
       // Source explicitely set by annotation
-      foreach ($param->getAnnotations() as $source => $name) {
-        if (isset(self::$SOURCES[$source])) {
-          $this->param($param, $name ?? $param->getName(), $source);
+      foreach ($param->annotations() as $annotation) {
+        if ($source= self::$SOURCES[$annotation->name()] ?? null) {
+          $this->param($param, $name ?? $param->name(), $source);
           continue 2;
         }
       }
 
       // Source derived from parameter type
-      $type= $param->getType();
+      $type= $param->constraint()->type();
       if ('var' === $type->getName()) {
         // NOOP
       } else if ($type->isAssignableFrom(InputStream::class)) {
@@ -56,42 +56,40 @@ class Delegate {
       } else if ($type->isAssignableFrom(Request::class)) {
         $source= 'request';
       }
-      $this->param($param, $param->getName(), $source);
+      $this->param($param, $param->name(), self::$SOURCES[$source]);
     }
   }
 
   /**
    * Adds parameter request reader for a given parameter
    *
-   * @param  lang.reflect.Parameter $param
+   * @param  lang.reflection.Parameter $param
    * @param  string $name
    * @param  function(web.Request, web.rest.format.EntityFormat, string): var $source
    * @return void
    */
   private function param($param, $name, $source) {
-    $extract= self::$SOURCES[$source];
-
-    if ($param->isOptional()) {
-      $default= $param->getDefaultValue();
-      $read= function($req, $format) use($extract, $name, $default) {
-        return $extract($req, $format, $name) ?? $default;
+    if ($param->optional()) {
+      $default= $param->default();
+      $read= function($req, $format) use($source, $name, $default) {
+        return $source($req, $format, $name) ?? $default;
       };
     } else {
-      $read= function($req, $format) use($extract, $name) {
-        if (null === ($value= $extract($req, $format, $name))) {
+      $read= function($req, $format) use($source, $name) {
+        if (null === ($value= $source($req, $format, $name))) {
           throw new IllegalArgumentException('Missing argument '.$name);
         }
         return $value;
       };
     }
-    $this->params[$name]= ['type' => $param->getType(), 'read' => $read];
+    $this->params[$name]= ['type' => $param->constraint()->type(), 'read' => $read];
   }
 
   /** @return string */
-  public function name() { return nameof($this->instance).'::'.$this->method->getName(); }
+  public function name() { return nameof($this->instance).'::'.$this->method->name(); }
 
   /** @return [:var] */
-  public function annotations() { return $this->method->getAnnotations(); }
+  public function annotations() { return $this->method->annotations(); }
 
   /** @return [:var] */
   public function params() { return $this->params; }
@@ -106,7 +104,7 @@ class Delegate {
   public function invoke($args) {
     try {
       return $this->method->invoke($this->instance, $args);
-    } catch (TargetInvocationException $e) {
+    } catch (TargetException $e) {
       throw $e->getCause();
     }
   }
