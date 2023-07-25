@@ -12,7 +12,7 @@ class ResourcesIn extends Delegates {
   /**
    * Creates this delegates instance
    *
-   * @param  lang.reflect.Package|string $package
+   * @param  lang.reflection.Package|string $package
    * @param  function(lang.XPClass): object $new Optional function to create instances
    */
   public function __construct($package, $new= null) {
