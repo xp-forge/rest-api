@@ -61,12 +61,13 @@ class Delegate {
   }
 
   /**
-   * Adds parameter request reader for a given parameter
+   * Adds parameter request accessor for a given parameter
    *
    * @param  lang.reflection.Parameter $param
    * @param  string $name
    * @param  function(web.Request, web.rest.format.EntityFormat, string): var $accessor
    * @return void
+   * @throws lang.IllegalArgumentException
    */
   private function param($param, $name, $accessor) {
     if ($param->optional()) {
@@ -88,7 +89,7 @@ class Delegate {
   /** @return string */
   public function name() { return nameof($this->instance).'::'.$this->method->name(); }
 
-  /** @return [:var] */
+  /** @return lang.reflection.Annotations */
   public function annotations() { return $this->method->annotations(); }
 
   /** @return [:var] */
