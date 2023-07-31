@@ -32,7 +32,6 @@ class Delegates {
 
     $base= rtrim($base, '/');
     foreach (Reflection::type($instance)->methods() as $method) {
-
       foreach ($method->annotations() as $annotation) {
         $verb= $annotation->name();
         if (null === ($source= self::$METHODS[$verb] ?? null)) continue;

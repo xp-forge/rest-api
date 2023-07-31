@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 4.0.1 / 2023-07-31
+
+* Fixed annotation argument not being taken into account - @thekid
+
 ## 4.0.0 / 2023-07-25
 
 * **Heads up:** Removed deprecated `web.rest.ClassesIn` - @thekid

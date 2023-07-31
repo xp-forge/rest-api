@@ -42,7 +42,7 @@ class Delegate {
       // Source explicitely set by annotation
       foreach ($param->annotations() as $annotation) {
         if ($accessor= self::$SOURCES[$annotation->name()] ?? null) {
-          $this->param($param, $name ?? $param->name(), $accessor);
+          $this->param($param, $annotation->argument(0) ?? $param->name(), $accessor);
           continue 2;
         }
       }

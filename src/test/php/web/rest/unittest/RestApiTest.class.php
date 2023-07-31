@@ -73,6 +73,12 @@ class RestApiTest extends RunTest {
     $this->assertPayload(402, self::JSON, '{"status":402,"message":"Payment Required"}', $res);
   }
 
+  #[Test]
+  public function missing_user_value() {
+    $res= $this->run(new RestApi(new Users()), 'DELETE', '/users');
+    $this->assertPayload(400, self::JSON, '{"status":400,"message":"Missing argument user"}', $res);
+  }
+
   #[Test, Ignore('Not yet implemented')]
   public function type_errors_for_arguments_rendered_as_bad_request() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/not.an.int');

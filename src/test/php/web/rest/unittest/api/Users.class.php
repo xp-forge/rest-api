@@ -3,7 +3,7 @@
 use io\streams\{InputStream, MemoryInputStream};
 use lang\ElementNotFoundException;
 use web\Error;
-use web\rest\{Delete, Get, Post, Put, Resource, Response};
+use web\rest\{Delete, Get, Post, Put, Resource, Response, Value};
 
 #[Resource('/users')]
 class Users {
@@ -14,8 +14,7 @@ class Users {
 
   #[Get('/')]
   public function listUsers() {
-    yield 1549 => $this->users[1549];
-    yield 6100 => $this->users[6100];
+    yield from $this->users;
   }
 
   #[Get('/count')]
@@ -54,6 +53,11 @@ class Users {
   #[Delete('/{id:[0-9]+}')]
   public function deleteUser($id) {
     throw new Error(402, 'Payment Required');
+  }
+
+  #[Delete('/')]
+  public function deleteAllUsers(#[Value('user')] $auth) {
+    $this->users= [];
   }
 
   #[Get('/{id}/avatar'), Cached(ttl: 3600)]
