@@ -19,7 +19,7 @@ abstract class RunTest {
    */
   protected function assertPayload($status, $mime, $body, $res) {
     $bytes= $res->output()->bytes();
-    $response= substr($bytes, strpos($bytes, "\r\n\r\n") + 4);
+    $response= (string)substr($bytes, strpos($bytes, "\r\n\r\n") + 4);
     $chunked= null === $body ? '' : dechex(strlen($body))."\r\n".$body."\r\n0\r\n\r\n";
     Assert::equals(
       ['status' => $status, 'mime' => $mime, 'body' => $chunked],
