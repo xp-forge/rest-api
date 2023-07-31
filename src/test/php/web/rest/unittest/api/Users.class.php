@@ -56,7 +56,10 @@ class Users {
   }
 
   #[Delete('/')]
-  public function deleteAllUsers(#[Value('user')] $auth) {
+  public function deleteAllUsers(
+    #[Value('user')]
+    $auth
+  ) {
     $this->users= [];
   }
 
