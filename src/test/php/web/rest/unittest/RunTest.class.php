@@ -12,16 +12,18 @@ abstract class RunTest {
    *
    * @param  int $status
    * @param  string $mime
-   * @param  string $body
+   * @param  ?string $body
    * @param  web.Response $res
    * @throws unittest.AssertionFailedError
    * @return void
    */
   protected function assertPayload($status, $mime, $body, $res) {
     $bytes= $res->output()->bytes();
+    $response= substr($bytes, strpos($bytes, "\r\n\r\n") + 4);
+    $chunked= null === $body ? '' : dechex(strlen($body))."\r\n".$body."\r\n0\r\n\r\n";
     Assert::equals(
-      ['status' => $status, 'mime' => $mime, 'body' => dechex(strlen($body))."\r\n".$body."\r\n0\r\n\r\n"],
-      ['status' => $res->status(), 'mime' => $res->headers()['Content-Type'], 'body' => substr($bytes, strpos($bytes, "\r\n\r\n") + 4)]
+      ['status' => $status, 'mime' => $mime, 'body' => $chunked],
+      ['status' => $res->status(), 'mime' => $res->headers()['Content-Type'], 'body' => $response]
     );
   }
 
@@ -33,13 +35,14 @@ abstract class RunTest {
    * @param  string $uri
    * @param  [:string] $headers
    * @param  string $body
+   * @param  var $user
    * @return web.Response
    */
-  protected function run($api, $method= 'GET', $uri= '/', $headers= [], $body= '') {
+  protected function run($api, $method= 'GET', $uri= '/', $headers= [], $body= '', $user= null) {
     $req= new Request(new TestInput($method, $uri, $headers, $body));
     $res= new Response(new TestOutput());
 
-    foreach ($api->handle($req, $res) ?? [] as $_) { }
+    foreach ($api->handle($req->pass('user', $user), $res) ?? [] as $_) { }
     return $res;
   }
 }

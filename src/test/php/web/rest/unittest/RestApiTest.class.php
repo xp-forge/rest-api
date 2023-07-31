@@ -75,8 +75,14 @@ class RestApiTest extends RunTest {
 
   #[Test]
   public function missing_user_value() {
-    $res= $this->run(new RestApi(new Users()), 'DELETE', '/users');
+    $res= $this->run(new RestApi(new Users()), 'DELETE', '/users', [], '', null);
     $this->assertPayload(400, self::JSON, '{"status":400,"message":"Missing argument user"}', $res);
+  }
+
+  #[Test]
+  public function with_user_value() {
+    $res= $this->run(new RestApi(new Users()), 'DELETE', '/users', [], '', ['id' => 'root']);
+    $this->assertPayload(204, self::JSON, null, $res);
   }
 
   #[Test, Ignore('Not yet implemented')]

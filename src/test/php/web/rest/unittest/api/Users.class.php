@@ -61,6 +61,7 @@ class Users {
     $auth
   ) {
     $this->users= [];
+    return Response::noContent();
   }
 
   #[Get('/{id}/avatar'), Cached(ttl: 3600)]
