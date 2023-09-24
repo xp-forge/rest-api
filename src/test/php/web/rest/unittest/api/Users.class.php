@@ -3,7 +3,7 @@
 use io\streams\{InputStream, MemoryInputStream};
 use lang\ElementNotFoundException;
 use web\Error;
-use web\rest\{Delete, Get, ListOf, Param, Post, Put, Resource, Response, Value};
+use web\rest\{Delete, Get, ListWith, Param, Post, Put, Resource, Response, Value};
 
 #[Resource('/users')]
 class Users {
@@ -15,7 +15,7 @@ class Users {
 
   #[Get('/')]
   public function listUsers(
-    #[Param, ListOf(',')]
+    #[Param, ListWith(',')]
     $select= []
   ) {
     if (empty($select)) {

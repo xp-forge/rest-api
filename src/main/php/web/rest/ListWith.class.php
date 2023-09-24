@@ -1,6 +1,6 @@
 <?php namespace web\rest;
 
-class ListOf extends Conversion {
+class ListWith extends Conversion {
   private $separator;
 
   /** @param string $separator */
