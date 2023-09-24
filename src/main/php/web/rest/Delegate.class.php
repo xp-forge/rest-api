@@ -66,16 +66,7 @@ class Delegate {
         }
       }
 
-      $this->param($param, $name, $conversions
-        ? function($req, $format, $name) use($accessor, $conversions) {
-            $value= $accessor($req, $format, $name);
-            foreach ($conversions as $c) {
-              $value= $c->convert($value);
-            }
-            return $value;
-          }
-        : $accessor
-      );
+      $this->param($param, $name, $accessor, $conversions);
     }
   }
 
@@ -85,10 +76,11 @@ class Delegate {
    * @param  lang.reflection.Parameter $param
    * @param  string $name
    * @param  function(web.Request, web.rest.format.EntityFormat, string): var $accessor
+   * @param  web.rest.Conversion[] $conversions
    * @return void
    * @throws lang.IllegalArgumentException
    */
-  private function param($param, $name, $accessor) {
+  private function param($param, $name, $accessor, $conversions= []) {
     if ($param->optional()) {
       $default= $param->default();
       $read= function($req, $format) use($accessor, $name, $default) {
@@ -102,7 +94,7 @@ class Delegate {
         return $value;
       };
     }
-    $this->params[$name]= ['type' => $param->constraint()->type(), 'read' => $read];
+    $this->params[$name]= ['type' => $param->constraint()->type(), 'read' => $read, 'conv' => $conversions];
   }
 
   /** @return string */

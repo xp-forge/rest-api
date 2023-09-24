@@ -1,7 +1,7 @@
 <?php namespace web\rest\unittest;
 
 use test\{Assert, Test, Values};
-use web\rest\{RestApi, Get, Param, ListWith};
+use web\rest\{RestApi, Get, Param, ListWith, Matrix};
 
 class ConversionsTest extends RunTest {
 
@@ -23,6 +23,26 @@ class ConversionsTest extends RunTest {
       self::JSON,
       $output,
       $this->run(new RestApi($api), 'GET', '/?'.$query)
+    );
+  }
+
+  #[Test, Values([['uid=0', '{"uid":"0"}'], ['handles=a&b;owned=true', '{"handles":"a&b","owned":"true"}']])]
+  public function matrix_parameter($path, $output) {
+    $api= new class() {
+
+      #[Get('/{filter}')]
+      public function test(
+        #[Matrix] array $filter= []
+      ) {
+        return $filter;
+      }
+    };
+
+    $this->assertPayload(
+      200,
+      self::JSON,
+      $output,
+      $this->run(new RestApi($api), 'GET', '/'.$path)
     );
   }
 }
