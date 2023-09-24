@@ -26,7 +26,7 @@ class ConversionsTest extends RunTest {
     );
   }
 
-  #[Test, Values([['uid=0', '{"uid":"0"}'], ['handles=a&b;owned=true', '{"handles":"a&b","owned":"true"}']])]
+  #[Test, Values([['uid=0', '{"uid":"0"}'], ['variants=a%26b;owned=true;colors=green,blue', '{"variants":"a&b","owned":"true","colors":["green","blue"]}']])]
   public function matrix_parameter($path, $output) {
     $api= new class() {
 
