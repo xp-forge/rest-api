@@ -32,7 +32,8 @@ class ConversionsTest extends RunTest {
 
       #[Get('/{filter}')]
       public function test(
-        #[Matrix] array $filter= []
+        #[Matrix]
+        array $filter= []
       ) {
         return $filter;
       }
