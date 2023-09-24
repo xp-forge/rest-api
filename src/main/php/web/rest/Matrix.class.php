@@ -1,6 +1,6 @@
 <?php namespace web\rest;
 
-/** @see http://web.archive.org/web/20130304084642/http://doriantaylor.com/policy/http-url-path-parameter-syntax */
+/** @see https://doriantaylor.com/policy/http-url-path-parameter-syntax */
 class Matrix extends Conversion {
 
   /**
