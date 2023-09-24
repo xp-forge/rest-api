@@ -1,5 +1,6 @@
 <?php namespace web\rest;
 
+/** @test web.rest.unittest.ConversionsTest */
 abstract class Conversion {
 
   /**
