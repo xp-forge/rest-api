@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 4.1.0 / 2023-09-24
+
+* Added compatibility with `xp-forge/marshalling` v2.0.0 - @thekid
+
 ## 4.0.1 / 2023-07-31
 
 * Fixed annotation argument not being taken into account - @thekid
