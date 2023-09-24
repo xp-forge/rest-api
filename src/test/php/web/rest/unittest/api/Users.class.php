@@ -14,7 +14,10 @@ class Users {
   ];
 
   #[Get('/')]
-  public function listUsers(#[Param, ListOf(',')] $select= []) {
+  public function listUsers(
+    #[Param, ListOf(',')]
+    $select= []
+  ) {
     if (empty($select)) {
       yield from $this->users;
     } else {
