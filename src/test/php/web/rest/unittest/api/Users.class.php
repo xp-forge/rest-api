@@ -3,18 +3,25 @@
 use io\streams\{InputStream, MemoryInputStream};
 use lang\ElementNotFoundException;
 use web\Error;
-use web\rest\{Delete, Get, Post, Put, Resource, Response, Value};
+use web\rest\{Delete, Get, ListOf, Param, Post, Put, Resource, Response, Value};
 
 #[Resource('/users')]
 class Users {
   private $users= [
     1549 => ['id' => 1549, 'handle' => 'thekid', 'name' => 'Timm'],
     6100 => ['id' => 6100, 'handle' => 'test', 'name' => 'Test'],
+    6101 => ['id' => 6101, 'handle' => 'binford', 'name' => 'More Power'],
   ];
 
   #[Get('/')]
-  public function listUsers() {
-    yield from $this->users;
+  public function listUsers(#[Param, ListOf(',')] $select= []) {
+    if (empty($select)) {
+      yield from $this->users;
+    } else {
+      foreach ($this->users as $id => $user) {
+        if (in_array($user['handle'], $select)) yield $id => $user;
+      }
+    }
   }
 
   #[Get('/count')]
