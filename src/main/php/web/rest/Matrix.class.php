@@ -1,7 +1,7 @@
 <?php namespace web\rest;
 
 /** @see https://doriantaylor.com/policy/http-url-path-parameter-syntax */
-class Matrix extends Conversion {
+class Matrix implements Conversion {
 
   /**
    * Converts a given input value.

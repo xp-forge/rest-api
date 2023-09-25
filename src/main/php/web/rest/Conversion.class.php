@@ -1,7 +1,7 @@
 <?php namespace web\rest;
 
 /** @test web.rest.unittest.ConversionsTest */
-abstract class Conversion {
+interface Conversion {
 
   /**
    * Converts a given input value.
@@ -9,5 +9,5 @@ abstract class Conversion {
    * @param  var $input
    * @return var
    */
-  public abstract function convert($input);
+  public function convert($input);
 }
