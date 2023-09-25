@@ -46,4 +46,25 @@ class ConversionsTest extends RunTest {
       $this->run(new RestApi($api), 'GET', '/'.$path)
     );
   }
+
+  #[Test]
+  public function conversions_can_be_combined_with_type_hinting() {
+    $api= new class() {
+
+      #[Get('/{filter}/authors')]
+      public function test(
+        #[Matrix]
+        Filters $filter
+      ) {
+        return $filter;
+      }
+    };
+
+    $this->assertPayload(
+      200,
+      self::JSON,
+      '{"status":"COMPLETED","orgunits":["a","b"]}',
+      $this->run(new RestApi($api), 'GET', '/status=COMPLETED;orgunits=a,b/authors')
+    );
+  }
 }
