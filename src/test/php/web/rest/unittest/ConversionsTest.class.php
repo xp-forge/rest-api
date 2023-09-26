@@ -67,4 +67,46 @@ class ConversionsTest extends RunTest {
       $this->run(new RestApi($api), 'GET', '/status=COMPLETED;orgunits=a,b/authors')
     );
   }
+
+  #[Test]
+  public function range() {
+    $api= new class() {
+
+      #[Get('/compare/{range}')]
+      public function test(
+        #[Range]
+        array $range
+      ) {
+        return $range;
+      }
+    };
+
+    $this->assertPayload(
+      200,
+      self::JSON,
+      '["main","feature"]',
+      $this->run(new RestApi($api), 'GET', '/compare/main...feature')
+    );
+  }
+
+  #[Test]
+  public function exceptions_raised_during_conversion_yield_bad_request() {
+    $api= new class() {
+
+      #[Get('/compare/{range}')]
+      public function test(
+        #[Range]
+        array $range
+      ) {
+        return $range;
+      }
+    };
+
+    $this->assertPayload(
+      400,
+      self::JSON,
+      '{"status":400,"message":"Malformed input \"main\""}',
+      $this->run(new RestApi($api), 'GET', '/compare/main')
+    );
+  }
 }
