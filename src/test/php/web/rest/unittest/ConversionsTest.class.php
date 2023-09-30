@@ -26,6 +26,28 @@ class ConversionsTest extends RunTest {
     );
   }
 
+  #[Test]
+  public function generic_range() {
+    $api= new class() {
+
+      /** @param web.rest.unittest.Range<int> */
+      #[Get('/')]
+      public function test(
+        #[Param, ListWith('..')]
+        $pages
+      ) {
+        return $pages;
+      }
+    };
+
+    $this->assertPayload(
+      200,
+      self::JSON,
+      '{"begin":1,"end":10}',
+      $this->run(new RestApi($api), 'GET', '/?pages=1..10')
+    );
+  }
+
   #[Test, Values([['uid=0', '{"uid":"0"}'], ['variants=a%26b;owned=true;colors=green,blue', '{"variants":"a&b","owned":"true","colors":["green","blue"]}']])]
   public function matrix_parameter($path, $output) {
     $api= new class() {
