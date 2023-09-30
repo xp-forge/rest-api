@@ -138,6 +138,35 @@ Body:
 * `$response->stream(io.streams.InputStream $in[, int $size])` will stream a response
 * `$response->body(string $bytes)` will write the given raw bytes to the response
 
+Asynchronous invocation
+-----------------------
+
+The following code will run the upload function asynchronously, continuing to serve requests while file contents are being transmitted.
+
+```php
+use io\Folder;
+use web\rest\{Async, Post, Resource, Response};
+
+#[Resource('/api')]
+class Uploads {
+  public function __construct(private Folder $folder) { }
+
+  #[Post('/files')]
+  public function upload(#[Request] $req) {
+    return new Async(function() use($req) {
+      if ($multipart= $req->multipart()) {
+
+        foreach ($multipart->files() as $file) {
+          yield from $file->transmit($this->folder);
+        }
+      }
+
+      return Response::ok();
+    });
+  }
+}
+```
+
 See also
 --------
 
