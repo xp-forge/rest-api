@@ -4,7 +4,7 @@ use lang\{Generic, IllegalArgumentException};
 
 #[Generic(self: 'T')]
 class Range {
-  public $begin, $end;
+  private $begin, $end;
 
   /**
    * Creates a range from a given two-element array, casting if necessary.
