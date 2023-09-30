@@ -80,6 +80,26 @@ To supply the source explicitely, you can use parameter attributes:
 * `#[Stream]` will pass an `io.streams.InputStream` instance to stream the request body to the parameter
 * `#[Request]` will pass the complete `web.Request` object
 
+Parameter conversions
+---------------------
+
+Parameters can be converted from their input. This library comes with a built-in conversion named *SeparatedBy*:
+
+```php
+use web\rest\{Resource, Get, Param, SeparatedBy};
+
+#[Resource('/api/trainings')]
+class Trainings {
+
+  #[Get('/completed')]
+  public function completed(#[Param, SeparatedBy(',')] array $orgunits) {
+    return $this->repository->find(['status' => 'COMPLETED', 'orgunits' => $orgunits]);
+  }
+}
+```
+
+The *orgunits* parameter can now be supplied in the URL as follows: `https://example.com/api/trainings/completed?orgunits=A,B` and the resulting value inside *$orgunits* will be `["A", "B"]`. User-defined conversions can be supplied by implementing the `web.rest.Conversion` interface.
+
 Matrix parameters
 -----------------
 
