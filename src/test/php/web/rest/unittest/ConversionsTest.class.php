@@ -69,15 +69,15 @@ class ConversionsTest extends RunTest {
   }
 
   #[Test]
-  public function range() {
+  public function branches() {
     $api= new class() {
 
-      #[Get('/compare/{range}')]
+      #[Get('/compare/{branches}')]
       public function test(
-        #[Range]
-        array $range
+        #[Branches]
+        array $branches
       ) {
-        return $range;
+        return $branches;
       }
     };
 
@@ -93,12 +93,12 @@ class ConversionsTest extends RunTest {
   public function exceptions_raised_during_conversion_yield_bad_request() {
     $api= new class() {
 
-      #[Get('/compare/{range}')]
+      #[Get('/compare/{branches}')]
       public function test(
-        #[Range]
-        array $range
+        #[Branches]
+        array $branches
       ) {
-        return $range;
+        return $branches;
       }
     };
 

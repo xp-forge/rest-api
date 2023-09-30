@@ -3,7 +3,7 @@
 use lang\IllegalArgumentException;
 use web\rest\Conversion;
 
-class Range implements Conversion {
+class Branches implements Conversion {
 
   public function convert($input) {
     if (2 === sscanf($input, '%[^.]...%[^.]', $lo, $hi)) {
