@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 4.2.0 / 2023-09-30
+
+* Merged PR #26: Add possibility to convert input parameters via
+  annotations, see# 25. Includes support for matrix parameters.
+  (@thekid)
+
 ## 4.1.0 / 2023-09-24
 
 * Added compatibility with `xp-forge/marshalling` v2.0.0 - @thekid
