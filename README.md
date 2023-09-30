@@ -80,6 +80,29 @@ To supply the source explicitely, you can use parameter attributes:
 * `#[Stream]` will pass an `io.streams.InputStream` instance to stream the request body to the parameter
 * `#[Request]` will pass the complete `web.Request` object
 
+Matrix parameters
+-----------------
+
+This library supports parameters inside path segments, e.g. `https://example.com/api/trainings/status=COMPLETED;orgunits=A,B/authors`:
+
+```php
+use web\rest\{Resource, Get, Matrix};
+
+#[Resource('/api/trainings')]
+class Trainings {
+
+  #[Get('/{filter}/authors')]
+  public function authors(#[Matrix] array $filter) {
+    $authors= [];
+    foreach ($this->repository->find($filter) as $training) {
+      $authors[$training->author->id()]= $training->author;
+    }
+    return $authors;
+  }
+}
+```
+
+The resulting value inside *$filter* will be `["status" => "COMPLETED", "orgunits" => ["A", "B"]]`.
 
 Return types
 ------------
