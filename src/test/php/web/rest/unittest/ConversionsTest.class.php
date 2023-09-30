@@ -1,17 +1,17 @@
 <?php namespace web\rest\unittest;
 
 use test\{Assert, Test, Values};
-use web\rest\{RestApi, Get, Param, ListWith, Matrix};
+use web\rest\{RestApi, Get, Param, SeparatedBy, Matrix};
 
 class ConversionsTest extends RunTest {
 
   #[Test, Values([['', '[]'], ['select=one', '["one"]'], ['select=one,two', '["one","two"]'], ['select[]=one', '["one"]'], ['select[]=one&select[]=two', '["one","two"]']])]
-  public function list_with($query, $output) {
+  public function array_separated_by($query, $output) {
     $api= new class() {
 
       #[Get('/')]
       public function test(
-        #[Param, ListWith(',')]
+        #[Param, SeparatedBy(',')]
         array $select= []
       ) {
         return $select;
@@ -27,13 +27,13 @@ class ConversionsTest extends RunTest {
   }
 
   #[Test]
-  public function generic_range() {
+  public function generic_range_separated_by() {
     $api= new class() {
 
-      /** @param web.rest.unittest.Range<int> */
+      /** @param web.rest.unittest.Range<int> $pages */
       #[Get('/')]
       public function test(
-        #[Param, ListWith('..')]
+        #[Param, SeparatedBy('..')]
         $pages
       ) {
         return $pages;

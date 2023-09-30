@@ -1,6 +1,6 @@
 <?php namespace web\rest;
 
-class ListWith implements Conversion {
+class SeparatedBy implements Conversion {
   private $separator;
 
   /** @param string $separator */
