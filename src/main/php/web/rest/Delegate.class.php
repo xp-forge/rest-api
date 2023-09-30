@@ -39,24 +39,34 @@ class Delegate {
     $this->method= $method instanceof Method ? $method : Reflection::type($instance)->method($method);
     foreach ($this->method->parameters() as $param) {
 
-      // Source explicitely set by annotation
+      // Check for source being explicitely set by annotation
+      $accessor= null;
+      $conversions= [];
       foreach ($param->annotations() as $annotation) {
-        if ($accessor= self::$SOURCES[$annotation->name()] ?? null) {
-          $this->param($param, $annotation->argument(0) ?? $param->name(), $accessor);
-          continue 2;
+        if (null === $accessor && $accessor= self::$SOURCES[$annotation->name()] ?? null) {
+          $name= $annotation->argument(0) ?? $param->name();
+        } else if ($annotation->is(Conversion::class)) {
+          $conversions[]= $annotation->newInstance();
         }
       }
 
-      // Source derived from parameter type
-      $type= $param->constraint()->type();
-      if (Type::$VAR === $type) {
-        // NOOP
-      } else if ($type->isAssignableFrom(InputStream::class)) {
-        $source= 'stream';
-      } else if ($type->isAssignableFrom(Request::class)) {
-        $source= 'request';
+      // Otherwise try to derive source from parameter type, falling
+      // back to the one supplied via constructor parameter.
+      if (null === $accessor) {
+        $name= $param->name();
+        $type= $param->constraint()->type();
+        if (Type::$VAR === $type) {
+          goto supplied;
+        } else if ($type->isAssignableFrom(InputStream::class)) {
+          $accessor= self::$SOURCES['stream'];
+        } else if ($type->isAssignableFrom(Request::class)) {
+          $accessor= self::$SOURCES['request'];
+        } else {
+          supplied: $accessor= self::$SOURCES[$source];
+        }
       }
-      $this->param($param, $param->name(), self::$SOURCES[$source]);
+
+      $this->param($param, $name, $accessor, $conversions);
     }
   }
 
@@ -66,10 +76,11 @@ class Delegate {
    * @param  lang.reflection.Parameter $param
    * @param  string $name
    * @param  function(web.Request, web.rest.format.EntityFormat, string): var $accessor
+   * @param  web.rest.Conversion[] $conversions
    * @return void
    * @throws lang.IllegalArgumentException
    */
-  private function param($param, $name, $accessor) {
+  private function param($param, $name, $accessor, $conversions= []) {
     if ($param->optional()) {
       $default= $param->default();
       $read= function($req, $format) use($accessor, $name, $default) {
@@ -83,7 +94,7 @@ class Delegate {
         return $value;
       };
     }
-    $this->params[$name]= ['type' => $param->constraint()->type(), 'read' => $read];
+    $this->params[$name]= ['type' => $param->constraint()->type(), 'read' => $read, 'conv' => $conversions];
   }
 
   /** @return string */

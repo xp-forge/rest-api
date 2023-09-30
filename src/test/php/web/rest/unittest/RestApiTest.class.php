@@ -29,7 +29,25 @@ class RestApiTest extends RunTest {
     $this->assertPayload(
       200,
       self::JSON,
-      '{"1549":{"id":1549,"handle":"thekid","name":"Timm"},"6100":{"id":6100,"handle":"test","name":"Test"}}',
+      '{'.
+        '"1549":{"id":1549,"handle":"thekid","name":"Timm"},'.
+        '"6100":{"id":6100,"handle":"test","name":"Test"},'.
+        '"6101":{"id":6101,"handle":"binford","name":"More Power"}'.
+      '}',
+      $res
+    );
+  }
+
+  #[Test]
+  public function list_users_with_filter() {
+    $res= $this->run(new RestApi(new Users()), 'GET', '/users?select=thekid,binford');
+    $this->assertPayload(
+      200,
+      self::JSON,
+      '{'.
+        '"1549":{"id":1549,"handle":"thekid","name":"Timm"},'.
+        '"6101":{"id":6101,"handle":"binford","name":"More Power"}'.
+      '}',
       $res
     );
   }
@@ -46,7 +64,7 @@ class RestApiTest extends RunTest {
   #[Test]
   public function count_users_returns_json() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/count');
-    $this->assertPayload(200, self::JSON, '2', $res);
+    $this->assertPayload(200, self::JSON, '3', $res);
   }
 
   #[Test]
@@ -102,7 +120,7 @@ class RestApiTest extends RunTest {
     $headers= ['Content-Type' => $type, 'Content-Length' => strlen($body)];
 
     $res= $this->run(new RestApi(new Users()), 'POST', '/users', $headers, $body);
-    $this->assertPayload(201, self::JSON, '{"id":6101,"name":"New"}', $res);
+    $this->assertPayload(201, self::JSON, '{"id":6102,"name":"New"}', $res);
   }
 
   #[Test]
@@ -184,7 +202,11 @@ class RestApiTest extends RunTest {
     $this->assertPayload(
       200,
       self::JSON,
-      '{"1549":{"id":1549,"handle":"thekid","name":"Timm"},"6100":{"id":6100,"handle":"test","name":"Test"}}',
+      '{'.
+        '"1549":{"id":1549,"handle":"thekid","name":"Timm"},'.
+        '"6100":{"id":6100,"handle":"test","name":"Test"},'.
+        '"6101":{"id":6101,"handle":"binford","name":"More Power"}'.
+      '}',
       $res
     );
   }

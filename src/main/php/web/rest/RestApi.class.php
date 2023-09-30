@@ -110,11 +110,11 @@ class RestApi implements Handler {
     try {
       $args= [];
       foreach ($delegate->params() as $name => $definition) {
-        if (isset($matches[$name])) {
-          $args[]= $this->marshalling->unmarshal($matches[$name], $definition['type']);
-        } else {
-          $args[]= $this->marshalling->unmarshal($definition['read']($req, $in), $definition['type']);
+        $value= $matches[$name] ?? $definition['read']($req, $in);
+        foreach ($definition['conv'] as $conversion) {
+          $value= $conversion->convert($value);
         }
+        $args[]= $this->marshalling->unmarshal($value, $definition['type']);
       }
     } catch (IllegalArgumentException $e) {
       return $this->transmit($res, Response::error(400, $e), $out);
