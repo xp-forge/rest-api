@@ -1,8 +1,9 @@
 <?php namespace web\rest\unittest;
 
+use ArrayIterator, Iterator, IteratorAggregate;
 use test\{Assert, Expect, Ignore, Test, Values};
 use web\Error;
-use web\rest\format\Json;
+use web\rest\format\{Json, EntityFormat};
 use web\rest\unittest\api\{Monitoring, Users};
 use web\rest\{MethodsIn, ResourcesIn, RestApi};
 
@@ -232,5 +233,37 @@ class RestApiTest extends RunTest {
   #[Test, Expect(class: Error::class, message: 'Unsupported mime type'), Values(['text/html, application/xhtml+xml, application/xml; q=0.9', 'application/xml', 'text/xml'])]
   public function does_not_accept($mime) {
     $this->run(new RestApi(new Users()), 'GET', '/users/1549', ['Accept' => $mime]);
+  }
+
+  #[Test]
+  public function register_csv_as_output_format() {
+    $api= (new RestApi(new Users()))->register('text/csv', new class() extends EntityFormat {
+      public function mimeType() { return 'text/csv; charset=utf-8'; }
+      public function read($request, $name) { return null; }
+      public function write($response, $value) {
+        if ($value instanceof Iterator) {
+          $it= $value;
+        } else if ($value instanceof IteratorAggregate) {
+          $it= $value->getIterator();
+        } else {
+          $it= new ArrayIterator((array)$value);
+        }
+
+        // Incomplete CSV implementation - for test purposes only!
+        $out= $response->stream();
+        $record= $it->current();
+        $out->write(implode(';', array_keys($record))."\n");
+        do {
+          $out->write(implode(';', $record)."\n");
+          $it->next();
+          $record= $it->current();
+        } while ($it->valid());
+
+        $out->close();
+      }
+    });
+
+    $res= $this->run($api, 'GET', '/users?select=thekid', ['Accept' => 'text/csv']);
+    $this->assertPayload(200, 'text/csv; charset=utf-8', "id;handle;name\n1549;thekid;Timm\n", $res);
   }
 }
