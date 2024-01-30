@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 4.2.0 / 2024-01-30
+
+* Made this library compatible with xp-forge/web version 4.0 - @thekid
+
 ## 4.2.0 / 2023-09-30
 
 * Merged PR #26: Add possibility to convert input parameters via
