@@ -6,15 +6,15 @@
   "description" : "Rest API",
   "keywords": ["module", "xp"],
   "require" : {
-    "xp-framework/core": "^11.0 | ^10.0 | ^9.0 | ^8.0 | ^7.0",
-    "xp-framework/reflection": "^2.0",
+    "xp-framework/core": "^12.0 | ^11.0 | ^10.0 | ^9.0 | ^8.0 | ^7.0",
+    "xp-framework/reflection": "^3.0 | ^2.0",
     "xp-forge/web": "^4.0 | ^3.0 | ^2.0 | ^1.0",
     "xp-forge/marshalling": "^2.0 | ^1.0",
     "xp-forge/json": "^5.0 | ^4.0 | ^3.1",
     "php": ">=7.0.0"
   },
   "require-dev" : {
-    "xp-framework/test": "^1.0"
+    "xp-framework/test": "^2.0 | ^1.0"
   },
   "autoload" : {
     "files" : ["src/main/php/autoload.php"]

@@ -3,6 +3,10 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 4.4.0 / 2024-03-24
+
+* Made compatible with XP 12 - @thekid
+
 ## 4.3.0 / 2024-01-30
 
 * Added PHP 8.4 to the test matrix - @thekid
