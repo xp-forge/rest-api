@@ -8,13 +8,13 @@ use lang\Reflection;
 class MethodsIn extends Delegates {
 
   /** @param object $instance */
-  public function __construct($instance) {
+  public function __construct(object $instance) {
     $class= Reflection::type($instance);
     if ($annotation= $class->annotation(Resource::class)) {
       $this->with($instance, (string)$annotation->argument(0));
     } else {
       $this->with($instance, '/');
     }
-    uksort($this->patterns, function($a, $b) { return strlen($b) - strlen($a); });
+    uksort($this->patterns, fn($a, $b) => strlen($b) - strlen($a));
   }
 }

@@ -123,9 +123,7 @@ class Response {
     $self= new self($code);
     if (null !== $cause) {
       $error= ['status' => $code, 'message' => $cause instanceof Throwable ? $cause->getMessage() : $cause];
-      $self->body= function($res, $format) use($error) {
-        $format->write($res, $error);
-      };
+      $self->body= fn($res, $format, $marshalling) => $format->write($res, $error);
     }
     return $self;
   }
