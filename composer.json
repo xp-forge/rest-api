@@ -11,7 +11,7 @@
     "xp-forge/web": "^4.0 | ^3.0 | ^2.0 | ^1.0",
     "xp-forge/marshalling": "^2.0 | ^1.0",
     "xp-forge/json": "^5.0 | ^4.0 | ^3.1",
-    "php": ">=7.0.0"
+    "php": ">=7.4.0"
   },
   "require-dev" : {
     "xp-framework/test": "^2.0 | ^1.0"
