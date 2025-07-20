@@ -139,6 +139,7 @@ Creation:
 
 * `Response::ok()` - 200 OK
 * `Response::created([string $location])` - 201 Created, optionally with a *Location* header
+* `Response::accepted()` - 202 Accepted
 * `Response::noContent()` - 204 No content
 * `Response::see(string $location)` - 302 Found and a *Location* header
 * `Response::notModified()` - 304 Not modified

@@ -42,7 +42,7 @@ class ResponseTest {
   #[Test]
   public function accepted() {
     Assert::equals(
-      ['status' => 201, 'headers' => [], 'body' => null],
+      ['status' => 202, 'headers' => [], 'body' => null],
       Response::accepted()->export()
     );
   }
