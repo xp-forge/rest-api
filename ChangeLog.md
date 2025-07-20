@@ -3,6 +3,12 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 5.1.0 / 2025-07-20
+
+* Added `Response::accepted()` which sets the HTTP status code to 202, see
+  https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/202
+  (@thekid) 
+
 ## 5.0.0 / 2025-05-04
 
 * **Heads up:** Dropped support for PHP < 7.4, see xp-framework/rfc#343

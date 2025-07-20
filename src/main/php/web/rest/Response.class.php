@@ -60,6 +60,15 @@ class Response {
   }
 
   /**
+   * Creates a new response instance with the status code set to 202 (Accepted)
+   *
+   * @return self
+   */
+  public static function accepted() {
+    return new self(202);
+  }
+
+  /**
    * Creates a new response instance with the status code set to 204 (No content)
    *
    * @return self

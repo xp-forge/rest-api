@@ -40,6 +40,14 @@ class ResponseTest {
   }
 
   #[Test]
+  public function accepted() {
+    Assert::equals(
+      ['status' => 201, 'headers' => [], 'body' => null],
+      Response::accepted()->export()
+    );
+  }
+
+  #[Test]
   public function no_content() {
     Assert::equals(
       ['status' => 204, 'headers' => [], 'body' => null],
