@@ -3,6 +3,8 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+* Added PHP 8.6 to test matrix - @thekid
+
 ## 5.1.0 / 2025-07-20
 
 * Added `Response::accepted()` which sets the HTTP status code to 202, see
