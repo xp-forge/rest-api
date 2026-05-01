@@ -2,10 +2,10 @@
 
 use ArrayIterator, Iterator, IteratorAggregate;
 use test\{Assert, Expect, Ignore, Test, Values};
-use web\Error;
 use web\rest\format\{Json, EntityFormat};
 use web\rest\unittest\api\{Monitoring, Users};
 use web\rest\{MethodsIn, ResourcesIn, RestApi};
+use web\{Error, NotFound};
 
 class RestApiTest extends RunTest {
 
@@ -143,6 +143,11 @@ class RestApiTest extends RunTest {
   public function not_found() {
     $res= $this->run(new RestApi(new Users()), 'GET', '/users/not.a.user/avatar');
     $this->assertPayload(404, self::JSON, '{"status":404,"message":"No such user #not.a.user"}', $res);
+  }
+
+  #[Test, Expect(NotFound::class)]
+  public function no_route() {
+    $this->run(new RestApi(new Users()), 'GET', '/not-found');
   }
 
   #[Test, Values(['/monitoring/status', '/monitoring/details'])]

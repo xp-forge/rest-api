@@ -3,6 +3,9 @@ Rest API change log
 
 ## ?.?.? / ????-??-??
 
+## 5.1.1 / 2026-05-01
+
+* Fixed handling *not found* errors - @thekid
 * Added PHP 8.6 to test matrix - @thekid
 
 ## 5.1.0 / 2025-07-20
