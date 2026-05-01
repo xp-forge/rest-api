@@ -3,7 +3,7 @@
 use lang\{IllegalArgumentException, Throwable};
 use util\data\Marshalling;
 use web\rest\format\{EntityFormat, FormUrlEncoded, Json, OctetStream};
-use web\{Error, Handler, NotFound};
+use web\{Error, Handler};
 
 class RestApi implements Handler {
   private $delegates, $base, $marshalling, $formats;
@@ -102,7 +102,7 @@ class RestApi implements Handler {
     $verb= strtolower($req->method());
     $path= $this->base ? preg_replace('#^'.$this->base.'#', '', $req->uri()->path()) : $req->uri()->path();
     if (null === ($target= $this->delegates->target($verb, $path))) {
-      throw new NotFound($path);
+      throw new Error(404, "Cannot route {$req->method()} requests to {$path}");
     }
 
     list($delegate, $matches)= $target;
